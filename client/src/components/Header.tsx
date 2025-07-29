@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { Menu, X, Phone, Mail, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { HashLink } from "react-router-hash-link";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { name: "Home", href: "#home" },
-    { name: "Products", href: "#products" },
-    { name: "About Us", href: "#about" },
-    { name: "Contact", href: "#contact" },
+    { name: "Home", href: "/#home" },
+    { name: "Products", href: "/#products" },
+    { name: "About Us", href: "/#about" },
+    { name: "Contact", href: "/#contact" },
   ];
 
   return (
@@ -49,22 +51,25 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
-              <a
+              <HashLink
                 key={item.name}
-                href={item.href}
+                smooth
+                to={item.href}
                 className="text-foreground hover:text-primary font-medium transition-colors duration-200 relative group"
               >
                 {item.name}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-              </a>
+              </HashLink>
             ))}
           </nav>
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <Button className="btn-quote">
-              Get Quote
-            </Button>
+            <Link to="/quote">
+              <Button className="btn-quote">
+                Get Quote
+              </Button>
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -81,18 +86,21 @@ const Header = () => {
           <div className="md:hidden mt-4 pb-4 border-t border-border">
             <nav className="flex flex-col space-y-4 pt-4">
               {navItems.map((item) => (
-                <a
+                <HashLink
                   key={item.name}
-                  href={item.href}
+                  smooth
+                  to={item.href}
                   className="text-foreground hover:text-primary font-medium transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
-                </a>
+                </HashLink>
               ))}
-              <Button className="btn-quote mt-4 w-full">
-                Get Quote
-              </Button>
+              <Link to="/quote">
+                <Button className="btn-quote mt-4 w-full">
+                  Get Quote
+                </Button>
+              </Link>
             </nav>
           </div>
         )}

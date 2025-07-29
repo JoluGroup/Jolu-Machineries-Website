@@ -1,25 +1,53 @@
 import { useState } from "react";
-import { Mail, Phone, MapPin, Clock, Send, MessageCircle, Calendar } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Clock,
+  Send,
+  MessageCircle,
+  Calendar
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+
+import { productOptions, countyOptions } from "@/data/options";
+
 
 const ContactSection = () => {
   const { toast } = useToast();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
+    county: "",
+    area: "",
     productInterest: "",
     message: ""
   });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -37,14 +65,22 @@ const ContactSection = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
     setTimeout(() => {
       toast({
         title: "Message Sent Successfully!",
-        description: "We'll get back to you within 24 hours. Thank you for contacting Jolu Machineries.",
+        description:
+          "We'll get back to you within 24 hours. Thank you for contacting Jolu Machineries."
       });
       setIsSubmitting(false);
-      setFormData({ name: "", email: "", phone: "", productInterest: "", message: "" });
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        county: "",
+        area: "",
+        productInterest: "",
+        message: ""
+      });
     }, 2000);
   };
 
@@ -64,13 +100,21 @@ const ContactSection = () => {
     {
       icon: MapPin,
       title: "Visit Us",
-      details: ["KFA Building", "Along Geoffrey Kamau Avenue, Next to Rubis Petrol Station", "Nakuru, Kenya"],
+      details: [
+        "KFA Building",
+        "Along Geoffrey Kamau Avenue, Next to Rubis Petrol Station",
+        "Nakuru, Kenya"
+      ],
       action: "Get Directions"
     },
     {
       icon: Clock,
       title: "Business Hours",
-      details: ["Monday - Friday: 8:00 AM - 6:00 PM", "Saturday: 9:00 AM - 4:00 PM", "Sunday: Closed"],
+      details: [
+        "Monday - Friday: 8:00 AM - 6:00 PM",
+        "Saturday: 9:00 AM - 4:00 PM",
+        "Sunday: Closed"
+      ],
       action: "Schedule Visit"
     }
   ];
@@ -85,10 +129,18 @@ const ContactSection = () => {
     "General Inquiry"
   ];
 
+  const countyOptions = [
+    "Baringo", "Bomet", "Bungoma", "Busia", "Elgeyo-Marakwet", "Embu", "Garissa", "Homa Bay",
+    "Isiolo", "Kajiado", "Kakamega", "Kericho", "Kiambu", "Kilifi", "Kirinyaga", "Kisii", "Kisumu",
+    "Kitui", "Kwale", "Laikipia", "Lamu", "Machakos", "Makueni", "Mandera", "Marsabit", "Meru",
+    "Migori", "Mombasa", "Murang'a", "Nairobi", "Nakuru", "Nandi", "Narok", "Nyamira", "Nyandarua",
+    "Nyeri", "Samburu", "Siaya", "Taita-Taveta", "Tana River", "Tharaka-Nithi", "Trans Nzoia",
+    "Turkana", "Uasin Gishu", "Vihiga", "Wajir", "West Pokot"
+  ];
+
   return (
     <section id="contact" className="py-16 bg-muted/30">
       <div className="container mx-auto px-4">
-        {/* Header */}
         <div className="text-center mb-16">
           <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
             Get In Touch
@@ -97,62 +149,54 @@ const ContactSection = () => {
             Contact Jolu Machineries
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Ready to revolutionize your farming operations? Get in touch with our agricultural 
+            Ready to revolutionize your farming operations? Get in touch with our agricultural
             experts today for personalized equipment recommendations and competitive quotes.
           </p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Contact Information */}
-          <div className="lg:col-span-1">
-            <div className="space-y-6">
-              {contactInfo.map((info, index) => (
-                <Card key={index} className="product-card">
-                  <CardContent className="p-6">
-                    <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <info.icon size={24} className="text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-foreground mb-2">{info.title}</h3>
-                        <div className="space-y-1">
-                          {info.details.map((detail, i) => (
-                            <p key={i} className="text-sm text-muted-foreground">{detail}</p>
-                          ))}
-                        </div>
-                        <Button variant="link" className="p-0 h-auto mt-2 text-primary">
-                          {info.action}
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-
-              {/* Quick Actions */}
-              <Card className="product-card bg-primary text-primary-foreground">
+          <div className="lg:col-span-1 space-y-6">
+            {contactInfo.map((info, index) => (
+              <Card key={index} className="product-card">
                 <CardContent className="p-6">
-                  <h3 className="font-semibold mb-4">Quick Actions</h3>
-                  <div className="space-y-3">
-                    <Button variant="secondary" className="w-full justify-start">
-                      <MessageCircle size={18} className="mr-2" />
-                      WhatsApp Chat
-                    </Button>
-                    <Button variant="secondary" className="w-full justify-start">
-                      <Calendar size={18} className="mr-2" />
-                      Schedule Demo
-                    </Button>
-                    <Button variant="secondary" className="w-full justify-start">
-                      <Send size={18} className="mr-2" />
-                      Request Catalog
-                    </Button>
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <info.icon size={24} className="text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-foreground mb-2">{info.title}</h3>
+                      <div className="space-y-1">
+                        {info.details.map((detail, i) => (
+                          <p key={i} className="text-sm text-muted-foreground">{detail}</p>
+                        ))}
+                      </div>
+                      <Button variant="link" className="p-0 h-auto mt-2 text-primary">
+                        {info.action}
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
-            </div>
+            ))}
+
+            <Card className="product-card bg-primary text-primary-foreground">
+              <CardContent className="p-6">
+                <h3 className="font-semibold mb-4">Quick Actions</h3>
+                <div className="space-y-3">
+                  <Button variant="secondary" className="w-full justify-start">
+                    <MessageCircle size={18} className="mr-2" /> WhatsApp Chat
+                  </Button>
+                  <Button variant="secondary" className="w-full justify-start">
+                    <Calendar size={18} className="mr-2" /> Schedule Demo
+                  </Button>
+                  <Button variant="secondary" className="w-full justify-start">
+                    <Send size={18} className="mr-2" /> Request Catalog
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
-          {/* Contact Form */}
           <div className="lg:col-span-2">
             <Card className="product-card">
               <CardHeader>
@@ -166,37 +210,36 @@ const ContactSection = () => {
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium mb-2">Full Name *</label>
-                      <Input
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        placeholder="Enter your full name"
-                        required
-                      />
+                      <Input name="name" value={formData.name} onChange={handleInputChange} required placeholder="Enter your full name" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Email Address *</label>
-                      <Input
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder="Enter your email"
-                        required
-                      />
+                      <Input name="email" type="email" value={formData.email} onChange={handleInputChange} required placeholder="Enter your email" />
                     </div>
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium mb-2">Phone Number *</label>
-                      <Input
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder="+254 XXX XXX XXX"
-                        required
-                      />
+                      <Input name="phone" value={formData.phone} onChange={handleInputChange} required placeholder="+254 XXX XXX XXX" />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">County *</label>
+                      <Select onValueChange={(value) => setFormData({ ...formData, county: value })} required>
+                        <SelectTrigger className="focus:border-lime-500 focus:ring-lime-500">
+                          <SelectValue placeholder="Select County" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-60 overflow-y-auto">
+                          {countyOptions.map((county, index) => (
+                            <SelectItem key={index} value={county}>
+                              {county}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <label htmlFor="area" className="block text-sm font-medium mb-2">Area/Town *</label>
+                      <Input id="area" name="area" value={formData.area} onChange={handleInputChange} required placeholder="e.g. Ruaka" className="focus:border-lime-500 focus:ring-lime-500" />
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Product of Interest</label>
@@ -221,18 +264,14 @@ const ContactSection = () => {
                       name="message"
                       value={formData.message}
                       onChange={handleInputChange}
+                      required
                       placeholder="Tell us about your farming needs, preferred equipment specifications, budget range, or any questions you have..."
                       rows={6}
-                      required
                     />
                   </div>
 
                   <div className="flex gap-4">
-                    <Button 
-                      type="submit" 
-                      className="btn-quote flex-1" 
-                      disabled={isSubmitting}
-                    >
+                    <Button type="submit" className="btn-quote flex-1" disabled={isSubmitting}>
                       {isSubmitting ? (
                         <>
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -251,14 +290,13 @@ const ContactSection = () => {
                   </div>
 
                   <p className="text-sm text-muted-foreground">
-                    * Required fields. By submitting this form, you agree to our privacy policy 
+                    * Required fields. By submitting this form, you agree to our privacy policy
                     and consent to being contacted by our sales team.
                   </p>
                 </form>
               </CardContent>
             </Card>
 
-            {/* Map */}
             <Card className="product-card mt-6">
               <CardContent className="p-0">
                 <div className="h-64 bg-muted rounded-lg flex items-center justify-center">

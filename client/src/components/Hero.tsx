@@ -63,16 +63,21 @@ const Hero = () => {
             
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Button size="lg" className="btn-quote text-lg px-8 py-4">
-                {heroSlides[currentSlide].cta}
-                <ArrowRight className="ml-2" size={20} />
+              <Button asChild size="lg" className="btn-quote text-lg px-8 py-4">
+                <a href="#products">
+                  {heroSlides[currentSlide].cta}
+                  <ArrowRight className="ml-2" size={20} />
+                </a>
               </Button>
-              <Button 
-                size="lg" 
-                className="text-white border-white/30 hover:bg-white/10 text-lg px-8 py-4"
-              >
-                Contact Us
-              </Button>
+              
+              <a href="tel:+254743682700">
+                <Button 
+                  size="lg" 
+                  className="text-white border-white/30 hover:bg-white/10 text-lg px-8 py-4"
+                >
+                  Contact Us
+                </Button>
+              </a>
             </div>
           </div>
 

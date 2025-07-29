@@ -119,6 +119,10 @@ All colors MUST be HSL based on the agricultural green theme.
 
   body {
     @apply bg-background text-foreground;
+
+  html {
+    scroll-behavior: smooth;
+  }
   }
 }
 
