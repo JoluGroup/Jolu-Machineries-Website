@@ -20,11 +20,11 @@ const Header = () => {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
               <Phone size={14} />
-              <span>+234 XXX XXX XXXX</span>
+              <span>+254 743 682 700 / +254 705 038 679</span>
             </div>
             <div className="flex items-center gap-1">
               <Mail size={14} />
-              <span>info@jolumachineries.com</span>
+              <span>jolumachineries@gmail.com</span>
             </div>
           </div>
           <div className="hidden md:flex items-center gap-1">
@@ -40,7 +40,7 @@ const Header = () => {
           {/* Logo */}
           <div className="flex items-center space-x-3">
             <img 
-              src="/lovable-uploads/fc941d17-d3ac-4e39-b869-99285d33b697.png" 
+              src="/lovable-uploads/jolu-machinery-logo.jpg" 
               alt="Jolu Machineries Logo" 
               className="h-12 w-auto"
             />

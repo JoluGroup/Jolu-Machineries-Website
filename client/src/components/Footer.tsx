@@ -45,13 +45,15 @@ const Footer = () => {
           {/* Company Info */}
           <div className="lg:col-span-1">
             <div className="mb-6">
-              <img 
-                src="/lovable-uploads/fc941d17-d3ac-4e39-b869-99285d33b697.png" 
-                alt="Jolu Machineries Logo" 
-                className="h-16 w-auto mb-4 brightness-0 invert"
-              />
+              <div className="inline-block bg-white rounded p-1 dark:bg-white/10">
+                <img 
+                  src="/lovable-uploads/jolu-machinery-logo.jpg" 
+                  alt="Jolu Machineries Logo" 
+                  className="h-16 w-auto mb-4 dark:invert"
+                />
+              </div>
               <p className="text-white/80 leading-relaxed mb-4">
-                Nigeria's trusted partner for premium Zoomlion agricultural machinery. 
+                Kenya's trusted partner for premium Zoomlion agricultural machinery. 
                 Empowering farmers with world-class equipment and exceptional service for over 15 years.
               </p>
             </div>
@@ -60,18 +62,18 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Phone size={18} className="text-primary-glow" />
-                <span className="text-white/80">+234 XXX XXX XXXX</span>
+                <span className="text-white/80">0743 682 700  /  0705 038 679</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail size={18} className="text-primary-glow" />
-                <span className="text-white/80">info@jolumachineries.com</span>
+                <span className="text-white/80">jolumachineries@gmail.com</span>
               </div>
               <div className="flex items-start space-x-3">
                 <MapPin size={18} className="text-primary-glow mt-1" />
                 <span className="text-white/80">
-                  Agricultural Equipment Hub<br />
-                  Lagos - Ibadan Expressway<br />
-                  Lagos, Nigeria
+                  KFA Building<br />
+                  Along Geoffrey Kamau Avenue, Next to Rubis Petrol Station<br />
+                  Nakuru, Kenya
                 </span>
               </div>
             </div>

@@ -38,23 +38,23 @@ const AboutSection = () => {
 
   const testimonials = [
     {
-      name: "Chief Ibrahim Musa",
+      name: "Geoffrey Maina",
       role: "Large Scale Farmer",
-      location: "Kaduna State",
+      location: "Eldoret",
       comment: "Jolu Machineries provided exceptional service. My Zoomlion tractor has been working perfectly for 3 years with minimal downtime.",
       rating: 5
     },
     {
-      name: "Alhaji Garba Ahmed",
+      name: "Priscilla Auma",
       role: "Agricultural Cooperative Leader",
-      location: "Kano State",
+      location: "Nakuru",
       comment: "Professional team, quality equipment, and excellent after-sales support. Highly recommend Jolu Machineries to all farmers.",
       rating: 5
     },
     {
-      name: "Mrs. Sarah Okonkwo",
+      name: "Syombua Kyalo",
       role: "Commercial Farmer",
-      location: "Benue State",
+      location: "Machakos",
       comment: "The harvester we purchased has significantly improved our farm productivity. Great value for money and reliable service.",
       rating: 5
     }
@@ -72,7 +72,7 @@ const AboutSection = () => {
             Your Trusted Agricultural Partner
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            For over 15 years, Jolu Agricultural & Construction Machineries has been Nigeria's 
+            For over 15 years, Jolu Agricultural & Construction Machineries has been Kenya's 
             premier dealer for Zoomlion agricultural equipment. We combine industry expertise 
             with unwavering commitment to help farmers achieve greater productivity and success.
           </p>
@@ -84,13 +84,13 @@ const AboutSection = () => {
             <h3 className="text-3xl font-bold mb-6 text-foreground">Our Story</h3>
             <div className="space-y-4 text-muted-foreground leading-relaxed">
               <p>
-                Founded with a vision to revolutionize Nigerian agriculture, Jolu Machineries 
+                Founded with a vision to revolutionize Kenyan agriculture, Jolu Machineries 
                 began as a small agricultural equipment dealer with big dreams. Today, we're 
-                proud to be one of Nigeria's leading distributors of Zoomlion agricultural machinery.
+                proud to be one of Kenya's leading distributors of Zoomlion agricultural machinery.
               </p>
               <p>
                 Our journey started when we recognized the need for reliable, high-quality 
-                agricultural equipment that could withstand Nigeria's diverse farming conditions. 
+                agricultural equipment that could withstand Kenya's diverse farming conditions. 
                 Partnering with Zoomlion, a global leader in agricultural technology, we've been 
                 able to provide farmers with world-class equipment at competitive prices.
               </p>
@@ -134,7 +134,7 @@ const AboutSection = () => {
               </div>
               <h3 className="text-2xl font-bold mb-4 text-foreground">Our Mission</h3>
               <p className="text-muted-foreground leading-relaxed">
-                To empower Nigerian farmers with world-class agricultural machinery and 
+                To empower Kenyan farmers with world-class agricultural machinery and 
                 exceptional service, driving agricultural productivity and food security 
                 across the nation.
               </p>
@@ -148,7 +148,7 @@ const AboutSection = () => {
               </div>
               <h3 className="text-2xl font-bold mb-4 text-foreground">Our Vision</h3>
               <p className="text-muted-foreground leading-relaxed">
-                To be West Africa's leading agricultural machinery dealer, recognized for 
+                To be East Africa's leading agricultural machinery dealer, recognized for 
                 innovation, reliability, and unwavering commitment to customer success 
                 in modern farming.
               </p>

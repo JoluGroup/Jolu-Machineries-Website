@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import tractor1 from "@/assets/tractor-1.jpg";
-import harvester1 from "@/assets/harvester-1.jpg";
+import tractor1 from "@/assets/tractor-1.png";
+import harvester1 from "@/assets/harvester-1.png";
 import implements1 from "@/assets/implements-1.jpg";
 
 const ProductsSection = () => {
@@ -23,26 +23,24 @@ const ProductsSection = () => {
   const products = [
     {
       id: 1,
-      name: "Zoomlion RK1504 Tractor",
+      name: "Zoomlion RN904/1104 Wheeled Tractor",
       category: "tractors",
       image: tractor1,
-      horsepower: "150 HP",
-      price: "₦12,500,000",
+      horsepower: "90-110 HP",
       rating: 4.8,
       reviews: 24,
-      features: ["4WD", "Power Steering", "Air Conditioning", "12F+12R Transmission"],
+      features: ["4WD", "Power Steering", "Air Conditioning", "16F+8R Transmission"],
       badge: "Best Seller"
     },
     {
       id: 2,
-      name: "Zoomlion TB60 Harvester",
+      name: "Zoomlion ZL120 Harvester",
       category: "harvesters",
       image: harvester1,
-      horsepower: "180 HP",
-      price: "₦25,800,000",
+      horsepower: "120 HP",
       rating: 4.9,
       reviews: 18,
-      features: ["Grain Tank 4000L", "Cutting Width 2.2m", "Hydrostatic Drive"],
+      features: ["Weight 4080kg", "Cutting Width 2360mm", "Hydrostatic Drive"],
       badge: "Premium"
     },
     {
@@ -51,7 +49,6 @@ const ProductsSection = () => {
       category: "implements",
       image: implements1,
       horsepower: "Compatible with 80-200 HP",
-      price: "₦2,150,000",
       rating: 4.7,
       reviews: 31,
       features: ["Disc Plough", "Cultivator", "Rotary Harrow", "Boom Sprayer"],

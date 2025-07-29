@@ -52,19 +52,19 @@ const ContactSection = () => {
     {
       icon: Phone,
       title: "Call Us",
-      details: ["+234 XXX XXX XXXX", "+234 XXX XXX XXXX"],
+      details: ["+254 743 682 700", "+254 705 038 679"],
       action: "Call Now"
     },
     {
       icon: Mail,
       title: "Email Us",
-      details: ["info@jolumachineries.com", "sales@jolumachineries.com"],
+      details: ["jolumachineries@gmail.com"],
       action: "Send Email"
     },
     {
       icon: MapPin,
       title: "Visit Us",
-      details: ["Agricultural Equipment Hub", "Lagos - Ibadan Expressway", "Lagos, Nigeria"],
+      details: ["KFA Building", "Along Geoffrey Kamau Avenue, Next to Rubis Petrol Station", "Nakuru, Kenya"],
       action: "Get Directions"
     },
     {
@@ -194,7 +194,7 @@ const ContactSection = () => {
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        placeholder="+234 XXX XXX XXXX"
+                        placeholder="+254 XXX XXX XXX"
                         required
                       />
                     </div>
@@ -266,7 +266,7 @@ const ContactSection = () => {
                     <MapPin size={48} className="text-primary mx-auto mb-2" />
                     <p className="text-muted-foreground">Interactive Map Coming Soon</p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Lagos - Ibadan Expressway, Lagos, Nigeria
+                      KFA Building, Along Geoffrey Kamau Avenue, Next to Rubis Petrol Station, Nakuru, Kenya
                     </p>
                   </div>
                 </div>
