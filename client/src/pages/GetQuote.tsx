@@ -5,12 +5,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
-import { productOptions, countyOptions } from "@/data/options";
+
+import { useState } from "react";
+
+import { productOptions } from "@/data/options";
 
 
 
 
 const GetQuote = () => {
+  const [selectedProduct, setSelectedProduct] = useState("");
   const { toast } = useToast();
 
   
@@ -146,19 +150,23 @@ const GetQuote = () => {
 
         <div>
         <label className="block mb-2 font-medium">Product of Interest *</label>
-        <select
+
+          <select
             required
+            value={selectedProduct}
+            onChange={(e) => setSelectedProduct(e.target.value)}
             className="block w-full appearance-none rounded-md border border-input bg-white dark:bg-zinc-800 px-4 py-2 pr-10 text-sm text-gray-700 dark:text-white shadow-sm focus:border-[hsl(var(--primary))] focus:ring-1 focus:ring-[hsl(var(--primary-glow))] focus:outline-none transition"
-        >
-            <option value="" disabled selected>
-            Select product category
+          >
+            <option value="" disabled>
+              Select product category
             </option>
             {productOptions.map((product, idx) => (
-            <option key={idx} value={product}>
+              <option key={idx} value={product}>
                 {product}
-            </option>
+              </option>
             ))}
-        </select>
+          </select>
+
         </div>
       <div>
         <label className="block mb-2 font-medium">Message *</label>

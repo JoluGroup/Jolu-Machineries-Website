@@ -26,11 +26,18 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "react-router-dom";
+
+import { useNavigate } from "react-router-dom";
 
 import { productOptions, countyOptions } from "@/data/options";
 
 
-const ContactSection = () => {
+type ContactSectionProps = {
+  productOptions?: string[];
+};
+
+const ContactSection = ({ productOptions = [] }: ContactSectionProps) => {
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -84,6 +91,9 @@ const ContactSection = () => {
     }, 2000);
   };
 
+
+const navigate = useNavigate();
+
   const contactInfo = [
     {
       icon: Phone,
@@ -119,25 +129,6 @@ const ContactSection = () => {
     }
   ];
 
-  const productOptions = [
-    "Tractors (50-100 HP)",
-    "Tractors (100-150 HP)",
-    "Tractors (150+ HP)",
-    "Harvesters",
-    "Agricultural Implements",
-    "Spare Parts & Service",
-    "General Inquiry"
-  ];
-
-  const countyOptions = [
-    "Baringo", "Bomet", "Bungoma", "Busia", "Elgeyo-Marakwet", "Embu", "Garissa", "Homa Bay",
-    "Isiolo", "Kajiado", "Kakamega", "Kericho", "Kiambu", "Kilifi", "Kirinyaga", "Kisii", "Kisumu",
-    "Kitui", "Kwale", "Laikipia", "Lamu", "Machakos", "Makueni", "Mandera", "Marsabit", "Meru",
-    "Migori", "Mombasa", "Murang'a", "Nairobi", "Nakuru", "Nandi", "Narok", "Nyamira", "Nyandarua",
-    "Nyeri", "Samburu", "Siaya", "Taita-Taveta", "Tana River", "Tharaka-Nithi", "Trans Nzoia",
-    "Turkana", "Uasin Gishu", "Vihiga", "Wajir", "West Pokot"
-  ];
-
   return (
     <section id="contact" className="py-16 bg-muted/30">
       <div className="container mx-auto px-4">
@@ -170,32 +161,78 @@ const ContactSection = () => {
                           <p key={i} className="text-sm text-muted-foreground">{detail}</p>
                         ))}
                       </div>
-                      <Button variant="link" className="p-0 h-auto mt-2 text-primary">
-                        {info.action}
-                      </Button>
+
+                        {info.title === "Business Hours" ? (
+                          <Link to="/schedule" className="inline-block mt-2">
+                            <Button variant="link" className="p-0 h-auto text-primary">
+                              {info.action}
+                            </Button>
+                          </Link>
+                        ) : (
+                          <a
+                            href={
+                              info.title === "Call Us"
+                                ? `tel:${info.details[0].replace(/\s+/g, "")}`
+                                : info.title === "Email Us"
+                                ? `mailto:${info.details[0]}`
+                                : "https://www.google.com/maps/search/?api=1&query=KFA+Building,+Geoffrey+Kamau+Avenue,+Nakuru,+Kenya"
+                            }
+                            className="inline-block mt-2"
+                            {...((info.title === "Visit Us") && {
+                              target: "_blank",
+                              rel: "noopener noreferrer",
+                            })}
+                          >
+                            <Button variant="link" className="p-0 h-auto text-primary">
+                              {info.action}
+                            </Button>
+                          </a>
+                          )}
+
                     </div>
                   </div>
                 </CardContent>
               </Card>
             ))}
 
-            <Card className="product-card bg-primary text-primary-foreground">
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-4">Quick Actions</h3>
-                <div className="space-y-3">
-                  <Button variant="secondary" className="w-full justify-start">
-                    <MessageCircle size={18} className="mr-2" /> WhatsApp Chat
-                  </Button>
-                  <Button variant="secondary" className="w-full justify-start">
-                    <Calendar size={18} className="mr-2" /> Schedule Demo
-                  </Button>
-                  <Button variant="secondary" className="w-full justify-start">
-                    <Send size={18} className="mr-2" /> Request Catalog
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                  <Card className="product-card bg-primary text-primary-foreground">
+                    <CardContent className="p-6">
+                      <h3 className="font-semibold mb-4">Quick Actions</h3>
+                      <div className="space-y-3">
+                        {/* WhatsApp Chat */}
+                        <Button
+                          variant="secondary"
+                          className="w-full justify-start"
+                          onClick={() =>
+                            window.open("https://wa.me/254743682700", "_blank")
+                          }
+                        >
+                          <MessageCircle size={18} className="mr-2" /> WhatsApp Chat
+                        </Button>
+
+                        {/* Schedule Demo */}
+                        <Button
+                          variant="secondary"
+                          className="w-full justify-start"
+                          onClick={() => navigate("/schedule")}
+                        >
+                          <Calendar size={18} className="mr-2" /> Schedule Demo
+                        </Button>
+
+                        {/* Request Catalog */}
+                        <Button
+                          variant="secondary"
+                          className="w-full justify-start"
+                          onClick={() =>
+                            window.open("mailto:info@example.com?subject=Request%20for%20Catalog")
+                          }
+                        >
+                          <Send size={18} className="mr-2" /> Request Catalog
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+              </div>
 
           <div className="lg:col-span-2">
             <Card className="product-card">
@@ -299,14 +336,17 @@ const ContactSection = () => {
 
             <Card className="product-card mt-6">
               <CardContent className="p-0">
-                <div className="h-64 bg-muted rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <MapPin size={48} className="text-primary mx-auto mb-2" />
-                    <p className="text-muted-foreground">Interactive Map Coming Soon</p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      KFA Building, Along Geoffrey Kamau Avenue, Next to Rubis Petrol Station, Nakuru, Kenya
-                    </p>
-                  </div>
+                <div className="h-64 w-full rounded-lg overflow-hidden">
+                  <iframe
+                    title="KFA Building Map"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.594770230731!2d36.057953614749446!3d-0.28645259980988364!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182aaa2d140f3223%3A0x8c4bc4cb5c5d1e62!2sKFA%20Building%2C%20Nakuru%2C%20Kenya!5e0!3m2!1sen!2ske!4v1698662143200!5m2!1sen!2ske"
+                    width="100%"
+                    height="100%"
+                    loading="lazy"
+                    className="border-0 w-full h-full"
+                    allowFullScreen
+                    referrerPolicy="no-referrer-when-downgrade"
+                  ></iframe>
                 </div>
               </CardContent>
             </Card>
