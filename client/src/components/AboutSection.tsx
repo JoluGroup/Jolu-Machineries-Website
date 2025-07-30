@@ -27,7 +27,7 @@ const AboutSection = () => {
     {
       icon: Truck,
       title: "Nationwide Delivery",
-      description: "Reliable delivery and installation services across Nigeria"
+      description: "Reliable delivery and installation services across Kenya"
     },
     {
       icon: Clock,
