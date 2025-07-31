@@ -82,7 +82,7 @@ const Footer = () => {
                 <span className="text-white/80">jolumachineries@gmail.com</span>
               </div>
               <div className="flex items-start space-x-3">
-                <MapPin size={18} className="text-primary-glow mt-1" />
+                <MapPin size={33} className="text-primary-glow mt-1" />
                 <span className="text-white/80">
                   KFA Building<br />
                   Along Geoffrey Kamau Avenue, Next to Rubis Petrol Station<br />
