@@ -39,13 +39,16 @@ const Header = () => {
       {/* Main Navigation */}
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center space-x-3">
+          {/* Logo and Title */}
+          <div className="flex items-center space-x-4">
             <img 
               src="/lovable-uploads/jolu-machinery-logo.jpg" 
               alt="Jolu Machineries Logo" 
               className="h-12 w-auto"
             />
+            <span className="text-xl font-bold text-primary hidden sm:inline-block">
+              JOLU AGRICULTURAL MACHINERIES
+            </span>
           </div>
 
           {/* Desktop Navigation */}
