@@ -4,11 +4,16 @@ import implements1 from "@/assets/implements-1.jpg";
 import tractor2 from "@/assets/tractor-2.png";
 import harvester2 from "@/assets/harvester-2.png";
 import harvester3 from "@/assets/harvester-3.png";
+import harvester4 from "@/assets/harvester-4.png";
+import harvester5 from "@/assets/harvester-5.png";
+
 import tractor3 from "@/assets/tractor-3.png";
 import tractor4 from "@/assets/tractor-4.png";
 import tractor5 from "@/assets/tractor-5.png";
 import tractor6 from "@/assets/tractor-6.png";
 import tractor7 from "@/assets/tractor-7.png";
+import tractor8 from "@/assets/tractor-8.png";
+import tractor9 from "@/assets/tractor-9.png";
 
 
 
@@ -475,6 +480,47 @@ export const products: Product[] = [
 },
 {
   id: "11",
+  slug: "zc123s-combine-harvester",
+  name: "Zoomlion ZC123S Combine Harvester",
+  description: "120hp high-performance combine harvester with robust design, large capacity, and advanced steering system for efficient harvesting in diverse field conditions.",
+  image: harvester4,
+  longDescription: "The Zoomlion ZC123S is a versatile and powerful 120hp combine harvester built to handle a wide range of field conditions with superior efficiency. Featuring a large 1800L grain tank, 220L fuel tank, and a robust chassis optimized for navigating ridges, it supports operations across corn, wheat, and rapeseed crops. The hydraulic dual-drive motor allows for sharp 360° turning, while the modern A/C cabin ensures operator comfort. With optional attachments for straw management, advanced threshing and cleaning systems, and long-lasting components, the ZC123S is a durable, field-ready solution for serious farmers.",
+  keySpecs: [
+    { label: "Horse Power", value: "120 hp" },
+    { label: "Cutting Width", value: "2200/2600 mm" },
+    { label: "Weight", value: "4250 kg" }
+  ],
+  advantages: [
+    "Equipped with 120hp turbocharged Xinchai engine for optimal performance and fuel efficiency",
+    "Large 1800L grain tank and 220L fuel tank for extended productivity",
+    "Hydraulic dual-drive motor system enables 360° turning for superior maneuverability",
+    "Modern steering wheel control with A/C cabin ensures operator comfort and ease of use",
+    "High-performance threshing cylinder with adjustable dual-layer vibrating screen for efficient cleaning",
+    "270° rotating unloading auger ensures fast and effective grain discharge",
+    "Robust chassis designed for navigating uneven field ridges with stability",
+    "Modern lubrication system for easy maintenance and longer component life",
+    "Hydraulic variable speed reel adapts to multiple crop varieties with minimal tangling",
+    "Optional attachments support harvesting of corn, wheat, rapeseed, and straw chopping"
+  ],
+  specTable: {
+    headers: ["Parameter", "Specification"],
+    rows: [
+      ["Rated HP", "120 hp"],
+      ["Feeding Capacity", "7.0 kg/s"],
+      ["Cutting Width", "2200/2600 mm"],
+      ["Rated Speed", "-"],
+      ["Gauge", "1300 mm"],
+      ["Minimum Ground Clearance", "300 mm"],
+      ["Threshing Drum (Dia × Length)", "φ605×2220 mm"],
+      ["Operation Productivity", "0.3–0.6 hm²/h"]
+    ]
+  },
+   ctaHeadline: "Experience intelligent power and comfort in the field.",
+  ctaDescription:
+    "Get in touch with us to discover how the Zoomlion ZC123S can transform your farming operations with unmatched precision and durability."
+},
+{
+  id: "12",
   slug: "zoomlion-rs1304-1604",
   name: "Zoomlion RS1304/1604 Wheeled Tractor",
   description: "High-powered, smart farming tractor designed for precision, comfort, and performance.",
@@ -525,7 +571,195 @@ export const products: Product[] = [
   ctaHeadline: "Experience intelligent power and comfort in the field.",
   ctaDescription:
     "Get in touch with us to discover how the Zoomlion RS1304/1604 can transform your farming operations with unmatched power and technology."
+},
+{
+  id: "13",
+  slug: "zoomlion-rg1804-2004",
+  name: "Zoomlion RG1804/2004 Wheeled Tractor",
+  description: "Heavy-duty wheeled tractor engineered for strength, precision, and extended field operations.",
+  image: tractor8,
+  longDescription:
+    "The Zoomlion RG1804/2004 is a high-horsepower, intelligent four-wheel drive tractor built for intensive agricultural demands. With a six-cylinder turbocharged engine delivering up to 200 HP and a large 375L fuel tank, it is made for long days in the field. It features Bosch electronically controlled direct injection, full hydraulic steering, and a split hydraulic lifting system with 90 kN capacity. The RG1804/2004 also includes a dual joystick 16F+16R/24F+8R gearbox and an air-conditioned cab, making it a powerful, efficient, and comfortable farming solution.",
+  keySpecs: [
+    { label: "Horse Power", value: "180–200 hp" },
+    { label: "Number of gears", value: "16F+16R (24F+8R Optional)" },
+    { label: "Weight", value: "7050–7800 kg" }
+  ],
+  advantages: [
+    "Six-cylinder turbocharged engine with 180/200 horsepower for strong field performance",
+    "Bosch electronically controlled direct injection ensures fuel efficiency and power",
+    "375L fuel tank supports full-day operations without refueling",
+    "Dual joystick control for main and auxiliary gears with multiple operating speeds",
+    "Transmission with forced lubrication for durability and reliability",
+    "Dry double-acting clutch allows independent PTO and drive control",
+    "PTO speed of 540/1000 r/min adaptable to a wide range of implements",
+    "Three sets of hydraulic outputs (optional 4) for various equipment needs",
+    "Rear Class III three-point suspension supports multiple agricultural tools",
+    "Split-type hydraulic lifting system with dual double-acting cylinders, 90 kN capacity",
+    "Full hydraulic steering and synchronized braking system for smooth handling",
+    "Real-time monitoring with engine status sensors and onboard diagnostic access"
+  ],
+  specTable: {
+    headers: ["Model", "RG1804/2004", "RG1804 (2025 New)"],
+    rows: [
+      ["Dimensions (L×W×H)", "5490×2430×3200 mm", "5490×2430×3200 mm"],
+      ["Wheelbase", "2775 mm", "2775 mm"],
+      ["Minimum usable mass", "7050 kg", "7800 kg"],
+      ["Ground clearance", "490 mm", "490 mm"],
+      ["Engine emission", "National III", "National III"],
+      ["Calibrated power", "132 / 147 kW", "132 kW"],
+      ["Fuel consumption rate", "≤250 g/kW·h", "≤250 g/kW·h"],
+      ["Clutch type", "Dry, independently operated double action", "Dry, independently operated double action"],
+      ["Gearbox", "16F+16R / 24F+8R", "24F+8R"],
+      ["Tyre size (front/rear)", "16.9-28 / 20.8-38", "16.9-28 / 20.8-38"],
+      ["Hydraulic system", "Split-type lifting system", "Split-type lifting system"],
+      ["Max lifting force", "90 kN", "90 kN"],
+      ["Tillage control", "Force-position integrated control", "Force-position integrated control"],
+      ["Hydraulic valves", "3 groups", "3 groups (optional 4)"],
+      ["Hitch", "Three-point rear suspension, Class III", "Three-point rear suspension, Class III"],
+      ["Calibrated traction", "61 kN", "61 kN"],
+      ["PTO power output", "113 / 126 kW", "126 kW"],
+      ["PTO speed", "540/1000 rpm", "540/1000 rpm"],
+      ["Cab", "Air-conditioned cab", "Air-conditioned cab"]
+    ]
+  },
+  ctaHeadline: "Unleash unmatched power and performance on your farm.",
+  ctaDescription:
+    "Contact us today to explore how the Zoomlion RG1804/2004 can boost your productivity with strength, efficiency, and intelligent technology."
+},
+{
+  id: "14",
+  slug: "zoomlion-te100-combine-harvester",
+  name: "Zoomlion TE100 Combine Harvester",
+  description: "190hp high-performance combine harvester designed for multi-crop efficiency, operator comfort, and long-term durability in large-scale farming operations.",
+  image: harvester5,
+  longDescription: "The Zoomlion TE100 is a powerful 190hp combine harvester equipped with a high-pressure common rail engine for superior fuel efficiency and torque. It features a hydrostatic drive system, a single longitudinal axial flow threshing unit, and a 4m wide cutting header. Designed for multi-crop harvesting—including wheat, corn, sorghum, and soybeans—the TE100 is built for flexibility and efficiency. Operators enjoy the comfort of a luxury air-conditioned cab and intuitive mono-lever controls. With a 3.2m³ grain tank, 52L/sec unloading rate, and upgraded components for easier maintenance, it’s a reliable solution for demanding fieldwork.",
+  keySpecs: [
+    { label: "Horse Power", value: "190 hp" },
+    { label: "Cutting Width", value: "4000 mm" },
+    { label: "Weight", value: "7230 kg" }
+  ],
+  advantages: [
+    "190hp Yuchai high-pressure common rail engine with strong torque and reliable performance",
+    "Hydrostatic drive walking system for smooth and flexible operation",
+    "Single longitudinal axial flow threshing unit for efficient separation",
+    "Rear flail-type chopper for effective and even crop residue distribution",
+    "Multi-functional mono-lever control for effortless operation",
+    "Luxury A/C cab with ergonomic and dustproof design for driver comfort",
+    "Hydraulic main clutch reduces operator fatigue and enhances control",
+    "Supports harvesting of wheat, corn, sorghum, soybeans, and more",
+    "Upgraded 4.0m wheat header and optional corn/soybean headers",
+    "Improved concave plate design for easy maintenance and efficient cleaning",
+    "3.2m³ enlarged grain tank with 52L/sec unloading rate for continuous work",
+    "4.5m high-level grain unloading system for faster and more stable output"
+  ],
+  specTable: {
+    headers: ["Parameter", "Specification"],
+    rows: [
+      ["Engine Type", "YCA05190-T300"],
+      ["Maximum Output", "190 hp"],
+      ["Emission", "National III"],
+      ["Fuel Tank Capacity", "440 L"],
+      ["Feeding Capacity", "10 kg/s"],
+      ["Conveyor Width", "920 mm"],
+      ["Threshing Type", "Single longitudinal axial flow"],
+      ["Rotor Dimensions", "3180 mm × φ620 mm"],
+      ["Concave Area", "2.5 m²"],
+      ["Cleaning Area", "2.08 m²"],
+      ["Fan Speed", "910–1480 rpm"],
+      ["Grain Tank Capacity", "3.2 m³"],
+      ["Unloading Rate", "52 L/sec"],
+      ["Cutting Width (Wheat)", "4000 mm"],
+      ["Cutting Width (Corn/Soybean)", "5–6 row / 4000 mm"],
+      ["Transmission Type", "Hydraulic, 3 speeds"],
+      ["Max Speed", "40 km/h"],
+      ["Front Tyre Size", "540/70R24"],
+      ["Rear Tyre Size", "300/80R15.3"],
+      ["Dimensions (L×W×H)", "6100 × 2800 × 3420 mm"],
+      ["Weight", "7230 kg"]
+    ]
+  },
+  ctaHeadline: "Power through harvest season with confidence and control.",
+  ctaDescription:
+    "Reach out now to see how the Zoomlion TE100 can take your multi-crop harvesting to the next level with power, precision, and operator comfort."
+},
+{
+  id: "15",
+  slug: "zoomlion-dv3504-wheeled-tractor",
+  name: "Zoomlion DV3504 Wheeled Tractor",
+  description: "Next-generation hybrid tractor designed for intelligent control, smooth operation, and powerful field performance.",
+  image: tractor9,
+  longDescription:
+    "The Zoomlion DV3504 is a high-horsepower hybrid wheeled tractor integrating cutting-edge electric and mechanical systems for superior field performance and energy efficiency. With a 350 HP rated output and CVT with AMT gearbox, it offers seamless 0–40 km/h stepless speed adjustment to suit any terrain or operation. Featuring dual-motor coupling technology, electrohydraulic control, intelligent panoramic surveillance, and a pressure-regulated smart cabin, the DV3504 redefines comfort, safety, and productivity for modern farming operations.",
+  keySpecs: [
+    { label: "Horse Power", value: "350 hp" },
+    { label: "Number of gears", value: "CVT with AMT" },
+    { label: "Weight", value: "13000 kg" }
+  ],
+  advantages: [
+    "350 hp hybrid powertrain with dual-motor coupling for exceptional load handling",
+    "Integrated generator-start system for smooth cold starts in low-temperature environments",
+    "CVT with AMT gearbox provides 0–40 km/h stepless speed control for precision tasks",
+    "Direct-drive motor technology ensures seamless acceleration and stable performance",
+    "Motor-driven PTO output allows soft engagement and protects the powertrain",
+    "High-capacity hydraulic output of 120–227 L/min supports large implements",
+    "Five-position electro-hydraulic proportional multi-way valve for implement control",
+    "Ergonomic joystick enables efficient control of reversing, acceleration, and deceleration",
+    "360° panoramic HD camera system improves safety and visibility",
+    "Intelligent air-conditioned pressure cabin enhances operator comfort",
+    "Cold/warm storage box and rotatable air suspension seat reduce fatigue",
+    "Category 4N three-point rear suspension ensures compatibility with heavy tools"
+  ],
+  specTable: {
+    headers: ["Model", "DV3504"],
+    rows: [
+      ["Dimensions (L×W×H)", "6446×3050×3450 mm"],
+      ["Wheelbase", "3100 mm"],
+      ["Minimum mass during operation", "13000 kg"],
+      ["Ground clearance", "≥430 mm (Tilting traction)"],
+      ["Engine emission", "National III"],
+      ["Rated power", "257.4 kW"],
+      ["Clutch type", "Torsional Vibration Damper (Coupling)"],
+      ["Gearbox", "CVT with AMT"],
+      ["Tyre size (front/rear)", "600/70R30, 710/70R42"],
+      ["Hydraulic system", "Split type"],
+      ["Max lifting force", "≥90 kN"],
+      ["Tillage control", "Electrohydraulic control"],
+      ["Hydraulic valves", "Five-position electro-hydraulic proportional multi-way valve"],
+      ["Hitch", "Three-point rear suspension, Category 4N"],
+      ["Hydraulic output flow rate", "120/227 L/min"],
+      ["Traction force", "≥113 kN"],
+      ["PTO speed", "0–1000 rpm"],
+      ["Cab", "Air-conditioned intelligent pressure cabin"]
+    ]
+  },
+  ctaHeadline: "Drive the future of farming with intelligent hybrid power.",
+  ctaDescription:
+    "Get in touch to learn how the Zoomlion DV3504 combines cutting-edge control, comfort, and raw power to elevate your agricultural efficiency."
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

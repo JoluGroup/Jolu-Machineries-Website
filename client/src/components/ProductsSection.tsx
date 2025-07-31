@@ -9,6 +9,10 @@ import tractor1 from "@/assets/tractor-1.png";
 import harvester1 from "@/assets/harvester-1.png";
 import harvester2 from "@/assets/harvester-2.png";
 import harvester3 from "@/assets/harvester-3.png";
+import harvester4 from "@/assets/harvester-4.png";
+import harvester5 from "@/assets/harvester-5.png";
+
+
 import implements1 from "@/assets/implements-1.jpg";
 import tractor2 from "@/assets/tractor-2.png";
 import tractor3 from "@/assets/tractor-3.png";
@@ -16,6 +20,8 @@ import tractor4 from "@/assets/tractor-4.png";
 import tractor5 from "@/assets/tractor-5.png";
 import tractor6 from "@/assets/tractor-6.png";
 import tractor7 from "@/assets/tractor-7.png";
+import tractor8 from "@/assets/tractor-8.png";
+import tractor9 from "@/assets/tractor-9.png";
 
 
 
@@ -116,7 +122,7 @@ const ProductsSection = () => {
   slug: "zoomlion-pg2004",
   name: "Zoomlion PG2004 Wheeled Tractor",
   category: "tractors",
-  image: tractor3, // make sure this image is imported as `tractor3`
+  image: tractor3,
   horsepower: "200 HP",
   rating: 4.9,
   reviews: 12,
@@ -133,7 +139,7 @@ const ProductsSection = () => {
   slug: "zoomlion-rd504",
   name: "Zoomlion RD504 Wheeled Tractor",
   category: "tractors",
-  image: tractor4, // Make sure this is imported as `tractor4`
+  image: tractor4,
   horsepower: "50 HP",
   rating: 4.8,
   reviews: 9,
@@ -151,7 +157,7 @@ const ProductsSection = () => {
   slug: "zl105-combine-harvester",
   name: "Zoomlion ZL105 Combine Harvester",
   category: "harvesters",
-  image: harvester3, // make sure this image is imported as `harvester3`
+  image: harvester3,
   horsepower: "105 HP",
   rating: 4.8,
   reviews: 15,
@@ -207,6 +213,31 @@ const ProductsSection = () => {
 },
 {
   id: 11,
+  slug: "zc123s-combine-harvester",
+  name: "Zoomlion ZC123S Combine Harvester",
+  category: "harvesters",
+  image: harvester4,
+  horsepower: "120 HP",
+  rating: 4.9,
+  reviews: 22,
+  features: [
+    "120hp turbocharged Xinchai engine for high fuel efficiency",
+    "Large 1800L grain tank and 220L fuel tank for extended operation",
+    "Robust chassis designed for navigating field ridges",
+    "Hydraulic dual-drive motor system for 360° turning in paddy fields",
+    "Modern A/C cabin with steering wheel for operator comfort",
+    "Hydraulic variable speed reel suitable for various crops",
+    "High-strength materials ensure extended machine lifetime",
+    "270° rotating unloading auger for efficient grain discharge",
+    "High-performance threshing cylinder with dual-layer vibrating screen",
+    "Air-flush radiator cleaning system to extend engine lifespan",
+    "Optional straw chopper for efficient straw management",
+    "Compatible with corn, wheat, and rapeseed attachments"
+  ],
+  badge: "Versatile"
+},
+{
+  id: 12,
   slug: "zoomlion-rs1304-1604",
   name: "Zoomlion RS1304/1604 Wheeled Tractor",
   category: "tractors",
@@ -222,7 +253,86 @@ const ProductsSection = () => {
     "Air-Brake System for Safe High-Speed Towing"
   ],
   badge: "Maximum Power & Performance"
+},
+{
+  id: 13,
+  slug: "zoomlion-rg1804-2004",
+  name: "Zoomlion RG1804/2004 Wheeled Tractor",
+  category: "tractors",
+  image: tractor8,
+  horsepower: "180–200 HP",
+  rating: 4.8,
+  reviews: 9,
+  features: [
+    "16F+16R Gearbox with Dual Joysticks for Versatile Operation",
+    "Bosch Electronically Controlled Injection for Fuel Efficiency",
+    "375L Fuel Tank for Full-Day Continuous Work",
+    "Split Hydraulic Lifting System with 90 kN Capacity",
+    "Three Hydraulic Outputs for Multiple Implements"
+  ],
+  badge: "Heavy-Duty Precision & Endurance"
+},
+{
+  id: 14,
+  slug: "zoomlion-te100-combine-harvester",
+  name: "Zoomlion TE100 Combine Harvester",
+  category: "harvesters",
+  image: harvester5,
+  horsepower: "190 HP",
+  rating: 4.8,
+  reviews: 17,
+  features: [
+    "190hp Yuchai high-pressure common rail engine with large torque reserve",
+    "Hydrostatic drive system for smooth and flexible movement",
+    "3.2m³ grain tank and 52L/sec unloading rate for uninterrupted harvesting",
+    "Single longitudinal axial flow threshing unit for powerful separation",
+    "Luxury A/C cabin with ergonomic, noise-reducing design",
+    "Multi-functional mono-lever for simplified operator control",
+    "Hydraulic main clutch reduces effort and increases efficiency",
+    "Rear flail-type chopper for even residue distribution",
+    "Supports wheat, corn, sorghum, soybean, and more",
+    "Upgraded 4.0m cutting width and detachable concave plate for easy maintenance",
+    "Wide cleaning room and improved airflow for better grain purity",
+    "4.5m high-level grain unloading system with stable performance"
+  ],
+  badge: "Powerful & Multi-Crop"
+},
+{
+  id: "15",
+  slug: "zoomlion-dv3504-wheeled-tractor",
+  name: "Zoomlion DV3504 Wheeled Tractor",
+  category: "tractors",
+  image: tractor9,
+  horsepower: "350 HP",
+  rating: 4.9,
+  reviews: 11,
+  features: [
+    "350hp hybrid power with dual-motor power coupling for heavy-load performance",
+    "CVT with AMT gearbox for seamless 0–40 km/h stepless speed changes",
+    "Hydraulic output flow rate of 160–220 L/min supports advanced implements",
+    "360° panoramic video surveillance enhances safety and precision",
+    "Air-conditioned intelligent pressure cabin with human-machine interface",
+    "Motor direct drive for smooth starts and efficient power delivery",
+    "Electrohydraulic joystick control for precise acceleration and reversing",
+    "Cold & warm storage box and wide air suspension seat for operator comfort",
+    "Ergonomic design reduces fatigue during long working hours",
+    "Front and rear high-definition cameras improve tool hookup visibility",
+    "Electrohydraulic tillage control and category 4N rear suspension",
+    "Built-in torque damper clutch for high-efficiency under varying loads"
+  ],
+  badge: "Hybrid Intelligence & Strength"
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

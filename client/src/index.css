@@ -9,43 +9,43 @@ All colors MUST be HSL based on the agricultural green theme.
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 140 50% 8%;
+    --foreground: 146 47% 13%;
 
     --card: 0 0% 100%;
-    --card-foreground: 140 50% 8%;
+    --card-foreground: 146 47% 13%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 140 50% 8%;
+    --popover-foreground: 146 47% 13%;
 
     /* Agricultural Green Primary Theme */
-    --primary: 95 58% 50%;
+    --primary: 146 47% 13%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 95 70% 60%;
-    --primary-dark: 140 50% 15%;
+    --primary-glow: 76 70% 61%;
+    --primary-dark: 146 47% 13%;
 
     --secondary: 95 25% 95%;
-    --secondary-foreground: 140 50% 15%;
+    --secondary-foreground: 146 47% 20%;
 
     --muted: 95 20% 96%;
     --muted-foreground: 95 15% 45%;
 
-    --accent: 95 45% 85%;
-    --accent-foreground: 140 50% 15%;
+    --accent: 76 58% 51%;
+    --accent-foreground: 146 47% 13%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 95 25% 88%;
     --input: 95 25% 90%;
-    --ring: 95 58% 50%;
+    --ring: 76 58% 51%;
 
     /* Agricultural Gradient System */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--primary-dark) / 0.95), hsl(var(--primary) / 0.9));
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary) / 0.95), hsl(var(--primary-glow) / 0.9));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary-dark) / 0.95), hsl(var(--accent) / 0.85));
     --gradient-card: linear-gradient(145deg, hsl(var(--card)), hsl(var(--muted)));
 
     /* Agricultural Shadows */
-    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.3);
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--accent) / 0.25);
     --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.2);
     --shadow-card: 0 4px 20px hsl(var(--primary) / 0.1);
 
@@ -55,36 +55,29 @@ All colors MUST be HSL based on the agricultural green theme.
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
+    --sidebar-foreground: 146 47% 13%;
+    --sidebar-primary: 146 47% 13%;
     --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 76 58% 51%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 95 25% 88%;
+    --sidebar-ring: 76 58% 51%;
   }
 
   .dark {
-    --background: 140 50% 8%;
+    --background: 146 47% 13%;
     --foreground: 0 0% 98%;
 
-    --card: 140 40% 12%;
+    --card: 146 47% 10%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 140 40% 12%;
+    --popover: 146 47% 10%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 95 58% 50%;
+    --primary: 76 58% 51%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 95 70% 60%;
-    --primary-dark: 140 60% 20%;
+    --primary-glow: 76 70% 61%;
+    --primary-dark: 146 47% 13%;
 
     --secondary: 140 30% 20%;
     --secondary-foreground: 0 0% 98%;
@@ -92,7 +85,7 @@ All colors MUST be HSL based on the agricultural green theme.
     --muted: 140 25% 18%;
     --muted-foreground: 95 15% 65%;
 
-    --accent: 140 30% 25%;
+    --accent: 76 58% 51%;
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -100,15 +93,16 @@ All colors MUST be HSL based on the agricultural green theme.
 
     --border: 140 25% 25%;
     --input: 140 25% 22%;
-    --ring: 95 58% 50%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --ring: 76 58% 51%;
+
+    --sidebar-background: 146 47% 13%;
+    --sidebar-foreground: 76 58% 51%;
+    --sidebar-primary: 76 58% 51%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 146 47% 18%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 140 25% 25%;
+    --sidebar-ring: 76 58% 51%;
   }
 }
 
@@ -119,10 +113,10 @@ All colors MUST be HSL based on the agricultural green theme.
 
   body {
     @apply bg-background text-foreground;
+  }
 
   html {
     scroll-behavior: smooth;
-  }
   }
 }
 
