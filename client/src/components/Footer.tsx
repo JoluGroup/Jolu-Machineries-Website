@@ -68,7 +68,7 @@ const Footer = () => {
               </div>
               <p className="text-white/80 leading-relaxed mb-4">
                 Kenya's trusted partner for premium Zoomlion agricultural machinery.
-                Empowering farmers with world-class equipment and exceptional service for over 15 years.
+                Empowering farmers with world-class equipment and exceptional service for over 5 years.
               </p>
             </div>
 
@@ -79,7 +79,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <Mail size={18} className="text-primary-glow" />
-                <span className="text-white/80">jolumachineries@gmail.com</span>
+                <span className="text-white/80">info@jolumachineries.com</span>
               </div>
               <div className="flex items-start space-x-3">
                 <MapPin size={33} className="text-primary-glow mt-1" />

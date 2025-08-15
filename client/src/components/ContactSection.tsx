@@ -26,19 +26,12 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
-
-import { useNavigate } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
 import { productOptions, countyOptions } from "@/data/options";
 
-
-type ContactSectionProps = {
-  productOptions?: string[];
-};
-
-const ContactSection = ({ productOptions = [] }: ContactSectionProps) => {
+const ContactSection = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -91,9 +84,6 @@ const ContactSection = ({ productOptions = [] }: ContactSectionProps) => {
     }, 2000);
   };
 
-
-const navigate = useNavigate();
-
   const contactInfo = [
     {
       icon: Phone,
@@ -104,7 +94,7 @@ const navigate = useNavigate();
     {
       icon: Mail,
       title: "Email Us",
-      details: ["jolumachineries@gmail.com"],
+      details: ["info@jolumachineries.com"],
       action: "Send Email"
     },
     {
@@ -146,6 +136,7 @@ const navigate = useNavigate();
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
+          {/* Contact Info Cards */}
           <div className="lg:col-span-1 space-y-6">
             {contactInfo.map((info, index) => (
               <Card key={index} className="product-card">
@@ -162,78 +153,74 @@ const navigate = useNavigate();
                         ))}
                       </div>
 
-                        {info.title === "Business Hours" ? (
-                          <Link to="/schedule" className="inline-block mt-2">
-                            <Button variant="link" className="p-0 h-auto text-primary">
-                              {info.action}
-                            </Button>
-                          </Link>
-                        ) : (
-                          <a
-                            href={
-                              info.title === "Call Us"
-                                ? `tel:${info.details[0].replace(/\s+/g, "")}`
-                                : info.title === "Email Us"
-                                ? `mailto:${info.details[0]}`
-                                : "https://www.google.com/maps/search/?api=1&query=KFA+Building,+Geoffrey+Kamau+Avenue,+Nakuru,+Kenya"
-                            }
-                            className="inline-block mt-2"
-                            {...((info.title === "Visit Us") && {
-                              target: "_blank",
-                              rel: "noopener noreferrer",
-                            })}
-                          >
-                            <Button variant="link" className="p-0 h-auto text-primary">
-                              {info.action}
-                            </Button>
-                          </a>
-                          )}
-
+                      {info.title === "Business Hours" ? (
+                        <Link to="/schedule" className="inline-block mt-2">
+                          <Button variant="link" className="p-0 h-auto text-primary">
+                            {info.action}
+                          </Button>
+                        </Link>
+                      ) : (
+                        <a
+                          href={
+                            info.title === "Call Us"
+                              ? `tel:${info.details[0].replace(/\s+/g, "")}`
+                              : info.title === "Email Us"
+                              ? `mailto:${info.details[0]}`
+                              : "https://www.google.com/maps/search/?api=1&query=KFA+Building,+Geoffrey+Kamau+Avenue,+Nakuru,+Kenya"
+                          }
+                          className="inline-block mt-2"
+                          {...((info.title === "Visit Us") && {
+                            target: "_blank",
+                            rel: "noopener noreferrer",
+                          })}
+                        >
+                          <Button variant="link" className="p-0 h-auto text-primary">
+                            {info.action}
+                          </Button>
+                        </a>
+                      )}
                     </div>
                   </div>
                 </CardContent>
               </Card>
             ))}
 
-                  <Card className="product-card bg-primary text-primary-foreground">
-                    <CardContent className="p-6">
-                      <h3 className="font-semibold mb-4">Quick Actions</h3>
-                      <div className="space-y-3">
-                        {/* WhatsApp Chat */}
-                        <Button
-                          variant="secondary"
-                          className="w-full justify-start"
-                          onClick={() =>
-                            window.open("https://wa.me/254743682700", "_blank")
-                          }
-                        >
-                          <MessageCircle size={18} className="mr-2" /> WhatsApp Chat
-                        </Button>
+            {/* Quick Actions */}
+            <Card className="product-card bg-primary text-primary-foreground">
+              <CardContent className="p-6">
+                <h3 className="font-semibold mb-4">Quick Actions</h3>
+                <div className="space-y-3">
+                  <Button
+                    variant="secondary"
+                    className="w-full justify-start"
+                    onClick={() => window.open("https://wa.me/254743682700", "_blank")}
+                  >
+                    <MessageCircle size={18} className="mr-2" /> WhatsApp Chat
+                  </Button>
 
-                        {/* Schedule Demo */}
-                        <Button
-                          variant="secondary"
-                          className="w-full justify-start"
-                          onClick={() => navigate("/schedule")}
-                        >
-                          <Calendar size={18} className="mr-2" /> Schedule Demo
-                        </Button>
+                  <Button
+                    variant="secondary"
+                    className="w-full justify-start"
+                    onClick={() => navigate("/schedule")}
+                  >
+                    <Calendar size={18} className="mr-2" /> Schedule Demo
+                  </Button>
 
-                        {/* Request Catalog */}
-                        <Button
-                          variant="secondary"
-                          className="w-full justify-start"
-                          onClick={() =>
-                            window.open("mailto:info@example.com?subject=Request%20for%20Catalog")
-                          }
-                        >
-                          <Send size={18} className="mr-2" /> Request Catalog
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-              </div>
+                  <Button
+                    variant="secondary"
+                    className="w-full justify-start"
+                    onClick={() =>
+                      window.open("mailto:info@example.com?subject=Request%20for%20Catalog")
+                    }
+                  >
+                    <Send size={18} className="mr-2" /> Request Catalog
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
+          {/* Form Section */}
           <div className="lg:col-span-2">
             <Card className="product-card">
               <CardHeader>
@@ -334,6 +321,7 @@ const navigate = useNavigate();
               </CardContent>
             </Card>
 
+            {/* Map */}
             <Card className="product-card mt-6">
               <CardContent className="p-0">
                 <div className="h-64 w-full rounded-lg overflow-hidden">

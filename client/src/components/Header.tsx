@@ -10,7 +10,16 @@ const Header = () => {
   const navItems = [
     { name: "Home", href: "/#home" },
     { name: "Products", href: "/#products" },
-    { name: "About Us", href: "/#about" },
+    {
+      name: "About",
+      dropdown: true,
+      items: [
+        { name: "About Us", to: "#about" },
+        { name: "Our Team", to: "/team" },
+        { name: "Gallery", to: "/gallery" },
+        { name: "Company Documents", to: "#documents" },
+      ],
+    },
     { name: "Contact", href: "/#contact" },
   ];
 
@@ -26,7 +35,7 @@ const Header = () => {
             </div>
             <div className="flex items-center gap-1">
               <Mail size={14} />
-              <span>jolumachineries@gmail.com</span>
+              <span>info@jolumachineries.com</span>
             </div>
           </div>
           <div className="hidden md:flex items-center gap-1">
@@ -46,24 +55,56 @@ const Header = () => {
               alt="Jolu Machineries Logo" 
               className="h-12 w-auto"
             />
-            <span className="text-xl font-bold text-primary hidden sm:inline-block">
+            <span className="text-base sm:text-xl font-bold text-primary">
               JOLU AGRICULTURAL MACHINERIES
             </span>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <HashLink
-                key={item.name}
-                smooth
-                to={item.href}
-                className="text-foreground hover:text-primary font-medium transition-colors duration-200 relative group"
-              >
-                {item.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-              </HashLink>
-            ))}
+            {navItems.map((item) =>
+              item.dropdown ? (
+                <div key={item.name} className="relative group">
+                  <button className="text-foreground hover:text-primary font-medium transition-colors duration-200">
+                    {item.name}
+                  </button>
+                  <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-black border border-border shadow-lg rounded-md opacity-0 group-hover:opacity-100 group-hover:translate-y-1 transform transition-all duration-300 z-50">
+                  {item.items.map((subItem) =>
+                    subItem.to.startsWith("#") ? (
+                      <HashLink
+                        key={subItem.name}
+                        to={`/${subItem.to}`}
+                        smooth
+                        className="block px-4 py-2 text-sm text-foreground hover:bg-muted hover:text-primary"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {subItem.name}
+                      </HashLink>
+                    ) : (
+                      <Link
+                        key={subItem.name}
+                        to={subItem.to}
+                        className="block px-4 py-2 text-sm text-foreground hover:bg-muted hover:text-primary"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {subItem.name}
+                      </Link>
+                    )
+                  )}
+                  </div>
+                </div>
+              ) : (
+                <HashLink
+                  key={item.name}
+                  smooth
+                  to={item.href}
+                  className="text-foreground hover:text-primary font-medium transition-colors duration-200 relative group"
+                >
+                  {item.name}
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                </HashLink>
+              )
+            )}
           </nav>
 
           {/* CTA Button */}
@@ -88,17 +129,35 @@ const Header = () => {
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-4 border-t border-border">
             <nav className="flex flex-col space-y-4 pt-4">
-              {navItems.map((item) => (
-                <HashLink
-                  key={item.name}
-                  smooth
-                  to={item.href}
-                  className="text-foreground hover:text-primary font-medium transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </HashLink>
-              ))}
+              {navItems.map((item) =>
+                item.dropdown ? (
+                  <div key={item.name}>
+                    <span className="text-foreground font-medium">{item.name}</span>
+                    <div className="ml-4 mt-2 space-y-2">
+                      {item.items.map((subItem) => (
+                        <Link
+                          key={subItem.name}
+                          to={subItem.to}
+                          className="block text-foreground hover:text-primary text-sm"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          {subItem.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <HashLink
+                    key={item.name}
+                    smooth
+                    to={item.href}
+                    className="text-foreground hover:text-primary font-medium transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.name}
+                  </HashLink>
+                )
+              )}
               <Link to="/quote">
                 <Button className="btn-quote mt-4 w-full">
                   Get Quote

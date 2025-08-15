@@ -29,27 +29,33 @@ const ProductsSection = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [visibleCount, setVisibleCount] = useState(6); // Load 6 products initially
+  const [visibleCount, setVisibleCount] = useState(3); // Load 6 products initially
 
   const categories = [
-    { id: 'all', name: 'All Products', count: 12 },
-    { id: 'tractors', name: 'Tractors', count: 8 },
-    { id: 'harvesters', name: 'Harvesters', count: 3 },
-    { id: 'implements', name: 'Implements', count: 15 },
+    { id: 'all', name: 'All Products', count: 15 },
+    { id: 'tractors', name: 'Tractors', count: 9 },
+    { id: 'harvesters', name: 'Harvesters', count: 5 },
+    { id: 'implements', name: 'Implements', count: 1 },
   ];
 
   const products = [
     {
       id: 1,
-      slug: "zoomlion-rn904",
-      name: "Zoomlion RN904/1104 Wheeled Tractor",
+      slug: "zoomlion-rc904-1104",
+      name: "Zoomlion RC904/1104 Wheeled Tractor",
       category: "tractors",
-      image: tractor1,
-      horsepower: "90-110 HP",
-      rating: 4.8,
-      reviews: 24,
-      features: ["4WD", "Power Steering", "Air Conditioning", "16F+8R Transmission"],
-      badge: "Best Seller"
+      image: tractor6,
+      horsepower: "90–110 HP",
+      rating: 4.6,
+      reviews: 8,
+      features: [
+        "16F+8R Gearbox for Versatile Speed Control",
+        "Turbocharged Inter-cooling Engine with High Efficiency",
+        "Full Hydraulic Steering for Easy Maneuvering",
+        "Enhanced Dual-Speed PTO for Broad Implement Compatibility",
+        "High-Pressure Hydraulic Lifting System for Heavy Loads"
+      ],
+      badge: "Heavy-Duty Performer"
     },
     {
       id: 2,
@@ -77,21 +83,23 @@ const ProductsSection = () => {
     },
     {
   id: 4,
-  slug: "zoomlion-pl2304",
-  name: "Zoomlion PL2304 Wheeled Tractor",
+  slug: "zoomlion-rk504-704",
+  name: "Zoomlion RK504/704 Wheeled Tractor",
   category: "tractors",
-  image: tractor2,
-  horsepower: "230 HP",
-  rating: 4.9,
-  reviews: 15,
+  image: tractor5,
+  horsepower: "50–70 HP",
+  rating: 4.7,
+  reviews: 11,
   features: [
-    "4WD",
-    "Smart Operation System",
-    "Air Conditioning",
-    "40F+40R Power Shift Transmission"
+    "12F+12R Shuttle Shift for Smooth Operation",
+    "Reliable National II Engine with High Torque",
+    "Enhanced Chassis & Waterproof Wiring for Paddy Fields",
+    "Adjustable Rear Track & Extra-Large Fuel Tank",
+    "Dual-Speed PTO for Versatile Implement Use"
   ],
-  badge: "New Arrival"
+  badge: "Powerful & Flexible"
 },
+
 {
   id: 5,
   slug: "tf150-combine-harvester",
@@ -175,42 +183,37 @@ const ProductsSection = () => {
   ],
   badge: "Efficient"
 },
-{
+    {
   id: 9,
-  slug: "zoomlion-rk504-704",
-  name: "Zoomlion RK504/704 Wheeled Tractor",
+  slug: "zoomlion-pl2304",
+  name: "Zoomlion PL2304 Wheeled Tractor",
   category: "tractors",
-  image: tractor5,
-  horsepower: "50–70 HP",
-  rating: 4.7,
-  reviews: 11,
+  image: tractor2,
+  horsepower: "230 HP",
+  rating: 4.9,
+  reviews: 15,
   features: [
-    "12F+12R Shuttle Shift for Smooth Operation",
-    "Reliable National II Engine with High Torque",
-    "Enhanced Chassis & Waterproof Wiring for Paddy Fields",
-    "Adjustable Rear Track & Extra-Large Fuel Tank",
-    "Dual-Speed PTO for Versatile Implement Use"
+    "4WD",
+    "Smart Operation System",
+    "Air Conditioning",
+    "40F+40R Power Shift Transmission"
   ],
-  badge: "Powerful & Flexible"
+  badge: "New Arrival"
 },
+
 {
-  id: 10,
-  slug: "zoomlion-rc904-1104",
-  name: "Zoomlion RC904/1104 Wheeled Tractor",
-  category: "tractors",
-  image: tractor6,
-  horsepower: "90–110 HP",
-  rating: 4.6,
-  reviews: 8,
-  features: [
-    "16F+8R Gearbox for Versatile Speed Control",
-    "Turbocharged Inter-cooling Engine with High Efficiency",
-    "Full Hydraulic Steering for Easy Maneuvering",
-    "Enhanced Dual-Speed PTO for Broad Implement Compatibility",
-    "High-Pressure Hydraulic Lifting System for Heavy Loads"
-  ],
-  badge: "Heavy-Duty Performer"
+      id: 10,
+      slug: "zoomlion-rn904",
+      name: "Zoomlion RN904/1104 Wheeled Tractor",
+      category: "tractors",
+      image: tractor1,
+      horsepower: "90-110 HP",
+      rating: 4.8,
+      reviews: 24,
+      features: ["4WD", "Power Steering", "Air Conditioning", "16F+8R Transmission"],
+      badge: "Best Seller"
 },
+
 {
   id: 11,
   slug: "zc123s-combine-harvester",
@@ -323,57 +326,6 @@ const ProductsSection = () => {
   badge: "Hybrid Intelligence & Strength"
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // Add more products here as needed
   ];
 
@@ -468,7 +420,7 @@ const ProductsSection = () => {
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-48 object-contain transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
@@ -529,7 +481,7 @@ const ProductsSection = () => {
               size="lg"
               variant="outline"
               className="hover:bg-primary hover:text-primary-foreground"
-              onClick={() => setVisibleCount((prev) => prev + 6)}
+              onClick={() => setVisibleCount((prev) => prev + 3)}
             >
               Load More Products
             </Button>
