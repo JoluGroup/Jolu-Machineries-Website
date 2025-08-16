@@ -44,19 +44,24 @@ const allowedOrigins = [
   "http://127.0.0.1:5173",
   "http://localhost:8080",
   "http://127.0.0.1:8080",
-  process.env.CLIENT_ORIGIN || ""
+  "http://192.168.56.1:8080",
+  "http://192.168.56.1:8081",
+  "https://www.jolumachineries.com",
 ].filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
-      return callback(new Error("Not allowed by CORS"));
+      // allow requests with no origin (like mobile apps, curl, Postman)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+
+      callback(new Error(`CORS policy: origin ${origin} not allowed`));
     },
     credentials: true,
   })
 );
-
 // --- Basic rate limiter ---
 const limiter = rateLimit({ windowMs: 60 * 1000, max: 60 });
 app.use(limiter);
