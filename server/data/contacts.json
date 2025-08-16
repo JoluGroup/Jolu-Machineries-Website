@@ -1,0 +1,152 @@
+[
+  {
+    "name": "Test User",
+    "email": "test@example.com",
+    "phone": "+254700000000",
+    "county": "Nakuru",
+    "area": "KFA",
+    "productInterest": "Tractors",
+    "message": "Looking for a Zoomlion tractor.",
+    "createdAt": "2025-08-15T16:00:14.408Z"
+  },
+  {
+    "name": "Kelvin Macharia",
+    "email": "kelvinmacharia115@gmail.com",
+    "phone": "+254791205914",
+    "county": "Embu",
+    "area": "Nairobi",
+    "productInterest": "Spare Parts & Service",
+    "message": "yysjhjjjkjjkjj",
+    "createdAt": "2025-08-15T17:34:50.103Z"
+  },
+  {
+    "name": "Kelvin Macharia",
+    "email": "kelvinmacharia115@gmail.com",
+    "phone": "+254791205914",
+    "county": "Embu",
+    "area": "Nairobi",
+    "productInterest": null,
+    "message": "hhjhlkjlkk",
+    "createdAt": "2025-08-15T17:35:42.419Z"
+  },
+  {
+    "name": "Kelvin Macharia",
+    "email": "kelvinmacharia115@gmail.com",
+    "phone": "+254791205914",
+    "county": "Bomet",
+    "area": "Nairobi",
+    "productInterest": "Tractors (150+ HP)",
+    "message": "sjhsajansdsndasj,da",
+    "createdAt": "2025-08-15T17:40:55.276Z"
+  },
+  {
+    "name": "Kelvin Macharia",
+    "email": "kelvinmacharia115@gmail.com",
+    "phone": "+254791205914",
+    "county": "Bomet",
+    "area": "Nairobi",
+    "productInterest": "Tractors (150+ HP)",
+    "message": "sjhsajansdsndasj,da",
+    "createdAt": "2025-08-15T17:40:55.949Z"
+  },
+  {
+    "name": "Kelvin Macharia",
+    "email": "kelvinmacharia115@gmail.com",
+    "phone": "+254791205914",
+    "county": "Embu",
+    "area": "Nairobi",
+    "productInterest": "Agricultural Implements",
+    "message": "sdsfwssffsfsfs",
+    "createdAt": "2025-08-15T17:43:09.528Z"
+  },
+  {
+    "name": "Kelvin Macharia",
+    "email": "kelvinmacharia115@gmail.com",
+    "phone": "+254791205914",
+    "county": "Embu",
+    "area": "Nairobi",
+    "productInterest": "Agricultural Implements",
+    "message": "sdsfwssffsfsfs",
+    "createdAt": "2025-08-15T17:43:10.193Z"
+  },
+  {
+    "name": "Kelvin Macharia",
+    "email": "kelvinmacharia115@gmail.com",
+    "phone": "+254791205914",
+    "county": "Embu",
+    "area": "Nairobi",
+    "productInterest": "Agricultural Implements",
+    "message": "sdsfwssffsfsfs",
+    "createdAt": "2025-08-15T17:45:06.679Z"
+  },
+  {
+    "name": "Kelvin Macharia",
+    "email": "kelvinmacharia115@gmail.com",
+    "phone": "+254791205914",
+    "county": "Embu",
+    "area": "Nairobi",
+    "productInterest": "Agricultural Implements",
+    "message": "sdsfwssffsfsfs",
+    "createdAt": "2025-08-15T17:45:07.357Z"
+  },
+  {
+    "name": "Kelvin Macharia",
+    "email": "kelvinmacharia115@gmail.com",
+    "phone": "+254791205914",
+    "county": "Embu",
+    "area": "Nairobi",
+    "productInterest": "Tractors (100-150 HP)",
+    "message": "sjkdasjaskasdas",
+    "createdAt": "2025-08-15T17:49:39.806Z"
+  },
+  {
+    "name": "Kelvin Macharia",
+    "email": "kelvinmacharia115@gmail.com",
+    "phone": "+254791205914",
+    "county": "Embu",
+    "area": "Nairobi",
+    "productInterest": "Tractors (100-150 HP)",
+    "message": "sjkdasjaskasdas",
+    "createdAt": "2025-08-15T17:49:40.502Z"
+  },
+  {
+    "name": "Kelvin Macharia",
+    "email": "kelvinmacharia115@gmail.com",
+    "phone": "+254791205914",
+    "county": "Embu",
+    "area": "Nairobi",
+    "productInterest": "Tractors (100-150 HP)",
+    "message": "usjdsjakasasjasj",
+    "createdAt": "2025-08-15T17:54:00.642Z"
+  },
+  {
+    "name": "Kelvin Macharia",
+    "email": "kelvinmacharia115@gmail.com",
+    "phone": "+254791205914",
+    "county": "Embu",
+    "area": "Nairobi",
+    "productInterest": "Tractors (100-150 HP)",
+    "message": "usjdsjakasasjasj",
+    "createdAt": "2025-08-15T17:54:01.317Z"
+  },
+  {
+    "name": "Kelvin Macharia",
+    "email": "kelvinmacharia115@gmail.com",
+    "phone": "+254791205914",
+    "county": "Embu",
+    "area": "Nairobi",
+    "productInterest": "Tractors (100-150 HP)",
+    "message": "usjdsjakasasjasj",
+    "createdAt": "2025-08-15T17:54:44.579Z"
+  },
+  {
+    "name": "Kelvin Macharia",
+    "email": "kelvinmacharia115@gmail.com",
+    "phone": "+254791205914",
+    "county": "Embu",
+    "area": "Nairobi",
+    "productInterest": "Tractors (100-150 HP)",
+    "message": "usjdsjakasasjasj",
+    "createdAt": "2025-08-15T17:54:45.273Z"
+  }
+]

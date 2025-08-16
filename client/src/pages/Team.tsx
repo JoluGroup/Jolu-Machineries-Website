@@ -10,7 +10,7 @@ const teamMembers = [
     title: "Chief Executive Officer",
     image: "/lovable-uploads/team/John.png",
     tier: "executives",
-    bio: "With over 15 years of industry experience, John has led Jolu Machineries from a humble beginning to becoming Kenya's leading dealer for Zoomlion and YTO agricultural equipment. His dedication to farmer success and innovative practices have shaped the company’s trusted reputation nationwide."
+    bio: "With over 15 years of industry experience, John has led Jolu Machineries from a humble beginning to becoming Kenya's leading dealer for Zoomlion agricultural equipment. His dedication to farmer success and innovative practices have shaped the company’s trusted reputation nationwide."
   },
   {
     name: "Lucy",

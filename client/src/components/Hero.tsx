@@ -1,11 +1,27 @@
 import { useState, useEffect } from "react";
-import { ArrowRight, Tractor, Award, Users, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  ArrowRight,
+  Tractor,
+  Award,
+  Users,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroImage1 from "@/assets/hero-tractor.jpg";
-import heroImage2 from "@/assets/hero-field.jpg";
+
+import heroImage1 from "@/assets/hero/tractor1.jpg";
+import heroImage2 from "@/assets/hero/tractor2.png";
+import heroImage3 from "@/assets/hero/hero-tractor.jpg";
+import heroImage4 from "@/assets/hero/hero-field.jpg";
+import heroImage5 from "@/assets/hero/tractor3.jpg";
 
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [animatedStats, setAnimatedStats] = useState([
+    { value: 0, target: 500, label: "Tractors Sold", icon: Tractor },
+    { value: 0, target: 15, label: "Years Experience", icon: Award },
+    { value: 0, target: 1000, label: "Happy Customers", icon: Users },
+  ]);
 
   const heroSlides = [
     {
@@ -24,8 +40,33 @@ const Hero = () => {
       cta: "Learn More",
       image: heroImage2,
     },
+    {
+      title: "Powerful Field Performance",
+      subtitle: "Engineered for African Farms",
+      description:
+        "From plowing to harvesting, our tractors are built to handle diverse farming needs with ease.",
+      cta: "View Models",
+      image: heroImage3,
+    },
+    {
+      title: "Reliable & Durable",
+      subtitle: "Made to Last",
+      description:
+        "Zoomlion tractors offer unmatched durability, keeping your farm running season after season.",
+      cta: "View Products",
+      image: heroImage4,
+    },
+    {
+      title: "Smart Farming Solutions",
+      subtitle: "Modern Implements Included",
+      description:
+        "Boost productivity with advanced implements that work seamlessly with our tractors.",
+      cta: "Explore More",
+      image: heroImage5,
+    },
   ];
 
+  // Auto-slide
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
@@ -33,40 +74,56 @@ const Hero = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const stats = [
-    { icon: Tractor, value: "500+", label: "Tractors Sold" },
-    { icon: Award, value: "15+", label: "Years Experience" },
-    { icon: Users, value: "1000+", label: "Happy Customers" },
-  ];
+  // Animate stats
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAnimatedStats((prev) =>
+        prev.map((stat) => {
+          if (stat.value < stat.target) {
+            return {
+              ...stat,
+              value: Math.min(stat.value + Math.ceil(stat.target / 100), stat.target),
+            };
+          }
+          return stat;
+        })
+      );
+    }, 30);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const nextSlide = () =>
     setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
   const prevSlide = () =>
-    setCurrentSlide((prev) => (prev === 0 ? heroSlides.length - 1 : prev - 1));
+    setCurrentSlide((prev) =>
+      prev === 0 ? heroSlides.length - 1 : prev - 1
+    );
 
   return (
     <section
       id="home"
-      className="relative min-h-[calc(100vh-64px)] flex items-center overflow-hidden"
+      className="relative h-screen flex items-center overflow-hidden"
     >
       {/* Sliding Background Images */}
-      <div className="absolute inset-0">
+      <div
+        className="absolute inset-0 flex transition-transform duration-1000 ease-in-out"
+        style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+      >
         {heroSlides.map((slide, index) => (
-          <img
-            key={index}
-            src={slide.image}
-            alt="Agricultural Machinery"
-            className={`w-full h-full object-cover absolute inset-0 transition-opacity duration-1000 ${
-              index === currentSlide ? "opacity-100" : "opacity-0"
-            }`}
-          />
+          <div key={index} className="w-full h-full flex-shrink-0 relative">
+            <img
+              src={slide.image}
+              alt="Agricultural Machinery"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/40"></div>
+          </div>
         ))}
-        {/* Transparent dark overlay */}
-        <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 py-20">
+      <div className="relative z-10 container mx-auto px-4">
         <div className="max-w-4xl">
           <div className="text-white mb-8 animate-fade-in">
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
@@ -101,12 +158,15 @@ const Hero = () => {
 
           {/* Stats Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-            {stats.map((stat, index) => (
+            {animatedStats.map((stat, index) => (
               <div key={index} className="text-center text-white">
                 <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/20 rounded-full mb-3">
                   <stat.icon size={24} className="text-primary-glow" />
                 </div>
-                <div className="text-3xl font-bold mb-1">{stat.value}</div>
+                <div className="text-3xl font-bold mb-1">
+                  {stat.value}
+                  {stat.label.includes("+") ? "+" : ""}
+                </div>
                 <div className="text-white/80 text-sm">{stat.label}</div>
               </div>
             ))}

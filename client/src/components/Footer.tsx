@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { FaTiktok } from "react-icons/fa";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 
 const Footer = () => {
   const location = useLocation();
@@ -59,16 +59,16 @@ const Footer = () => {
           {/* Company Info */}
           <div className="lg:col-span-1">
             <div className="mb-6">
-              <div className="inline-block bg-white rounded p-1 dark:bg-white/10">
+              <Link to="/" className="inline-block bg-white rounded p-1 dark:bg-white/10">
                 <img
                   src="/lovable-uploads/jolu-machinery-logo.jpg"
                   alt="Jolu Machineries Logo"
                   className="h-16 w-auto mb-4 dark:invert"
                 />
-              </div>
+              </Link>
               <p className="text-white/80 leading-relaxed mb-4">
                 Kenya's trusted partner for premium Zoomlion agricultural machinery.
-                Empowering farmers with world-class equipment and exceptional service for over 5 years.
+                Empowering farmers with world-class equipment and exceptional service for over 15 years.
               </p>
             </div>
 
@@ -82,10 +82,18 @@ const Footer = () => {
                 <span className="text-white/80">info@jolumachineries.com</span>
               </div>
               <div className="flex items-start space-x-3">
-                <MapPin size={33} className="text-primary-glow mt-1" />
+                <MapPin size={35} className="text-primary-glow mt-1" />
                 <span className="text-white/80">
-                  KFA Building<br />
-                  Along Geoffrey Kamau Avenue, Next to Rubis Petrol Station<br />
+                  Main Office<br />
+                  Simba Close, Along New Garden Estate Rd, Thome Estate<br />
+                  Nairobi, Kenya
+                </span>
+              </div>
+              <div className="flex items-start space-x-3">
+                <MapPin size={44} className="text-primary-glow mt-1" />
+                <span className="text-white/80">
+                  Regional Office<br />
+                  KFA Building Along Geoffrey Kamau Avenue, Next to Rubis Petrol Station<br />
                   Nakuru, Kenya
                 </span>
               </div>

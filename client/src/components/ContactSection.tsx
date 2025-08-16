@@ -1,347 +1,218 @@
 import { useState } from "react";
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Clock,
-  Send,
-  MessageCircle,
-  Calendar
-} from "lucide-react";
+import { Mail, Phone, MapPin, Clock, Send, MessageCircle, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { api } from "@/lib/api";
 import { productOptions, countyOptions } from "@/data/options";
+
+type Form = {
+  name: string;
+  email: string;
+  phone: string;
+  county: string;
+  area: string;
+  productInterest?: string | null;
+  message: string;
+};
 
 const ContactSection = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState<Form>({
     name: "",
     email: "",
     phone: "",
     county: "",
     area: "",
     productInterest: "",
-    message: ""
+    message: "",
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSelectChange = (value: string) => {
-    setFormData({
-      ...formData,
-      productInterest: value
-    });
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData((s) => ({ ...s, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
-    setTimeout(() => {
-      toast({
-        title: "Message Sent Successfully!",
-        description:
-          "We'll get back to you within 24 hours. Thank you for contacting Jolu Machineries."
-      });
+    try {
+      const payload = {
+        ...formData,
+        productInterest: formData.productInterest || null,
+      };
+      await api.contact(payload);
+      toast({ title: "Message sent!", description: "We'll get back to you within 24 hours." });
+      setFormData({ name: "", email: "", phone: "", county: "", area: "", productInterest: "", message: "" });
+    } catch (err: any) {
+      toast({ title: "Failed to send", description: err?.message || "Please check the fields and try again.", variant: "destructive" });
+    } finally {
       setIsSubmitting(false);
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        county: "",
-        area: "",
-        productInterest: "",
-        message: ""
-      });
-    }, 2000);
+    }
   };
 
   const contactInfo = [
-    {
-      icon: Phone,
-      title: "Call Us",
-      details: ["+254 743 682 700", "+254 705 038 679"],
-      action: "Call Now"
-    },
-    {
-      icon: Mail,
-      title: "Email Us",
-      details: ["info@jolumachineries.com"],
-      action: "Send Email"
-    },
-    {
-      icon: MapPin,
-      title: "Visit Us",
-      details: [
-        "KFA Building",
-        "Along Geoffrey Kamau Avenue, Next to Rubis Petrol Station",
-        "Nakuru, Kenya"
-      ],
-      action: "Get Directions"
-    },
-    {
-      icon: Clock,
-      title: "Business Hours",
-      details: [
-        "Monday - Friday: 8:00 AM - 6:00 PM",
-        "Saturday: 9:00 AM - 4:00 PM",
-        "Sunday: Closed"
-      ],
-      action: "Schedule Visit"
-    }
+    { icon: Mail, title: "Email", details: ["info@jolumachineries.com"], action: "Send Email" },
+    { icon: Phone, title: "Phone", details: ["+254 743 682 700", "+254 705 038 679"], action: "Call Now" },
+    { icon: MapPin, title: "Locations", details: ["Nairobi, Kenya", "Nakuru, Kenya"], action: "Get Directions" },
+    { icon: Clock, title: "Business Hours", details: ["Mon–Fri: 8:00–18:00", "Sat: 9:00–16:00", "Sun: Closed"], action: "Schedule Visit" },
   ];
 
   return (
-    <section id="contact" className="py-16 bg-muted/30">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
-            Get In Touch
-          </Badge>
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">
-            Contact Jolu Machineries
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Ready to revolutionize your farming operations? Get in touch with our agricultural
-            experts today for personalized equipment recommendations and competitive quotes.
-          </p>
-        </div>
+    <div className="flex flex-col min-h-screen">
+      <main className="flex-grow bg-white dark:bg-zinc-900 text-black dark:text-white">
+        <section className="py-12 md:py-16">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4">Contact Jolu Machineries</h2>
+              <p className="text-lg text-muted-foreground">Talk to our experts for personalized recommendations and quotes.</p>
+            </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Contact Info Cards */}
-          <div className="lg:col-span-1 space-y-6">
-            {contactInfo.map((info, index) => (
-              <Card key={index} className="product-card">
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <info.icon size={24} className="text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-foreground mb-2">{info.title}</h3>
-                      <div className="space-y-1">
-                        {info.details.map((detail, i) => (
-                          <p key={i} className="text-sm text-muted-foreground">{detail}</p>
-                        ))}
+            <div className="grid lg:grid-cols-3 gap-8">
+              {/* Left: Info */}
+              <div className="lg:col-span-1 space-y-6">
+                {contactInfo.map((info, idx) => (
+                  <Card key={idx} className="product-card">
+                    <CardContent className="p-6">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <info.icon size={18} />
+                        <CardTitle className="text-xl">{info.title}</CardTitle>
+                      </div>
+                      <ul className="space-y-1 text-muted-foreground">
+                        {info.details.map((d, i) => <li key={i}>{d}</li>)}
+                      </ul>
+                      <div className="mt-4 flex gap-2">
+                        {info.title === "Phone" && (
+                          <Button variant="secondary" className="w-full justify-start" onClick={() => window.open("tel:+254743682700")}>
+                            <Phone size={16} className="mr-2" /> Call Now
+                          </Button>
+                        )}
+                        {info.title === "Email" && (
+                          <Button variant="secondary" className="w-full justify-start" onClick={() => window.open("mailto:info@jolumachineries.com")}>
+                            <Mail size={16} className="mr-2" /> Email Us
+                          </Button>
+                        )}
+                      </div>
+                      <div className="mt-2">
+                        <Button variant="secondary" className="w-full justify-start" onClick={() => window.open("https://wa.me/254743682700", "_blank")}>
+                          <MessageCircle size={16} className="mr-2" /> WhatsApp Chat
+                        </Button>
+                      </div>
+                      <div className="mt-2">
+                        <Button variant="secondary" className="w-full justify-start" onClick={() => navigate("/schedule")}>
+                          <Calendar size={16} className="mr-2" /> Schedule Demo
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Right: Form */}
+              <div className="lg:col-span-2">
+                <Card className="product-card">
+                  <CardHeader>
+                    <CardTitle>Send us a message</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block mb-2 font-medium">Full Name *</label>
+                          <Input name="name" value={formData.name} onChange={handleInputChange} required placeholder="Enter your full name" />
+                        </div>
+                        <div>
+                          <label className="block mb-2 font-medium">Email Address *</label>
+                          <Input name="email" type="email" value={formData.email} onChange={handleInputChange} required placeholder="Enter your email" />
+                        </div>
+                        <div>
+                          <label className="block mb-2 font-medium">Phone Number *</label>
+                          <Input name="phone" value={formData.phone} onChange={handleInputChange} required placeholder="+254 XXX XXX XXX" />
+                        </div>
+                        <div>
+                          <label className="block mb-2 font-medium">County *</label>
+                          <Select onValueChange={(value) => setFormData((s) => ({ ...s, county: value }))}>
+                            <SelectTrigger><SelectValue placeholder="Select County" /></SelectTrigger>
+                            <SelectContent className="max-h-60 overflow-y-auto">
+                              {countyOptions.map((county) => (
+                                <SelectItem key={county} value={county}>{county}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="md:col-span-2">
+                          <label className="block mb-2 font-medium">Area/Town *</label>
+                          <Input name="area" value={formData.area} onChange={handleInputChange} required placeholder="e.g., Kilimani, Ruaka" />
+                        </div>
+                        <div className="md:col-span-2">
+                          <label className="block mb-2 font-medium">Product Interest</label>
+                          <Select onValueChange={(value) => setFormData((s) => ({ ...s, productInterest: value }))}>
+                            <SelectTrigger><SelectValue placeholder="Select product category" /></SelectTrigger>
+                            <SelectContent>
+                              {productOptions.map((opt) => (
+                                <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
 
-                      {info.title === "Business Hours" ? (
-                        <Link to="/schedule" className="inline-block mt-2">
-                          <Button variant="link" className="p-0 h-auto text-primary">
-                            {info.action}
-                          </Button>
-                        </Link>
-                      ) : (
-                        <a
-                          href={
-                            info.title === "Call Us"
-                              ? `tel:${info.details[0].replace(/\s+/g, "")}`
-                              : info.title === "Email Us"
-                              ? `mailto:${info.details[0]}`
-                              : "https://www.google.com/maps/search/?api=1&query=KFA+Building,+Geoffrey+Kamau+Avenue,+Nakuru,+Kenya"
-                          }
-                          className="inline-block mt-2"
-                          {...((info.title === "Visit Us") && {
-                            target: "_blank",
-                            rel: "noopener noreferrer",
-                          })}
-                        >
-                          <Button variant="link" className="p-0 h-auto text-primary">
-                            {info.action}
-                          </Button>
-                        </a>
-                      )}
+                      <div>
+                        <label className="block mb-2 font-medium">Message *</label>
+                        <Textarea name="message" value={formData.message} onChange={handleInputChange} required minLength={10} placeholder="Tell us what you need..." />
+                      </div>
+
+                      <Button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? "Sending..." : (<><Send className="mr-2 h-4 w-4" /> Send Message</>)}
+                      </Button>
+                    </form>
+
+                    {/* Maps Section */}
+                    <div className="mt-10 space-y-6">
+                      <h3 className="text-xl font-semibold">Find Us</h3>
+                      <div className="grid md:grid-cols-2 gap-6">
+                        {/* Nairobi Map */}
+                        <div>
+                          <h4 className="font-medium mb-2">Nairobi – Simba Close, Thome</h4>
+                          <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2760.7176816752344!2d36.86981770972918!3d-1.2271689765895926!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f15e36827a427%3A0x99f4140fa95df719!2sSimba%20Close%2C%20Nairobi!5e0!3m2!1sen!2ske!4v1755332232084!5m2!1sen!2ske"
+                            width="100%"
+                            height="250"
+                            style={{ border: 0 }}
+                            allowFullScreen={true}
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                          ></iframe>
+                        </div>
+
+                        {/* Nakuru Map */}
+                        <div>
+                          <h4 className="font-medium mb-2">Nakuru – KFA Building</h4>
+                          <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15958.37956243454!2d36.05669568715821!3d-0.28648409808689044!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182aa60a63f693e9%3A0xaba0a02d31f7b4d5!2sKFA%20Building%2C%20Nakuru!5e0!3m2!1sen!2ske!4v1723810622341!5m2!1sen!2ske"
+                            width="100%"
+                            height="250"
+                            style={{ border: 0 }}
+                            allowFullScreen={true}
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                          ></iframe>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-
-            {/* Quick Actions */}
-            <Card className="product-card bg-primary text-primary-foreground">
-              <CardContent className="p-6">
-                <h3 className="font-semibold mb-4">Quick Actions</h3>
-                <div className="space-y-3">
-                  <Button
-                    variant="secondary"
-                    className="w-full justify-start"
-                    onClick={() => window.open("https://wa.me/254743682700", "_blank")}
-                  >
-                    <MessageCircle size={18} className="mr-2" /> WhatsApp Chat
-                  </Button>
-
-                  <Button
-                    variant="secondary"
-                    className="w-full justify-start"
-                    onClick={() => navigate("/schedule")}
-                  >
-                    <Calendar size={18} className="mr-2" /> Schedule Demo
-                  </Button>
-
-                  <Button
-                    variant="secondary"
-                    className="w-full justify-start"
-                    onClick={() =>
-                      window.open("mailto:info@example.com?subject=Request%20for%20Catalog")
-                    }
-                  >
-                    <Send size={18} className="mr-2" /> Request Catalog
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
           </div>
-
-          {/* Form Section */}
-          <div className="lg:col-span-2">
-            <Card className="product-card">
-              <CardHeader>
-                <CardTitle className="text-2xl">Send Us a Message</CardTitle>
-                <p className="text-muted-foreground">
-                  Fill out the form below and our team will get back to you within 24 hours.
-                </p>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Full Name *</label>
-                      <Input name="name" value={formData.name} onChange={handleInputChange} required placeholder="Enter your full name" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Email Address *</label>
-                      <Input name="email" type="email" value={formData.email} onChange={handleInputChange} required placeholder="Enter your email" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Phone Number *</label>
-                      <Input name="phone" value={formData.phone} onChange={handleInputChange} required placeholder="+254 XXX XXX XXX" />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2">County *</label>
-                      <Select onValueChange={(value) => setFormData({ ...formData, county: value })} required>
-                        <SelectTrigger className="focus:border-lime-500 focus:ring-lime-500">
-                          <SelectValue placeholder="Select County" />
-                        </SelectTrigger>
-                        <SelectContent className="max-h-60 overflow-y-auto">
-                          {countyOptions.map((county, index) => (
-                            <SelectItem key={index} value={county}>
-                              {county}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <label htmlFor="area" className="block text-sm font-medium mb-2">Area/Town *</label>
-                      <Input id="area" name="area" value={formData.area} onChange={handleInputChange} required placeholder="e.g. Ruaka" className="focus:border-lime-500 focus:ring-lime-500" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Product of Interest</label>
-                      <Select onValueChange={handleSelectChange}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select product category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {productOptions.map((option, index) => (
-                            <SelectItem key={index} value={option}>
-                              {option}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Message *</label>
-                    <Textarea
-                      name="message"
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      required
-                      placeholder="Tell us about your farming needs, preferred equipment specifications, budget range, or any questions you have..."
-                      rows={6}
-                    />
-                  </div>
-
-                  <div className="flex gap-4">
-                    <Button type="submit" className="btn-quote flex-1" disabled={isSubmitting}>
-                      {isSubmitting ? (
-                        <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          <Send size={18} className="mr-2" />
-                          Send Message
-                        </>
-                      )}
-                    </Button>
-                    <Button type="button" variant="outline" className="flex-1">
-                      Request Quote
-                    </Button>
-                  </div>
-
-                  <p className="text-sm text-muted-foreground">
-                    * Required fields. By submitting this form, you agree to our privacy policy
-                    and consent to being contacted by our sales team.
-                  </p>
-                </form>
-              </CardContent>
-            </Card>
-
-            {/* Map */}
-            <Card className="product-card mt-6">
-              <CardContent className="p-0">
-                <div className="h-64 w-full rounded-lg overflow-hidden">
-                  <iframe
-                    title="KFA Building Map"
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3988.594770230731!2d36.057953614749446!3d-0.28645259980988364!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182aaa2d140f3223%3A0x8c4bc4cb5c5d1e62!2sKFA%20Building%2C%20Nakuru%2C%20Kenya!5e0!3m2!1sen!2ske!4v1698662143200!5m2!1sen!2ske"
-                    width="100%"
-                    height="100%"
-                    loading="lazy"
-                    className="border-0 w-full h-full"
-                    allowFullScreen
-                    referrerPolicy="no-referrer-when-downgrade"
-                  ></iframe>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-    </section>
+        </section>
+      </main>
+    </div>
   );
 };
 

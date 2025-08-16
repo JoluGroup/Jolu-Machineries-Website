@@ -14,31 +14,31 @@ const Header = () => {
       name: "About",
       dropdown: true,
       items: [
-        { name: "About Us", to: "#about" },
-        { name: "Our Team", to: "/team" },
-        { name: "Gallery", to: "/gallery" },
-        { name: "Company Documents", to: "#documents" },
+        { name: "About Us", href: "/#about" },
+        { name: "Team", href: "/team" },
+        { name: "Gallery", href: "/gallery" },
+        { name: "Documents", href: "/#documents" },
       ],
     },
-    { name: "Contact", href: "/#contact" },
-  ];
+    { name: "Schedule", href: "/schedule" },
+  ] as const;
 
   return (
-    <header className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
-      {/* Top Contact Bar */}
-      <div className="bg-primary text-primary-foreground py-2 px-4">
-        <div className="container mx-auto flex justify-between items-center text-sm">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1">
+    <header className="bg-white/70 dark:bg-zinc-900/70 backdrop-blur supports-[backdrop-filter]:bg-white/50 sticky top-0 z-50 border-b border-zinc-200 dark:border-zinc-800">
+      {/* Top Bar */}
+      <div className="bg-primary text-primary-foreground text-xs py-2">
+        <div className="container mx-auto px-4 flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2">
               <Phone size={14} />
-              <span>+254 743 682 700 / +254 705 038 679</span>
+              <span>+254 743 682 700</span>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center space-x-2">
               <Mail size={14} />
               <span>info@jolumachineries.com</span>
             </div>
           </div>
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden md:flex items-center space-x-2">
             <MapPin size={14} />
             <span>Agricultural Equipment Specialists</span>
           </div>
@@ -48,122 +48,131 @@ const Header = () => {
       {/* Main Navigation */}
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo and Title */}
-          <div className="flex items-center space-x-4">
-            <img 
-              src="/lovable-uploads/jolu-machinery-logo.jpg" 
-              alt="Jolu Machineries Logo" 
-              className="h-12 w-auto"
+          {/* Brand with Logo (Clickable to Home) */}
+          <Link to="/" className="flex items-center space-x-3">
+            <img
+              src="/lovable-uploads/jolu-machinery-logo.jpg"
+              alt="Jolu Logo"
+              className="h-10 w-10 object-contain"
             />
-            <span className="text-base sm:text-xl font-bold text-primary">
-              JOLU AGRICULTURAL MACHINERIES
-            </span>
-          </div>
+            <div className="text-2xl font-bold text-primary">
+              JOLU MACHINERIES
+            </div>
+          </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          {/* Desktop Menu */}
+          <nav className="hidden md:flex items-center space-x-6">
             {navItems.map((item) =>
-              item.dropdown ? (
-                <div key={item.name} className="relative group">
-                  <button className="text-foreground hover:text-primary font-medium transition-colors duration-200">
-                    {item.name}
-                  </button>
-                  <div className="absolute left-0 mt-2 w-48 bg-white dark:bg-black border border-border shadow-lg rounded-md opacity-0 group-hover:opacity-100 group-hover:translate-y-1 transform transition-all duration-300 z-50">
-                  {item.items.map((subItem) =>
-                    subItem.to.startsWith("#") ? (
-                      <HashLink
-                        key={subItem.name}
-                        to={`/${subItem.to}`}
-                        smooth
-                        className="block px-4 py-2 text-sm text-foreground hover:bg-muted hover:text-primary"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        {subItem.name}
-                      </HashLink>
-                    ) : (
-                      <Link
-                        key={subItem.name}
-                        to={subItem.to}
-                        className="block px-4 py-2 text-sm text-foreground hover:bg-muted hover:text-primary"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        {subItem.name}
-                      </Link>
-                    )
-                  )}
+              "dropdown" in item ? (
+                <div
+                  key={item.name}
+                  className="relative group"
+                  // Keep pointer events active on hover
+                >
+                  <button className="hover:text-primary">{item.name}</button>
+                  <div className="absolute left-0 mt-2 w-40 bg-white dark:bg-zinc-800 shadow rounded-lg opacity-0 group-hover:opacity-100 pointer-events-auto transition-opacity duration-200 z-50">
+                    <ul className="py-2">
+                      {item.items.map((sub) => (
+                        <li key={sub.name}>
+                          {sub.href.startsWith("/#") ? (
+                            <HashLink
+                              to={sub.href}
+                              className="block px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                            >
+                              {sub.name}
+                            </HashLink>
+                          ) : (
+                            <Link
+                              to={sub.href}
+                              className="block px-4 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                            >
+                              {sub.name}
+                            </Link>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
-              ) : (
-                <HashLink
-                  key={item.name}
-                  smooth
-                  to={item.href}
-                  className="text-foreground hover:text-primary font-medium transition-colors duration-200 relative group"
-                >
+              ) : item.href.startsWith("/#") ? (
+                <HashLink key={item.name} to={item.href} className="hover:text-primary">
                   {item.name}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
                 </HashLink>
+              ) : (
+                <Link key={item.name} to={item.href} className="hover:text-primary">
+                  {item.name}
+                </Link>
               )
             )}
-          </nav>
-
-          {/* CTA Button */}
-          <div className="hidden md:block">
             <Link to="/quote">
-              <Button className="btn-quote">
-                Get Quote
-              </Button>
+              <Button size="sm">Request a Quote</Button>
             </Link>
-          </div>
+          </nav>
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 text-foreground hover:text-primary transition-colors"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden"
+            onClick={() => setIsMenuOpen((s) => !s)}
+            aria-label="Toggle menu"
           >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {isMenuOpen ? <X /> : <Menu />}
           </button>
         </div>
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden mt-4 pb-4 border-t border-border">
-            <nav className="flex flex-col space-y-4 pt-4">
-              {navItems.map((item) =>
-                item.dropdown ? (
-                  <div key={item.name}>
-                    <span className="text-foreground font-medium">{item.name}</span>
-                    <div className="ml-4 mt-2 space-y-2">
-                      {item.items.map((subItem) => (
-                        <Link
-                          key={subItem.name}
-                          to={subItem.to}
-                          className="block text-foreground hover:text-primary text-sm"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          {subItem.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <HashLink
-                    key={item.name}
-                    smooth
-                    to={item.href}
-                    className="text-foreground hover:text-primary font-medium transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item.name}
-                  </HashLink>
-                )
-              )}
-              <Link to="/quote">
-                <Button className="btn-quote mt-4 w-full">
-                  Get Quote
-                </Button>
-              </Link>
-            </nav>
+          <div className="md:hidden mt-4 space-y-2">
+            {navItems.map((item) =>
+              "dropdown" in item ? (
+                <details key={item.name} className="bg-zinc-100 dark:bg-zinc-800 rounded-lg p-2">
+                  <summary className="cursor-pointer">{item.name}</summary>
+                  <ul className="pl-4 mt-2 space-y-1">
+                    {item.items.map((sub) => (
+                      <li key={sub.name}>
+                        {sub.href.startsWith("/#") ? (
+                          <HashLink
+                            to={sub.href}
+                            onClick={() => setIsMenuOpen(false)}
+                            className="block py-1"
+                          >
+                            {sub.name}
+                          </HashLink>
+                        ) : (
+                          <Link
+                            to={sub.href}
+                            onClick={() => setIsMenuOpen(false)}
+                            className="block py-1"
+                          >
+                            {sub.name}
+                          </Link>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              ) : item.href.startsWith("/#") ? (
+                <HashLink
+                  key={item.name}
+                  to={item.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block"
+                >
+                  {item.name}
+                </HashLink>
+              ) : (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block"
+                >
+                  {item.name}
+                </Link>
+              )
+            )}
+            <Link to="/quote" onClick={() => setIsMenuOpen(false)}>
+              <Button className="w-full mt-2">Request a Quote</Button>
+            </Link>
           </div>
         )}
       </div>

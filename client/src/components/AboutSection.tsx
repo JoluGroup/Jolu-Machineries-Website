@@ -20,9 +20,9 @@ const AboutSection = () => {
   const features = [
     {
       icon: Award,
-      title: "5+ Years Experience",
+      title: "15+ Years Experience",
       description:
-        "Over half a decade of expertise in agricultural machinery sales and service"
+        "Over a decade of expertise in agricultural machinery sales and service"
     },
     {
       icon: Users,

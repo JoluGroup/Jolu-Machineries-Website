@@ -10,7 +10,7 @@ const galleryItems = [
   },
   {
     src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/handover-1.jpg`,
-    caption: "Official YTO Tractor Handover to Valued Client – Nairobi",
+    caption: "Official Tractor Handover to Valued Client – Nairobi",
   },
   {
     src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/machines-1.jpg`,
@@ -21,8 +21,8 @@ const galleryItems = [
     caption: "Heavy-Duty Trailer Ready for Delivery",
   },
   {
-    src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/handover-2.jpg`,
-    caption: "Successful YTO Tractor Delivery – Nakuru",
+    src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/operator-1.jpeg`,
+    caption: "Qualified Tractor Operator – Nakuru",
   },
   {
     src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/zoomlion-tractor.jpg`,
