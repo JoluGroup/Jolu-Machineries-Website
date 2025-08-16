@@ -190,6 +190,12 @@ const quoteRouter = require("express").Router();
 quoteRouter.get("/", (_req, res) => res.json({ message: "This is the quote route" }));
 app.use("/api/quotes", quoteRouter);
 
+
+// --- Root route ---
+app.get("/", (req, res) => {
+  res.send("🚀 Jolu Machinery API is live! Visit /api/health to check status.");
+});
+
 // --- Server start ---
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
