@@ -38,30 +38,25 @@ async function connectToMongo() {
 }
 connectToMongo();
 
-// ✅ CORS setup
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://127.0.0.1:5173",
-  "http://localhost:8080",
-  "http://127.0.0.1:8080",
-  "http://192.168.56.1:8080",
-  "http://192.168.56.1:8081",
-  "https://www.jolumachineries.com",
-].filter(Boolean);
+// ✅ CORS setup (Step 3)
+const allowedOrigins = process.env.CLIENT_ORIGIN
+  ? process.env.CLIENT_ORIGIN.split(",")
+  : [];
 
 app.use(
   cors({
-    origin: (origin, callback) => {
+    origin: function (origin, callback) {
       // allow requests with no origin (like mobile apps, curl, Postman)
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-
-      callback(new Error(`CORS policy: origin ${origin} not allowed`));
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS policy: origin ${origin} not allowed`));
+      }
     },
     credentials: true,
   })
 );
+
 // --- Basic rate limiter ---
 const limiter = rateLimit({ windowMs: 60 * 1000, max: 60 });
 app.use(limiter);
@@ -194,7 +189,6 @@ ${payload.notes || "N/A"}`,
 const quoteRouter = require("express").Router();
 quoteRouter.get("/", (_req, res) => res.json({ message: "This is the quote route" }));
 app.use("/api/quotes", quoteRouter);
-
 
 // --- Root route ---
 app.get("/", (req, res) => {
