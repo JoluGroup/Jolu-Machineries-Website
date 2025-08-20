@@ -7,6 +7,7 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const nodemailer = require("nodemailer");
 const { z } = require("zod");
+const path = require("path");
 
 const app = express();
 
@@ -15,7 +16,32 @@ app.use(helmet());
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ MongoDB connection
+// --- CORS setup ---
+const allowedOrigins = [
+  "http://localhost:8080",                       // local dev
+  "https://jolu-machineries.onrender.com"        // deployed frontend
+];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS policy: origin ${origin} not allowed`));
+    }
+  },
+  credentials: true,
+  methods: ["GET","POST","PUT","DELETE","OPTIONS"]
+}));
+
+// Handle preflight requests globally
+app.options("*", cors());
+
+// --- Rate limiter ---
+const limiter = rateLimit({ windowMs: 60 * 1000, max: 60 });
+app.use(limiter);
+
+// --- MongoDB connection ---
 const uri = process.env.MONGO_URI;
 const client = new MongoClient(uri, {
   serverApi: {
@@ -38,29 +64,6 @@ async function connectToMongo() {
 }
 connectToMongo();
 
-// ✅ CORS setup (Step 3)
-const allowedOrigins = process.env.CLIENT_ORIGIN
-  ? process.env.CLIENT_ORIGIN.split(",")
-  : [];
-
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin (like mobile apps, curl, Postman)
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error(`CORS policy: origin ${origin} not allowed`));
-      }
-    },
-    credentials: true,
-  })
-);
-
-// --- Basic rate limiter ---
-const limiter = rateLimit({ windowMs: 60 * 1000, max: 60 });
-app.use(limiter);
-
 // --- Email transporter ---
 let transporter = null;
 if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
@@ -75,11 +78,8 @@ if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
   });
 
   transporter.verify((error, success) => {
-    if (error) {
-      console.error("SMTP connection error:", error);
-    } else {
-      console.log("✅ SMTP server is ready to take messages");
-    }
+    if (error) console.error("SMTP connection error:", error);
+    else console.log("✅ SMTP server is ready to take messages");
   });
 }
 
@@ -96,14 +96,27 @@ const contactSchema = z.object({
   message: t(10),
 });
 
+const quoteSchema = contactSchema;
+
 const scheduleSchema = z.object({
   name: t(2),
   email: z.string().trim().email(),
   phone: t(7),
   preferredDate: t(4),
+  preferredTime: t(2),
   product: t(2),
   notes: z.string().trim().optional().nullable(),
 });
+
+// --- Exports for routes ---
+module.exports = {
+  db: () => db,
+  transporter: () => transporter,
+  contactSchema,
+  quoteSchema,
+  scheduleSchema,
+  z,
+};
 
 // --- Routes ---
 app.get("/api/health", async (_req, res) => {
@@ -114,35 +127,20 @@ app.get("/api/health", async (_req, res) => {
 app.post("/api/contact", async (req, res) => {
   try {
     const payload = contactSchema.parse(req.body);
+    await db.collection("contacts").insertOne({ ...payload, createdAt: new Date() });
 
-    // Save to MongoDB
-    await db.collection("contacts").insertOne({
-      ...payload,
-      createdAt: new Date(),
-    });
-
-    // Send email
     if (transporter) {
       await transporter.sendMail({
-        to: process.env.EMAIL_TO, // multiple recipients supported
+        to: process.env.EMAIL_TO,
         from: process.env.EMAIL_FROM || "noreply@example.com",
         subject: `New Contact: ${payload.name} (${payload.productInterest || "General"})`,
-        text: `Name: ${payload.name}
-Email: ${payload.email}
-Phone: ${payload.phone}
-County: ${payload.county}
-Area: ${payload.area}
-Interest: ${payload.productInterest || "N/A"}
-Message:
-${payload.message}`,
+        text: `Name: ${payload.name}\nEmail: ${payload.email}\nPhone: ${payload.phone}\nCounty: ${payload.county}\nArea: ${payload.area}\nInterest: ${payload.productInterest || "N/A"}\nMessage:\n${payload.message}`,
       });
     }
 
     res.status(201).json({ ok: true, message: "Contact saved & email sent" });
   } catch (err) {
-    if (err instanceof z.ZodError) {
-      return res.status(400).json({ ok: false, errors: err.flatten() });
-    }
+    if (err instanceof z.ZodError) return res.status(400).json({ ok: false, errors: err.flatten() });
     console.error("Contact form error:", err);
     res.status(500).json({ ok: false, message: "Server error" });
   }
@@ -152,43 +150,28 @@ ${payload.message}`,
 app.post("/api/schedule", async (req, res) => {
   try {
     const payload = scheduleSchema.parse(req.body);
+    await db.collection("schedules").insertOne({ ...payload, createdAt: new Date() });
 
-    // Save to MongoDB
-    await db.collection("schedules").insertOne({
-      ...payload,
-      createdAt: new Date(),
-    });
-
-    // Send email
     if (transporter) {
       await transporter.sendMail({
-        to: process.env.EMAIL_TO, // multiple recipients supported
+        to: process.env.EMAIL_TO,
         from: process.env.EMAIL_FROM || "noreply@example.com",
         subject: `Demo Request: ${payload.name} — ${payload.product}`,
-        text: `Name: ${payload.name}
-Email: ${payload.email}
-Phone: ${payload.phone}
-Preferred Date: ${payload.preferredDate}
-Product: ${payload.product}
-Notes:
-${payload.notes || "N/A"}`,
+        text: `Name: ${payload.name}\nEmail: ${payload.email}\nPhone: ${payload.phone}\nPreferred Date: ${payload.preferredDate}\nPreferred Time: ${payload.preferredTime}\nProduct: ${payload.product}\nNotes:\n${payload.notes || "N/A"}`,
       });
     }
 
     res.status(201).json({ ok: true, message: "Schedule saved & email sent" });
   } catch (err) {
-    if (err instanceof z.ZodError) {
-      return res.status(400).json({ ok: false, errors: err.flatten() });
-    }
+    if (err instanceof z.ZodError) return res.status(400).json({ ok: false, errors: err.flatten() });
     console.error("Schedule form error:", err);
     res.status(500).json({ ok: false, message: "Server error" });
   }
 });
 
-// ✅ Quotes route placeholder
-const quoteRouter = require("express").Router();
-quoteRouter.get("/", (_req, res) => res.json({ message: "This is the quote route" }));
-app.use("/api/quotes", quoteRouter);
+// ✅ Quotes Route (with CORS)
+const quoteRoutes = require("./routes/quoteRoutes");
+app.use("/api/quotes", quoteRoutes);
 
 // --- Root route ---
 app.get("/", (req, res) => {

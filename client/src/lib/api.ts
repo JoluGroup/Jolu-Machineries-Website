@@ -19,6 +19,10 @@ export const api = {
     name: string; email: string; phone: string; county: string; area: string;
     productInterest?: string | null; message: string;
   }) => send("/api/contact", data),
+  quote: (data: {
+    name: string; email: string; phone: string; county: string; area: string;
+    productInterest?: string | null; message: string;
+  }) => send("/api/quotes", data),
   schedule: (data: {
     name: string; email: string; phone: string; preferredDate: string;
     product: string; notes?: string | null;

@@ -181,7 +181,10 @@ const ContactSection = () => {
                         </div>
                         <div>
                           <label className="block mb-2 font-medium">County *</label>
-                          <Select onValueChange={(value) => setFormData((s) => ({ ...s, county: value }))}>
+                          <Select
+                            value={formData.county}
+                            onValueChange={(value) => setFormData((s) => ({ ...s, county: value }))}
+                          >
                             <SelectTrigger>
                               <SelectValue placeholder="Select County" />
                             </SelectTrigger>
@@ -206,7 +209,10 @@ const ContactSection = () => {
                         </div>
                         <div className="md:col-span-2">
                           <label className="block mb-2 font-medium">Product Interest</label>
-                          <Select onValueChange={(value) => setFormData((s) => ({ ...s, productInterest: value }))}>
+                          <Select
+                            value={formData.productInterest || ""}
+                            onValueChange={(value) => setFormData((s) => ({ ...s, productInterest: value }))}
+                          >
                             <SelectTrigger>
                               <SelectValue placeholder="Select product category" />
                             </SelectTrigger>

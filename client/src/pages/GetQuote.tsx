@@ -31,7 +31,7 @@ const GetQuote = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await api.contact({ ...form, productInterest: form.productInterest || null });
+      await api.quote({ ...form, productInterest: form.productInterest || null });
       toast({ title: "Quote request sent", description: "We'll get back to you within 24 hours." });
       setForm({ name: "", email: "", phone: "", county: "", area: "", productInterest: "", message: "" });
     } catch (err: any) {

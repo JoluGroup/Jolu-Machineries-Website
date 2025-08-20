@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: jolu-machinery-server
+    env: node
+    region: oregon
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 20.14.0
+      - key: CLIENT_ORIGIN
+        value: https://jolu-machinery.onrender.com
+      - fromGroup: jolu-machinery-env
+
+  - type: web
+    name: jolu-machinery-client
+    env: static
+    region: oregon
+    plan: free
+    rootDir: client
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        value: https://jolu-machinery-server.onrender.com
