@@ -4,31 +4,59 @@ import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 
 const galleryItems = [
-  {
-    src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/godown-1.jpg`,
-    caption: "Zoomlion Display at Jolu Showroom – Nakuru",
-  },
-  {
-    src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/handover-1.jpg`,
-    caption: "Official Tractor Handover to Valued Client – Nairobi",
-  },
-  {
-    src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/machines-1.jpg`,
-    caption: "Range of Agricultural Machines at Nakuru Yard",
-  },
-  {
-    src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/trailer-1.jpg`,
-    caption: "Heavy-Duty Trailer Ready for Delivery",
-  },
-  {
-    src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/operator-1.jpeg`,
-    caption: "Qualified Tractor Operator – Nakuru",
-  },
-  {
+{
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/godown-1.jpg`,
+  caption: "Zoomlion Machinery Showcase – Jolu Showroom, Nakuru",
+},
+{
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/handover-1.jpg`,
+  caption: "Official Tractor Handover Ceremony – Nairobi",
+},
+{
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/machines-1.jpg`,
+  caption: "Wide Range of Agricultural Machines – Nakuru Yard",
+},
+{
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/trailer-1.jpg`,
+  caption: "Heavy-Duty Trailer Prepared for Delivery",
+},
+{
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/operator-1.jpeg`,
+  caption: "Certified Tractor Operator – Nakuru",
+},
+{
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/john-tractor1.jpg`,
+  caption: "Our CEO at the Nakuru Showroom",
+},
+{
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/implement-1.jpg`,
+  caption: "Demonstrating a Modern Farm Implement",
+},
+{
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/john-tractor-1.jpg`,
+  caption: "Our CEO at the Nakuru Godown",
+},
+{
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/contract.jpg`,
+  caption: "Contract Signing with a Valued Partner",
+},
+{
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/shem-tractor.jpg`,
+  caption: "General Manager at Our Migori Branch",
+},
+{
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/handover-4.jpg`,
+  caption: "Delighted Client During Tractor Handover – Eldoret",
+},
+{
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/tractor-2.jpg`,
+  caption: "Zoomlion Tractor on Display",
+},
+{
     src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/zoomlion-tractor.jpg`,
     caption: "Zoomlion Tractor Model Featured at Our Showroom",
   },
-  {
+{
     src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/godown-2.jpg`,
     caption: "Wide Inventory at Jolu Agricultural Machineries Showroom",
   },

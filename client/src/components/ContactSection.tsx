@@ -50,7 +50,11 @@ const ContactSection = () => {
       toast({ title: "Message sent!", description: "We'll get back to you within 24 hours." });
       setFormData({ name: "", email: "", phone: "", county: "", area: "", productInterest: "", message: "" });
     } catch (err: any) {
-      toast({ title: "Failed to send", description: err?.message || "Please check the fields and try again.", variant: "destructive" });
+      toast({
+        title: "Failed to send",
+        description: err?.message || "Please check the fields and try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -66,11 +70,15 @@ const ContactSection = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-grow bg-white dark:bg-zinc-900 text-black dark:text-white">
-        <section className="py-12 md:py-16">
+        
+        {/* ✅ Contact section now has an id */}
+        <section id="contact" className="py-12 md:py-16">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-4xl md:text-5xl font-bold mb-4">Contact Jolu Machineries</h2>
-              <p className="text-lg text-muted-foreground">Talk to our experts for personalized recommendations and quotes.</p>
+              <p className="text-lg text-muted-foreground">
+                Talk to our experts for personalized recommendations and quotes.
+              </p>
             </div>
 
             <div className="grid lg:grid-cols-3 gap-8">
@@ -84,27 +92,45 @@ const ContactSection = () => {
                         <CardTitle className="text-xl">{info.title}</CardTitle>
                       </div>
                       <ul className="space-y-1 text-muted-foreground">
-                        {info.details.map((d, i) => <li key={i}>{d}</li>)}
+                        {info.details.map((d, i) => (
+                          <li key={i}>{d}</li>
+                        ))}
                       </ul>
                       <div className="mt-4 flex gap-2">
                         {info.title === "Phone" && (
-                          <Button variant="secondary" className="w-full justify-start" onClick={() => window.open("tel:+254743682700")}>
+                          <Button
+                            variant="secondary"
+                            className="w-full justify-start"
+                            onClick={() => window.open("tel:+254743682700")}
+                          >
                             <Phone size={16} className="mr-2" /> Call Now
                           </Button>
                         )}
                         {info.title === "Email" && (
-                          <Button variant="secondary" className="w-full justify-start" onClick={() => window.open("mailto:info@jolumachineries.com")}>
+                          <Button
+                            variant="secondary"
+                            className="w-full justify-start"
+                            onClick={() => window.open("mailto:info@jolumachineries.com")}
+                          >
                             <Mail size={16} className="mr-2" /> Email Us
                           </Button>
                         )}
                       </div>
                       <div className="mt-2">
-                        <Button variant="secondary" className="w-full justify-start" onClick={() => window.open("https://wa.me/254743682700", "_blank")}>
+                        <Button
+                          variant="secondary"
+                          className="w-full justify-start"
+                          onClick={() => window.open("https://wa.me/254743682700", "_blank")}
+                        >
                           <MessageCircle size={16} className="mr-2" /> WhatsApp Chat
                         </Button>
                       </div>
                       <div className="mt-2">
-                        <Button variant="secondary" className="w-full justify-start" onClick={() => navigate("/schedule")}>
+                        <Button
+                          variant="secondary"
+                          className="w-full justify-start"
+                          onClick={() => navigate("/schedule")}
+                        >
                           <Calendar size={16} className="mr-2" /> Schedule Demo
                         </Button>
                       </div>
@@ -124,38 +150,71 @@ const ContactSection = () => {
                       <div className="grid md:grid-cols-2 gap-4">
                         <div>
                           <label className="block mb-2 font-medium">Full Name *</label>
-                          <Input name="name" value={formData.name} onChange={handleInputChange} required placeholder="Enter your full name" />
+                          <Input
+                            name="name"
+                            value={formData.name}
+                            onChange={handleInputChange}
+                            required
+                            placeholder="Enter your full name"
+                          />
                         </div>
                         <div>
                           <label className="block mb-2 font-medium">Email Address *</label>
-                          <Input name="email" type="email" value={formData.email} onChange={handleInputChange} required placeholder="Enter your email" />
+                          <Input
+                            name="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            required
+                            placeholder="Enter your email"
+                          />
                         </div>
                         <div>
                           <label className="block mb-2 font-medium">Phone Number *</label>
-                          <Input name="phone" value={formData.phone} onChange={handleInputChange} required placeholder="+254 XXX XXX XXX" />
+                          <Input
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleInputChange}
+                            required
+                            placeholder="+254 XXX XXX XXX"
+                          />
                         </div>
                         <div>
                           <label className="block mb-2 font-medium">County *</label>
                           <Select onValueChange={(value) => setFormData((s) => ({ ...s, county: value }))}>
-                            <SelectTrigger><SelectValue placeholder="Select County" /></SelectTrigger>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select County" />
+                            </SelectTrigger>
                             <SelectContent className="max-h-60 overflow-y-auto">
                               {countyOptions.map((county) => (
-                                <SelectItem key={county} value={county}>{county}</SelectItem>
+                                <SelectItem key={county} value={county}>
+                                  {county}
+                                </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         </div>
                         <div className="md:col-span-2">
                           <label className="block mb-2 font-medium">Area/Town *</label>
-                          <Input name="area" value={formData.area} onChange={handleInputChange} required placeholder="e.g., Kilimani, Ruaka" />
+                          <Input
+                            name="area"
+                            value={formData.area}
+                            onChange={handleInputChange}
+                            required
+                            placeholder="e.g., Kilimani, Ruaka"
+                          />
                         </div>
                         <div className="md:col-span-2">
                           <label className="block mb-2 font-medium">Product Interest</label>
                           <Select onValueChange={(value) => setFormData((s) => ({ ...s, productInterest: value }))}>
-                            <SelectTrigger><SelectValue placeholder="Select product category" /></SelectTrigger>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select product category" />
+                            </SelectTrigger>
                             <SelectContent>
                               {productOptions.map((opt) => (
-                                <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                                <SelectItem key={opt} value={opt}>
+                                  {opt}
+                                </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
@@ -164,11 +223,22 @@ const ContactSection = () => {
 
                       <div>
                         <label className="block mb-2 font-medium">Message *</label>
-                        <Textarea name="message" value={formData.message} onChange={handleInputChange} required minLength={10} placeholder="Tell us what you need..." />
+                        <Textarea
+                          name="message"
+                          value={formData.message}
+                          onChange={handleInputChange}
+                          required
+                          minLength={10}
+                          placeholder="Tell us what you need..."
+                        />
                       </div>
 
                       <Button type="submit" disabled={isSubmitting}>
-                        {isSubmitting ? "Sending..." : (<><Send className="mr-2 h-4 w-4" /> Send Message</>)}
+                        {isSubmitting ? "Sending..." : (
+                          <>
+                            <Send className="mr-2 h-4 w-4" /> Send Message
+                          </>
+                        )}
                       </Button>
                     </form>
 

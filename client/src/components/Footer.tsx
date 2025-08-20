@@ -4,10 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { FaTiktok } from "react-icons/fa";
 import { useLocation, Link } from "react-router-dom";
+import { useState } from "react";
 
 const Footer = () => {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
+
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -24,6 +28,25 @@ const Footer = () => {
     }
   };
 
+  const handleSubscribe = () => {
+    if (!email) {
+      setMessage("⚠️ Please enter an email address.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setMessage("⚠️ Please enter a valid email.");
+      return;
+    }
+
+    // ✅ Replace with API/Backend call later
+    console.log("Subscribed with:", email);
+
+    setMessage("✅ Thank you for subscribing!");
+    setEmail("");
+  };
+
   const quickLinks = [
     { name: "Home", id: "home" },
     { name: "Products", id: "products" },
@@ -35,7 +58,6 @@ const Footer = () => {
     { name: "Tractors", id: "products" },
     { name: "Harvesters", id: "products" },
     { name: "Implements", id: "products" },
-    { name: "Spare Parts", id: "contact" },
   ];
 
   const services = [
@@ -162,11 +184,30 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex space-x-2">
                 <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
                 />
-                <Button className="bg-primary hover:bg-primary-glow px-6">Subscribe</Button>
+                <Button
+                  onClick={handleSubscribe}
+                  className="bg-primary hover:bg-primary-glow px-6"
+                >
+                  Subscribe
+                </Button>
               </div>
+              {message && (
+                <p
+                  className={`text-sm mt-2 ${
+                    message.startsWith("⚠️")
+                      ? "text-yellow-400"
+                      : "text-green-400"
+                  }`}
+                >
+                  {message}
+                </p>
+              )}
 
               <div>
                 <p className="text-white/80 mb-3">Follow us on social media:</p>
@@ -195,20 +236,9 @@ const Footer = () => {
 
         <Separator className="bg-white/20 mb-8" />
 
-        <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0">
           <div className="text-white/60 text-sm">
             © {new Date().getFullYear()} Jolu Agricultural & Construction Machineries. All rights reserved.
-          </div>
-          <div className="flex space-x-6 text-sm">
-            <a href="#" className="text-white/60 hover:text-primary-glow transition-colors">
-              Privacy Policy
-            </a>
-            <a href="#" className="text-white/60 hover:text-primary-glow transition-colors">
-              Terms of Service
-            </a>
-            <a href="#" className="text-white/60 hover:text-primary-glow transition-colors">
-              Cookie Policy
-            </a>
           </div>
         </div>
       </div>
