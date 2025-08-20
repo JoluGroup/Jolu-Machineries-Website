@@ -82,7 +82,10 @@ const Hero = () => {
           if (stat.value < stat.target) {
             return {
               ...stat,
-              value: Math.min(stat.value + Math.ceil(stat.target / 100), stat.target),
+              value: Math.min(
+                stat.value + Math.ceil(stat.target / 100),
+                stat.target
+              ),
             };
           }
           return stat;
@@ -103,7 +106,7 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="relative h-screen flex items-center overflow-hidden"
+      className="relative min-h-screen flex items-center md:items-center pt-20 md:pt-0 overflow-hidden"
     >
       {/* Sliding Background Images */}
       <div
@@ -126,19 +129,19 @@ const Hero = () => {
       <div className="relative z-10 container mx-auto px-4">
         <div className="max-w-4xl">
           <div className="text-white mb-8 animate-fade-in">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-7xl font-bold mb-4 leading-snug md:leading-tight">
               {heroSlides[currentSlide].title}
             </h1>
-            <div className="text-xl md:text-2xl text-primary-glow font-semibold mb-4">
+            <div className="text-lg sm:text-xl md:text-2xl text-primary-glow font-semibold mb-4 min-h-[2rem]">
               {heroSlides[currentSlide].subtitle}
             </div>
-            <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-white/90 mb-8 max-w-2xl leading-relaxed">
               {heroSlides[currentSlide].description}
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Button asChild size="lg" className="btn-quote text-lg px-8 py-4">
+            <div className="flex flex-col sm:flex-row gap-4 mb-10">
+              <Button asChild size="lg" className="btn-quote text-lg px-6 sm:px-8 py-3 sm:py-4">
                 <a href="#products">
                   {heroSlides[currentSlide].cta}
                   <ArrowRight className="ml-2" size={20} />
@@ -148,7 +151,7 @@ const Hero = () => {
               <a href="tel:+254743682700">
                 <Button
                   size="lg"
-                  className="text-white border-white/30 hover:bg-white/10 text-lg px-8 py-4"
+                  className="text-white border-white/30 hover:bg-white/10 text-lg px-6 sm:px-8 py-3 sm:py-4"
                 >
                   Contact Us
                 </Button>
@@ -163,9 +166,8 @@ const Hero = () => {
                 <div className="inline-flex items-center justify-center w-12 h-12 bg-primary/20 rounded-full mb-3">
                   <stat.icon size={24} className="text-primary-glow" />
                 </div>
-                <div className="text-3xl font-bold mb-1">
+                <div className="text-2xl md:text-3xl font-bold mb-1">
                   {stat.value}
-                  {stat.label.includes("+") ? "+" : ""}
                 </div>
                 <div className="text-white/80 text-sm">{stat.label}</div>
               </div>
@@ -174,12 +176,12 @@ const Hero = () => {
         </div>
 
         {/* Slide Indicators */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        <div className="absolute bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
           {heroSlides.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                 index === currentSlide
                   ? "bg-primary-glow scale-125"
                   : "bg-white/50 hover:bg-white/70"
@@ -192,15 +194,15 @@ const Hero = () => {
       {/* Arrow Buttons */}
       <button
         onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-2 rounded-full z-20"
+        className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-2 rounded-full z-20"
       >
-        <ChevronLeft className="w-6 h-6" />
+        <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
       </button>
       <button
         onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-2 rounded-full z-20"
+        className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-2 rounded-full z-20"
       >
-        <ChevronRight className="w-6 h-6" />
+        <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
       </button>
 
       {/* Floating WhatsApp Button */}
