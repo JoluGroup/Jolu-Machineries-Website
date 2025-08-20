@@ -17,22 +17,19 @@ app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // --- CORS setup ---
-const allowedOrigins = [
-  "http://localhost:8080",                       // local dev
-  "https://jolu-machineries.onrender.com"        // deployed frontend
-];
-
-app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error(`CORS policy: origin ${origin} not allowed`));
-    }
-  },
-  credentials: true,
-  methods: ["GET","POST","PUT","DELETE","OPTIONS"]
-}));
+// Allow localhost in dev, any origin in production
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // allow Postman, mobile apps, etc.
+      if (origin.includes("localhost")) return callback(null, true); // dev
+      if (process.env.NODE_ENV === "production") return callback(null, true); // deployed frontend
+      return callback(new Error(`CORS policy: origin ${origin} not allowed`));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  })
+);
 
 // Handle preflight requests globally
 app.options("*", cors());
@@ -44,11 +41,7 @@ app.use(limiter);
 // --- MongoDB connection ---
 const uri = process.env.MONGO_URI;
 const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
+  serverApi: { version: ServerApiVersion.v1, strict: true, deprecationErrors: true },
 });
 
 let db;
@@ -71,10 +64,7 @@ if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT || 465),
     secure: Number(process.env.SMTP_PORT) === 465,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
+    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
   });
 
   transporter.verify((error, success) => {
@@ -169,7 +159,7 @@ app.post("/api/schedule", async (req, res) => {
   }
 });
 
-// ✅ Quotes Route (with CORS)
+// ✅ Quotes Route
 const quoteRoutes = require("./routes/quoteRoutes");
 app.use("/api/quotes", quoteRoutes);
 
