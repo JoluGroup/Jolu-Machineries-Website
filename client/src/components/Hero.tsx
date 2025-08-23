@@ -18,9 +18,9 @@ import heroImage5 from "@/assets/hero/tractor3.jpg";
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [animatedStats, setAnimatedStats] = useState([
-    { value: 0, target: 500, label: "Tractors Sold", icon: Tractor },
-    { value: 0, target: 15, label: "Years Experience", icon: Award },
-    { value: 0, target: 1000, label: "Happy Customers", icon: Users },
+    { value: 0, target: 150, label: "Tractors Sold", icon: Tractor },
+    { value: 0, target: 5, label: "Years Experience", icon: Award },
+    { value: 0, target: 100, label: "Happy Customers", icon: Users },
   ]);
 
   const heroSlides = [
