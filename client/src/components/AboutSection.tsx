@@ -2,7 +2,7 @@ import { Award, Users, Wrench, ShieldCheck, Truck, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import kiprotichChebet from "@/assets/testimonials/kiprotich-chebet.jpeg";
+import nancyChebet from "@/assets/testimonials/nancy-chebet.jpeg";
 import geoffreyBosire from "@/assets/testimonials/geoffrey-bosire.jpeg";
 import johnOuma from "@/assets/testimonials/john-ouma.jpeg";
 
@@ -20,9 +20,9 @@ const AboutSection = () => {
   const features = [
     {
       icon: Award,
-      title: "15+ Years Experience",
+      title: "5+ Years Experience",
       description:
-        "Over a decade of expertise in agricultural machinery sales and service"
+        "Yeasrs of expertise in agricultural machinery sales and service"
     },
     {
       icon: Users,
@@ -58,10 +58,10 @@ const AboutSection = () => {
 
 const testimonials = [
   {
-    name: "Kiprotich Chebet",
+    name: "Nancy Chebet",
     role: "Large Scale Maize Farmer",
     location: "Eldoret",
-    photo: kiprotichChebet,
+    photo: nancyChebet,
     comment:
       "Jolu Machineries delivered my tractor on time and gave me hands-on training. It has completely transformed my farm’s efficiency.",
     rating: 5
