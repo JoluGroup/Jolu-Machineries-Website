@@ -2,7 +2,7 @@ import { Award, Users, Wrench, ShieldCheck, Truck, Clock } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import nancyChebet from "@/assets/testimonials/nancy-chebet.jpeg";
+import faithYegon from "@/assets/testimonials/faith-yegon.jpeg";
 import geoffreyBosire from "@/assets/testimonials/geoffrey-bosire.jpeg";
 import johnOuma from "@/assets/testimonials/john-ouma.jpeg";
 
@@ -58,10 +58,10 @@ const AboutSection = () => {
 
 const testimonials = [
   {
-    name: "Nancy Chebet",
+    name: "Faith Yegon",
     role: "Large Scale Maize Farmer",
     location: "Eldoret",
-    photo: nancyChebet,
+    photo: faithYegon,
     comment:
       "Jolu Machineries delivered my tractor on time and gave me hands-on training. It has completely transformed my farm’s efficiency.",
     rating: 5
@@ -105,7 +105,7 @@ const testimonials = [
             Your Trusted Agricultural Partner
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            For over 5 years, Jolu Agricultural & Construction Machineries has been Kenya's
+            For over 5 years, Jolu Machineries has been Kenya's
             premier dealer for Zoomlion agricultural equipment. We combine industry expertise
             with unwavering commitment to help farmers achieve greater productivity and success.
           </p>

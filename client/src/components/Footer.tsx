@@ -238,7 +238,7 @@ const Footer = () => {
 
         <div className="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0">
           <div className="text-white/60 text-sm">
-            © {new Date().getFullYear()} Jolu Agricultural & Construction Machineries. All rights reserved.
+            © {new Date().getFullYear()} Jolu Machineries. All rights reserved.
           </div>
         </div>
       </div>
