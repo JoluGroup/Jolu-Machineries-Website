@@ -12,6 +12,7 @@ const Footer = () => {
 
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false); // ✅ Loader state
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -28,7 +29,7 @@ const Footer = () => {
     }
   };
 
-  const handleSubscribe = () => {
+  const handleSubscribe = async () => {
     if (!email) {
       setMessage("⚠️ Please enter an email address.");
       return;
@@ -40,11 +41,45 @@ const Footer = () => {
       return;
     }
 
-    // ✅ Replace with API/Backend call later
-    console.log("Subscribed with:", email);
+    try {
+      setLoading(true); // ✅ show loader
+      setMessage("");
 
-    setMessage("✅ Thank you for subscribing!");
-    setEmail("");
+      const API_BASE =
+        import.meta.env?.VITE_API_BASE ||
+        (import.meta.env.MODE === "development"
+          ? "http://localhost:5000"
+          : "");
+
+      const res = await fetch(`${API_BASE}/api/subscribe`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      let data: any = {};
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error("Invalid JSON response from server");
+      }
+
+      if (!res.ok || !data.ok) {
+        throw new Error(data?.message || "Subscription failed");
+      }
+
+      if (data.status === "already_subscribed") {
+        setMessage("ℹ️ You’re already subscribed with this email.");
+      } else {
+        setMessage("✅ Thank you for subscribing!");
+      }
+      setEmail("");
+    } catch (err) {
+      console.error(err);
+      setMessage("⚠️ Could not subscribe right now. Please try again later.");
+    } finally {
+      setLoading(false); // ✅ hide loader
+    }
   };
 
   const quickLinks = [
@@ -181,20 +216,23 @@ const Footer = () => {
               farming tips, and exclusive offers.
             </p>
 
+            {/* ✅ Updated Section with loader */}
             <div className="space-y-3">
-              <div className="flex space-x-2">
+              <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
                 <Input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  disabled={loading} // ✅ disable input when loading
                 />
                 <Button
                   onClick={handleSubscribe}
                   className="bg-primary hover:bg-primary-glow px-6"
+                  disabled={loading} // ✅ disable button when loading
                 >
-                  Subscribe
+                  {loading ? "Subscribing..." : "Subscribe"} {/* ✅ loader text */}
                 </Button>
               </div>
               {message && (
@@ -202,6 +240,8 @@ const Footer = () => {
                   className={`text-sm mt-2 ${
                     message.startsWith("⚠️")
                       ? "text-yellow-400"
+                      : message.startsWith("ℹ️")
+                      ? "text-blue-400"
                       : "text-green-400"
                   }`}
                 >

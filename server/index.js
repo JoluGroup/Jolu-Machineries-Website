@@ -55,7 +55,19 @@ async function connectToMongo() {
     process.exit(1);
   }
 }
-connectToMongo();
+
+// Ensure unique indexes used by this API
+async function ensureIndexes() {
+  try {
+    await db.collection("subscribers").createIndex({ email: 1 }, { unique: true });
+    console.log("✅ subscribers.email unique index ensured");
+  } catch (e) {
+    // If it already exists, this will usually be a no-op or a harmless message
+    console.error("Index creation notice:", e.message);
+  }
+}
+
+connectToMongo().then(() => ensureIndexes());
 
 // --- Email transporter ---
 let transporter = null;
@@ -63,7 +75,7 @@ if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
   transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT || 465),
-    secure: Number(process.env.SMTP_PORT) === 465,
+    secure: Number(process.env.SMTP_PORT || 465) === 465,
     auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
   });
 
@@ -96,6 +108,11 @@ const scheduleSchema = z.object({
   preferredTime: t(2),
   product: t(2),
   notes: z.string().trim().optional().nullable(),
+});
+
+// ✅ New: subscribe schema
+const subscribeSchema = z.object({
+  email: z.string().trim().email(),
 });
 
 // --- Exports for routes ---
@@ -162,6 +179,60 @@ app.post("/api/schedule", async (req, res) => {
 // ✅ Quotes Route
 const quoteRoutes = require("./routes/quoteRoutes");
 app.use("/api/quotes", quoteRoutes);
+
+// ✅ NEW: Subscribe Route
+app.post("/api/subscribe", async (req, res) => {
+  try {
+    const { email } = subscribeSchema.parse(req.body);
+    const normalized = email.toLowerCase();
+    const now = new Date();
+
+    // Upsert (no duplicates)
+    const result = await db.collection("subscribers").updateOne(
+      { email: normalized },
+      { $setOnInsert: { email: normalized, createdAt: now } },
+      { upsert: true }
+    );
+
+    const already = result.upsertedCount === 0;
+
+    // Optional emails
+    if (transporter) {
+      if (process.env.EMAIL_TO) {
+        await transporter.sendMail({
+          to: process.env.EMAIL_TO,
+          from: process.env.EMAIL_FROM || "noreply@example.com",
+          subject: `New newsletter subscriber: ${normalized}`,
+          text: `A new subscriber signed up at ${now.toISOString()}.\nEmail: ${normalized}`,
+        });
+      }
+
+      if (process.env.SEND_WELCOME_EMAIL === "true") {
+        await transporter.sendMail({
+          to: normalized,
+          from: process.env.EMAIL_FROM || "noreply@example.com",
+          subject: "Welcome to Jolu Machineries Newsletter",
+          text:
+            "Thank you for subscribing to Jolu Machineries! You'll receive updates on machinery, tips, and offers.\n\nYou can unsubscribe anytime by replying with 'UNSUBSCRIBE'.",
+        });
+      }
+    }
+
+    return res
+      .status(already ? 200 : 201)
+      .json({ ok: true, status: already ? "already_subscribed" : "subscribed" });
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      return res.status(400).json({ ok: false, errors: err.flatten() });
+    }
+    // Handle duplicate key edge case (race conditions)
+    if (err && err.code === 11000) {
+      return res.status(200).json({ ok: true, status: "already_subscribed" });
+    }
+    console.error("Subscribe error:", err);
+    return res.status(500).json({ ok: false, message: "Server error" });
+  }
+});
 
 // --- Root route ---
 app.get("/", (req, res) => {
