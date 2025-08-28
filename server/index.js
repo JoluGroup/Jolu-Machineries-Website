@@ -196,24 +196,21 @@ app.post("/api/subscribe", async (req, res) => {
 
     const already = result.upsertedCount === 0;
 
-    // Optional emails
-    if (transporter) {
-      if (process.env.EMAIL_TO) {
+    // ✅ Send different emails for new vs existing subscriber
+    if (transporter && process.env.EMAIL_TO) {
+      if (already) {
         await transporter.sendMail({
           to: process.env.EMAIL_TO,
           from: process.env.EMAIL_FROM || "noreply@example.com",
-          subject: `New newsletter subscriber: ${normalized}`,
-          text: `A new subscriber signed up at ${now.toISOString()}.\nEmail: ${normalized}`,
+          subject: `⚠️ Existing subscriber tried again: ${normalized}`,
+          text: `The email ${normalized} attempted to subscribe again on ${now.toISOString()}, but is already in the subscribers list.`,
         });
-      }
-
-      if (process.env.SEND_WELCOME_EMAIL === "true") {
+      } else {
         await transporter.sendMail({
-          to: normalized,
+          to: process.env.EMAIL_TO,
           from: process.env.EMAIL_FROM || "noreply@example.com",
-          subject: "Welcome to Jolu Machineries Newsletter",
-          text:
-            "Thank you for subscribing to Jolu Machineries! You'll receive updates on machinery, tips, and offers.\n\nYou can unsubscribe anytime by replying with 'UNSUBSCRIBE'.",
+          subject: `✅ New newsletter subscriber: ${normalized}`,
+          text: `A new subscriber signed up at ${now.toISOString()}.\nEmail: ${normalized}`,
         });
       }
     }
