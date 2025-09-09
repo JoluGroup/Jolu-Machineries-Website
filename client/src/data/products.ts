@@ -1,11 +1,14 @@
 import tractor1 from "@/assets/tractor-1.png";
 import harvester1 from "@/assets/harvester-1.png";
-import implements1 from "@/assets/implements-1.jpg";
+import twodiskplough from "@/assets/twodiskplough.png";
 import tractor2 from "@/assets/tractor-2.png";
 import harvester2 from "@/assets/harvester-2.png";
 import harvester3 from "@/assets/harvester-3.png";
 import harvester4 from "@/assets/harvester-4.png";
 import harvester5 from "@/assets/harvester-5.png";
+import diskHarrow18 from "@/assets/diskHarrow18.jpeg"
+import threeDiskPlough from "@/assets/threeDiskPlough.webp"
+import waterBowser from "@/assets/waterBowser.jpg"
 
 import tractor3 from "@/assets/tractor-3.png";
 import tractor4 from "@/assets/tractor-4.png";
@@ -112,36 +115,39 @@ export const products: Product[] = [
     ctaHeadline: "Looking to harvest more in less time?",
     ctaDescription: "Request a quote or talk to a specialist about the Zoomlion ZL120 Combine Harvester."
   },
+  
   {
     id: "3",
     slug: "implements-set",
-    name: "Agricultural Implements Set",
-    description: "Powerful Farm Implements",
-    image: implements1,
-    longDescription: "A curated set of essential agricultural implements designed to complement your tractors and boost farm productivity. Suitable for ploughing, spraying, cultivating, and harrowing.",
-    keySpecs: [
-      { label: "Compatibility", value: "80–200 HP Tractors" },
-      { label: "Types Included", value: "Plough, Cultivator, Sprayer, Harrow" },
-      { label: "Material Strength", value: "High-Grade Steel" }
-    ],
-    advantages: [
-      "Heavy-duty disc plough for breaking up hard soil",
-      "Rotary harrow for superior leveling",
-      "Boom sprayer for efficient pesticide application",
-      "Multi-purpose cultivator for seedbed prep"
-    ],
-    specTable: {
-      headers: ["Implement", "Details"],
-      rows: [
-        ["Disc Plough", "3-disc, hardened steel"],
-        ["Cultivator", "9-tine adjustable frame"],
-        ["Rotary Harrow", "Heavy-duty blades, 1.8m width"],
-        ["Boom Sprayer", "600L capacity, 10m reach"]
-      ]
-    },
-    ctaHeadline: "Need Implements that Work as Hard as You Do?",
-    ctaDescription: "Talk to us about compatible tools for your farm – get a personalized quote today."
+  name: "2 Disk Plough",
+  description: "Durable Primary Tillage Equipment",
+  image: twodiskplough,
+  longDescription: "The 2 Disk Plough is designed for initial soil breaking and turning, ideal for tough soils and virgin land. Its strong build and efficient design make it perfect for preparing your fields before planting.",
+  keySpecs: [
+    { label: "Compatibility", value: "60 HP and Below Tractors" },
+    { label: "Discs", value: "2 high-strength, heat-treated steel discs" },
+    { label: "Working Width", value: "0.6 – 0.8 m" },
+    { label: "Depth of Cut", value: "Up to 25 cm" }
+  ],
+  advantages: [
+    "Strong penetration for hard and dry soils",
+    "Breaks clods and buries weeds effectively",
+    "Low maintenance, long service life",
+    "Easy attachment and smooth operation with tractors"
+  ],
+  specTable: {
+    headers: ["Specification", "Details"],
+    rows: [
+      ["No. of Discs", "2"],
+      ["Disc Diameter", "660 mm (26 inches)"],
+      ["Tractor Power", "50–120 HP"],
+      ["Weight", "Approx. 320–400 kg"]
+    ]
   },
+  ctaHeadline: "Looking for Reliable Tillage Equipment?",
+  ctaDescription: "Get in touch with us for a 2 Disk Plough built to handle tough conditions and improve your soil preparation."
+},
+
   {
   id: "4",
   slug: "zoomlion-pl2304",
@@ -197,48 +203,47 @@ export const products: Product[] = [
   ctaHeadline: "Interested in the Zoomlion PL2304?",
   ctaDescription: "Get expert advice, a free quote, or schedule a demo. Contact us now to learn more."
 },
+
 {
   id: "5",
-  slug: "tf150-combine-harvester",
-  name: "Zoomlion TF150 Combine Harvester",
-  description: "300hp combine harvester with dual axial flow threshing and advanced cleaning system for large-scale multi-crop harvesting.",
-  image: harvester2,
-  longDescription: "The Zoomlion TF150 is a high-capacity combine harvester equipped with a 300hp Yuchai engine and a dual axial flow threshing and separation system. With advanced intelligent features like floating bridge control, electronic grain tank management, and precise torque distribution, it offers exceptional performance across varying terrains and crop types. Designed for power and productivity, it supports high-speed unloading, flexible header options, and reduced grain loss, making it a reliable choice for wheat, corn, soybeans, and more.",
+  slug: "18-disk-harrow",
+  name: "18 Disk Harrow",
+  description: "Heavy-duty harrow designed for efficient soil breaking and seedbed preparation.",
+  image: diskHarrow18,
+  longDescription: "The 18 Disk Harrow is built for durability and performance, making it ideal for primary tillage, soil pulverization, and seedbed preparation. With its sturdy frame and high-quality boron steel disks, it ensures deep penetration, effective clod breaking, and superior soil mixing, enhancing field productivity across various soil conditions.",
   keySpecs: [
-    { label: "Horse Power", value: "300 hp" },
-    { label: "Grain Tank Capacity", value: "9000 L" },
-    { label: "Weight", value: "12650 kg" }
+    { label: "Number of Disks", value: "18" },
+    { label: "Disk Diameter", value: "610 mm (24 inches)" },
+    { label: "Compatible Tractor Power", value: "60–90 HP" }
   ],
   advantages: [
-    "300hp National III Yuchai engine with Bosch high-pressure fuel system",
-    "Double longitudinal axial flow threshing and separation technology",
-    "Low wheat loss rate (<0.4%) and corn grain breakage rate (<1%)",
-    "Floating bridge system minimizes feeding losses on 10° slopes",
-    "Electronically controlled 9000L grain tank with 55L/s unloading speed",
-    "High-frequency vibrating screen with 900MPa high-strength steel",
-    "Time-sharing hydraulic four-wheel drive for adaptive terrain control",
-    "Supports multiple header types for wheat, corn, and flexible crops",
-    "Strong planetary gearbox and durable H-drive chassis for better passability",
-    "Designed for long operating hours with 600L fuel tank and 3586mm wheelbase"
+    "Efficiently breaks clods and levels soil",
+    "Made with high-quality boron steel discs for durability",
+    "Heavy-duty frame for long-lasting performance",
+    "Ideal for seedbed preparation and weed control",
+    "Works effectively in tough soil conditions",
+    "Easy to attach and operate with standard tractors",
+    "Low maintenance and reliable performance"
   ],
   specTable: {
-    headers: ["Parameter", "Specification"],
+    headers: ["Model", "18 Disk Harrow"],
     rows: [
-      ["Rated HP", "300 hp"],
-      ["Rated Speed", "2200 r/min"],
-      ["Fuel Tank Capacity", "600 L"],
-      ["Grain Tank Capacity", "9000 L"],
-      ["Grain Unloading Speed", "55 L/s"],
-      ["Threshing Rollers", "2 (Dual longitudinal axial flow)"],
-      ["Roller Size", "Ф480×3180 mm"],
-      ["Cleaning Area", "4.3 m²"],
-      ["Wheelbase", "3586 mm"],
-      ["Minimum Ground Clearance", "380 mm"]
+      ["No. of Disks", "18"],
+      ["Disk Diameter", "610 mm (24 inches)"],
+      ["Overall Width", "Approx. 2150 mm"],
+      ["Working Depth", "150–200 mm"],
+      ["Tractor Power Required", "60–90 HP"],
+      ["Frame Type", "Heavy-duty welded steel"],
+      ["Disk Type", "Notched or plain (customizable)"],
+      ["Bearing Type", "Sealed, high-capacity bearings"],
+      ["Weight", "Approx. 550–650 kg"],
+      ["Application", "Primary tillage, clod breaking, soil mixing, seedbed preparation"]
     ]
   },
-  ctaHeadline: "Harvest bigger, faster, and smarter with the TF150",
-  ctaDescription: "Contact us today to learn how the Zoomlion TF150 can upgrade your harvest operations with unmatched power and efficiency."
+  ctaHeadline: "Looking for efficient soil preparation?",
+  ctaDescription: "Get a quote or speak with our product team about the 18 Disk Harrow today."
 },
+
 {
   id: "6",
   slug: "zoomlion-pg2004",
@@ -736,22 +741,123 @@ export const products: Product[] = [
   ctaHeadline: "Drive the future of farming with intelligent hybrid power.",
   ctaDescription:
     "Get in touch to learn how the Zoomlion DV3504 combines cutting-edge control, comfort, and raw power to elevate your agricultural efficiency."
+},
+
+{
+  id: "16",
+  slug: "tf150-combine-harvester",
+  name: "Zoomlion TF150 Combine Harvester",
+  description: "300hp combine harvester with dual axial flow threshing and advanced cleaning system for large-scale multi-crop harvesting.",
+  image: harvester2,
+  longDescription: "The Zoomlion TF150 is a high-capacity combine harvester equipped with a 300hp Yuchai engine and a dual axial flow threshing and separation system. With advanced intelligent features like floating bridge control, electronic grain tank management, and precise torque distribution, it offers exceptional performance across varying terrains and crop types. Designed for power and productivity, it supports high-speed unloading, flexible header options, and reduced grain loss, making it a reliable choice for wheat, corn, soybeans, and more.",
+  keySpecs: [
+    { label: "Horse Power", value: "300 hp" },
+    { label: "Grain Tank Capacity", value: "9000 L" },
+    { label: "Weight", value: "12650 kg" }
+  ],
+  advantages: [
+    "300hp National III Yuchai engine with Bosch high-pressure fuel system",
+    "Double longitudinal axial flow threshing and separation technology",
+    "Low wheat loss rate (<0.4%) and corn grain breakage rate (<1%)",
+    "Floating bridge system minimizes feeding losses on 10° slopes",
+    "Electronically controlled 9000L grain tank with 55L/s unloading speed",
+    "High-frequency vibrating screen with 900MPa high-strength steel",
+    "Time-sharing hydraulic four-wheel drive for adaptive terrain control",
+    "Supports multiple header types for wheat, corn, and flexible crops",
+    "Strong planetary gearbox and durable H-drive chassis for better passability",
+    "Designed for long operating hours with 600L fuel tank and 3586mm wheelbase"
+  ],
+  specTable: {
+    headers: ["Parameter", "Specification"],
+    rows: [
+      ["Rated HP", "300 hp"],
+      ["Rated Speed", "2200 r/min"],
+      ["Fuel Tank Capacity", "600 L"],
+      ["Grain Tank Capacity", "9000 L"],
+      ["Grain Unloading Speed", "55 L/s"],
+      ["Threshing Rollers", "2 (Dual longitudinal axial flow)"],
+      ["Roller Size", "Ф480×3180 mm"],
+      ["Cleaning Area", "4.3 m²"],
+      ["Wheelbase", "3586 mm"],
+      ["Minimum Ground Clearance", "380 mm"]
+    ]
+  },
+  ctaHeadline: "Harvest bigger, faster, and smarter with the TF150",
+  ctaDescription: "Contact us today to learn how the Zoomlion TF150 can upgrade your harvest operations with unmatched power and efficiency."
+},
+{
+  id: "17",
+  slug: "3-disk-plough",
+  name: "3-Disk Plough",
+  description: "Heavy-duty plough with three discs, designed for primary tillage and effective soil turning for tractors within 70–90 HP range.",
+  image: threeDiskPlough,
+  longDescription: "The 3-Disk Plough is a robust implement built for durability and efficiency in tough soil conditions. It is designed to break, lift, and turn soil effectively, making it ideal for land preparation before planting. With its heavy-duty frame and three sharp discs, it penetrates hard soils with ease and ensures uniform working depth. Compatible with tractors ranging from 70–90 HP, this plough provides reliable performance for medium-scale farming operations.",
+  keySpecs: [
+    { label: "Compatible Horse Power", value: "70–90 HP" },
+    { label: "Working Width", value: "Approx. 90 cm – 110 cm" },
+    { label: "Number of Discs", value: "3" },
+    { label: "Disc Diameter", value: "660 mm (26 in)" },
+    { label: "Approx. Weight", value: "320–350 kg" }
+  ],
+  advantages: [
+    "Strong frame and construction for long service life",
+    "Three sharp discs for deep soil penetration and turning",
+    "Adjustable working depth for different soil conditions",
+    "Effective in hard, dry, and rocky soils",
+    "Low maintenance design with reliable performance",
+    "Suitable for medium-scale land preparation"
+  ],
+  specTable: {
+    headers: ["Parameter", "Specification"],
+    rows: [
+      ["Tractor Compatibility", "70–90 HP"],
+      ["No. of Discs", "3"],
+      ["Disc Diameter", "660 mm"],
+      ["Working Width", "90–110 cm"],
+      ["Working Depth", "25–30 cm"],
+      ["Approx. Weight", "320–350 kg"]
+    ]
+  },
+  ctaHeadline: "Prepare your land with strength and precision",
+  ctaDescription: "Upgrade your tillage with the 3-Disk Plough — built to handle tough soils while ensuring efficient land preparation."
+},
+
+{
+  id: "18",
+  slug: "water-bowser",
+  name: "Water Bowser",
+  description: "Durable water transport and supply implement designed for irrigation, livestock, and dust suppression needs on farms and worksites.",
+  image: waterBowser,
+  longDescription: "The Water Bowser is a versatile implement built for efficient storage and transportation of water. Designed with a robust steel tank and heavy-duty trailer chassis, it ensures reliable performance in both agricultural and construction environments. With a capacity range of 2000–5000 litres, it is suitable for irrigation, livestock watering, spraying, and dust suppression. The bowser is equipped with a high-pressure pump and multiple discharge outlets for efficient water delivery, making it a practical solution for medium to large-scale operations.",
+  keySpecs: [
+    { label: "Capacity Range", value: "2000–5000 Litres" },
+    { label: "Pump Type", value: "High-Pressure Water Pump" },
+    { label: "Chassis", value: "Heavy-Duty Trailer Mounted" },
+    { label: "Material", value: "Corrosion-Resistant Steel Tank" },
+    { label: "Usage", value: "Irrigation, Livestock, Dust Suppression" }
+  ],
+  advantages: [
+    "Durable steel tank with corrosion-resistant coating",
+    "Multiple water discharge outlets with adjustable flow",
+    "High-pressure pump for fast and efficient delivery",
+    "Heavy-duty chassis ensures stability during towing",
+    "Easy tractor attachment for mobility",
+    "Low maintenance and long service life",
+    "Ideal for farming, livestock, and construction support"
+  ],
+  specTable: {
+    headers: ["Parameter", "Specification"],
+    rows: [
+      ["Capacity", "2000–5000 Litres"],
+      ["Pump Type", "High-Pressure Pump"],
+      ["Chassis", "Trailer Mounted"],
+      ["Material", "Steel with Corrosion Protection"],
+      ["Applications", "Irrigation, Livestock, Dust Control"]
+    ]
+  },
+  ctaHeadline: "Reliable water supply wherever you need it",
+  ctaDescription: "Enhance your farming and construction operations with the Water Bowser — a durable and efficient solution for water transport and delivery."
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

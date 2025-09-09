@@ -13,7 +13,13 @@ import harvester4 from "@/assets/harvester-4.png";
 import harvester5 from "@/assets/harvester-5.png";
 
 
-import implements1 from "@/assets/implements-1.jpg";
+import twodiskplough from "@/assets/twodiskplough.png";
+import diskHarrow18 from "@/assets/diskHarrow18.jpeg";
+import threeDiskPlough from "@/assets/threeDiskPlough.webp";
+import waterBowser from "@/assets/waterBowser.jpg";
+
+
+
 import tractor2 from "@/assets/tractor-2.png";
 import tractor3 from "@/assets/tractor-3.png";
 import tractor4 from "@/assets/tractor-4.png";
@@ -32,10 +38,10 @@ const ProductsSection = () => {
   const [visibleCount, setVisibleCount] = useState(3); // Load 6 products initially
 
   const categories = [
-    { id: 'all', name: 'All Products', count: 15 },
+    { id: 'all', name: 'All Products', count: 18 },
     { id: 'tractors', name: 'Tractors', count: 9 },
     { id: 'harvesters', name: 'Harvesters', count: 5 },
-    { id: 'implements', name: 'Implements', count: 1 },
+    { id: 'implements', name: 'Implements', count: 4 },
   ];
 
   const products = [
@@ -69,18 +75,24 @@ const ProductsSection = () => {
       features: ["Weight 4080kg", "Cutting Width 2360mm", "Hydrostatic Drive"],
       badge: "Premium"
     },
-    {
-      id: 3,
-      slug: "implements-set",
-      name: "Agricultural Implements Set",
-      category: "implements",
-      image: implements1,
-      horsepower: "Compatible with 80-200 HP",
-      rating: 4.7,
-      reviews: 31,
-      features: ["Disc Plough", "Cultivator", "Rotary Harrow", "Boom Sprayer"],
-      badge: "Value Pack"
-    },
+{
+  id: 3,
+  slug: "implements-set",
+  name: "2 Disk Plough",
+  category: "implements",
+  image: twodiskplough,
+  horsepower: "Compatible with 60 HP and Below Tractors",
+  rating: 4.8,
+  reviews: 45,
+  features: [
+    "2 heavy-duty heat-treated steel discs",
+    "Working depth up to 25 cm",
+    "Durable frame for tough soils",
+    "Easy tractor attachment"
+  ],
+  badge: "Best Seller"
+},
+
     {
   id: 4,
   slug: "zoomlion-rk504-704",
@@ -102,28 +114,23 @@ const ProductsSection = () => {
 
 {
   id: 5,
-  slug: "tf150-combine-harvester",
-  name: "Zoomlion TF150 Combine Harvester",
-  category: "harvesters",
-  image: harvester2,
-  horsepower: "300 HP",
-  rating: 4.9,
-  reviews: 18,
+  slug: "18-disk-harrow",
+  name: "18 Disk Harrow",
+  category: "implements",
+  image: diskHarrow18,
+  horsepower: "Compatible with 80–120 HP",
+  rating: 4.8,
+  reviews: 27,
   features: [
-    "300hp National III Yuchai engine with Bosch fuel system",
-    "Light-load modes: 240hp and 185hp for fuel efficiency",
-    "Double longitudinal axial flow threshing & separation system",
-    "Low loss rates: <0.4% for wheat, <1% for corn",
-    "Inclined 6.5° upper sieve for better grain cleaning",
-    "Massive 9000L electronically controlled grain tank",
-    "High-speed 55L/s grain unloading system",
-    "Robust 600L fuel tank for extended operation",
-    "Floating header bridge for 10° slope harvesting",
-    "Custom H-drive chassis with 4WD torque distribution",
-    "High-frequency vibrating screen with 900MPa steel",
-    "Adaptable headers: 6.1m wheat, 5.6m flexible, 6-row or 8-row corn"
+    "Heavy-duty 18-disk configuration for efficient soil breaking",
+    "Designed for deep tillage and seedbed preparation",
+    "Durable boron steel disks for long-lasting performance",
+    "Adjustable working depth and angle for different soil conditions",
+    "Robust frame construction for stability in tough terrain",
+    "Low maintenance with easily replaceable wear parts",
+    "Ideal for medium to large-scale farms"
   ],
-  badge: "Premium"
+  badge: "Durable"
 },
 {
   id: 6,
@@ -142,8 +149,27 @@ const ProductsSection = () => {
   ],
   badge: "High Performance"
 },
+
 {
   id: 7,
+  slug: "3-disk-plough",
+  name: "3-Disk Plough",
+  category: "implements",
+  image: threeDiskPlough,
+  horsepower: "70–90 HP",
+  rating: 4.8,
+  reviews: 20,
+  features: [
+    "Heavy-duty frame for durability",
+    "Three sharp discs for effective soil cutting",
+    "Adjustable working depth",
+    "Ideal for primary tillage in tough soils"
+  ],
+  badge: "Reliable Performance"
+},
+
+{
+  id: 8,
   slug: "zoomlion-rd504",
   name: "Zoomlion RD504 Wheeled Tractor",
   category: "tractors",
@@ -161,7 +187,7 @@ const ProductsSection = () => {
   badge: "Compact & Versatile"
 },
 {
-  id: 8,
+  id: 9,
   slug: "zl105-combine-harvester",
   name: "Zoomlion ZL105 Combine Harvester",
   category: "harvesters",
@@ -183,8 +209,9 @@ const ProductsSection = () => {
   ],
   badge: "Efficient"
 },
+
     {
-  id: 9,
+  id: 10,
   slug: "zoomlion-pl2304",
   name: "Zoomlion PL2304 Wheeled Tractor",
   category: "tractors",
@@ -202,7 +229,7 @@ const ProductsSection = () => {
 },
 
 {
-      id: 10,
+      id: 11,
       slug: "zoomlion-rn904",
       name: "Zoomlion RN904/1104 Wheeled Tractor",
       category: "tractors",
@@ -214,8 +241,36 @@ const ProductsSection = () => {
       badge: "Best Seller"
 },
 
+
 {
-  id: 11,
+  id: 12,
+  slug: "water-bowser",
+  name: "Water Bowser",
+  category: "implements",
+  image: waterBowser,
+  capacity: "2000–5000 Litres",
+  rating: 4.8,
+  reviews: 15,
+  features: [
+    "Durable steel tank construction for long service life",
+    "Capacity range from 2000L to 5000L for various needs",
+    "Mounted on heavy-duty trailer chassis for stability",
+    "Equipped with high-pressure pump for efficient water delivery",
+    "Multi-purpose use: irrigation, livestock watering, and dust suppression",
+    "Rear discharge outlets with adjustable flow control",
+    "Easy attachment to tractors for towing",
+    "Corrosion-resistant coating for enhanced durability",
+    "Low maintenance design with strong reliability",
+    "Suitable for medium to large-scale farm and construction operations"
+  ],
+  badge: "Multi-Purpose"
+},
+
+
+
+
+{
+  id: 13,
   slug: "zc123s-combine-harvester",
   name: "Zoomlion ZC123S Combine Harvester",
   category: "harvesters",
@@ -240,7 +295,7 @@ const ProductsSection = () => {
   badge: "Versatile"
 },
 {
-  id: 12,
+  id: 14,
   slug: "zoomlion-rs1304-1604",
   name: "Zoomlion RS1304/1604 Wheeled Tractor",
   category: "tractors",
@@ -258,7 +313,7 @@ const ProductsSection = () => {
   badge: "Maximum Power & Performance"
 },
 {
-  id: 13,
+  id: 15,
   slug: "zoomlion-rg1804-2004",
   name: "Zoomlion RG1804/2004 Wheeled Tractor",
   category: "tractors",
@@ -276,7 +331,7 @@ const ProductsSection = () => {
   badge: "Heavy-Duty Precision & Endurance"
 },
 {
-  id: 14,
+  id: 16,
   slug: "zoomlion-te100-combine-harvester",
   name: "Zoomlion TE100 Combine Harvester",
   category: "harvesters",
@@ -301,7 +356,7 @@ const ProductsSection = () => {
   badge: "Powerful & Multi-Crop"
 },
 {
-  id: "15",
+  id: 17,
   slug: "zoomlion-dv3504-wheeled-tractor",
   name: "Zoomlion DV3504 Wheeled Tractor",
   category: "tractors",
@@ -324,6 +379,31 @@ const ProductsSection = () => {
     "Built-in torque damper clutch for high-efficiency under varying loads"
   ],
   badge: "Hybrid Intelligence & Strength"
+},
+{
+  id: 18,
+  slug: "tf150-combine-harvester",
+  name: "Zoomlion TF150 Combine Harvester",
+  category: "harvesters",
+  image: harvester2,
+  horsepower: "300 HP",
+  rating: 4.9,
+  reviews: 18,
+  features: [
+    "300hp National III Yuchai engine with Bosch fuel system",
+    "Light-load modes: 240hp and 185hp for fuel efficiency",
+    "Double longitudinal axial flow threshing & separation system",
+    "Low loss rates: <0.4% for wheat, <1% for corn",
+    "Inclined 6.5° upper sieve for better grain cleaning",
+    "Massive 9000L electronically controlled grain tank",
+    "High-speed 55L/s grain unloading system",
+    "Robust 600L fuel tank for extended operation",
+    "Floating header bridge for 10° slope harvesting",
+    "Custom H-drive chassis with 4WD torque distribution",
+    "High-frequency vibrating screen with 900MPa steel",
+    "Adaptable headers: 6.1m wheat, 5.6m flexible, 6-row or 8-row corn"
+  ],
+  badge: "Premium"
 }
 
     // Add more products here as needed
