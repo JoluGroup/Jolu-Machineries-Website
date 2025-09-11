@@ -206,13 +206,13 @@ export const products: Product[] = [
 
 {
   id: "5",
-  slug: "18-disk-harrow",
-  name: "18 Disk Harrow",
+  slug: "disk-harrow",
+  name: "Disk Harrow",
   description: "Heavy-duty harrow designed for efficient soil breaking and seedbed preparation.",
   image: diskHarrow18,
-  longDescription: "The 18 Disk Harrow is built for durability and performance, making it ideal for primary tillage, soil pulverization, and seedbed preparation. With its sturdy frame and high-quality boron steel disks, it ensures deep penetration, effective clod breaking, and superior soil mixing, enhancing field productivity across various soil conditions.",
+  longDescription: "The Disk Harrow is built for durability and performance, making it ideal for primary tillage, soil pulverization, and seedbed preparation. With its sturdy frame and high-quality boron steel disks, it ensures deep penetration, effective clod breaking, and superior soil mixing, enhancing field productivity across various soil conditions.",
   keySpecs: [
-    { label: "Number of Disks", value: "18" },
+    { label: "Number of Disks", value: "18/20/24" },
     { label: "Disk Diameter", value: "610 mm (24 inches)" },
     { label: "Compatible Tractor Power", value: "60–90 HP" }
   ],
@@ -226,9 +226,9 @@ export const products: Product[] = [
     "Low maintenance and reliable performance"
   ],
   specTable: {
-    headers: ["Model", "18 Disk Harrow"],
+    headers: ["Model", "Disk Harrow"],
     rows: [
-      ["No. of Disks", "18"],
+      ["No. of Disks", "18/20/24"],
       ["Disk Diameter", "610 mm (24 inches)"],
       ["Overall Width", "Approx. 2150 mm"],
       ["Working Depth", "150–200 mm"],
@@ -241,7 +241,7 @@ export const products: Product[] = [
     ]
   },
   ctaHeadline: "Looking for efficient soil preparation?",
-  ctaDescription: "Get a quote or speak with our product team about the 18 Disk Harrow today."
+  ctaDescription: "Get a quote or speak with our product team about the Disk Harrow today."
 },
 
 {

@@ -35,7 +35,7 @@ const ProductsSection = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [visibleCount, setVisibleCount] = useState(3); // Load 6 products initially
+  const [visibleCount, setVisibleCount] = useState(6); // Load 6 products initially
 
   const categories = [
     { id: 'all', name: 'All Products', count: 18 },
@@ -114,8 +114,8 @@ const ProductsSection = () => {
 
 {
   id: 5,
-  slug: "18-disk-harrow",
-  name: "18 Disk Harrow",
+  slug: "disk-harrow",
+  name: "Disk Harrow",
   category: "implements",
   image: diskHarrow18,
   horsepower: "Compatible with 80–120 HP",
@@ -561,7 +561,7 @@ const ProductsSection = () => {
               size="lg"
               variant="outline"
               className="hover:bg-primary hover:text-primary-foreground"
-              onClick={() => setVisibleCount((prev) => prev + 3)}
+              onClick={() => setVisibleCount((prev) => prev + 6)}
             >
               Load More Products
             </Button>

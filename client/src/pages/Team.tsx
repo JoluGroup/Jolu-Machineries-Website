@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Footer from "@/components/Footer";
-import Header from "@/components/Header"; // ✅ Import your header
+import Header from "@/components/Header";
 import { X } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -21,10 +21,26 @@ const teamMembers = [
   },
   {
     name: "Shem",
-    title: "General Manager",
+    title: "Director of Operations",
+    roles: "Operations, After-sales Services & Digital Marketing (Graphics Design)",
     image: "/lovable-uploads/team/Shem.png",
-    tier: "gm",
-    bio: "Shem ensures the smooth running of operations at Jolu Machineries. From logistics to service delivery, his eye for detail and proactive leadership keep the team aligned and efficient, supporting both farmers and partners."
+    tier: "management",
+    bio: "Shem oversees operational strategy and execution, ensuring efficiency and consistency in service delivery. His leadership drives smooth coordination across departments and enhances customer satisfaction."
+  },
+  {
+    name: "Kelvin",
+    title: "General Manager",
+    roles: "Finance, HR & IT",
+    image: "/lovable-uploads/team/Kelvin.png",
+    tier: "management",
+    bio: "Kelvin provides overall leadership and direction for Jolu Machineries. His vision for growth and commitment to excellence continues to strengthen the company’s position as a trusted partner for farmers across Kenya."
+  },
+  {
+    name: "Dennis",
+    title: "Head of Operations and Business Development",
+    image: "/lovable-uploads/team/Dennis.png",
+    tier: "operations",
+    bio: "Dennis brings extensive experience in business development and operations management. He is dedicated to expanding our market reach and optimizing our service delivery to meet the evolving needs of our clients."
   },
   {
     name: "Hesbon",
@@ -55,6 +71,12 @@ const TeamCard = ({ member, setSelectedMember }) => (
       </h3>
       <p className="mt-1 text-gray-600 dark:text-gray-300 text-xs sm:text-sm line-clamp-2">
         {member.title}
+        {member.roles && (
+          <>
+            <br />
+            <span className="text-xs">{member.roles}</span>
+          </>
+        )}
       </p>
     </div>
   </motion.div>
@@ -69,13 +91,14 @@ const Team = () => {
 
   const grouped = {
     executives: teamMembers.filter((m) => m.tier === "executives"),
-    gm: teamMembers.filter((m) => m.tier === "gm"),
+    management: teamMembers.filter((m) => m.tier === "management"),
+    operations: teamMembers.filter((m) => m.tier === "operations"),
     partner: teamMembers.filter((m) => m.tier === "partner")
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-white dark:bg-zinc-900 text-gray-900 dark:text-white transition-colors">
-      <Header /> {/* ✅ Added Header here */}
+      <Header />
 
       <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
         <div className="relative mb-12 max-w-5xl mx-auto">
@@ -92,20 +115,38 @@ const Team = () => {
         </div>
 
         <div className="space-y-16 max-w-7xl mx-auto">
+          {/* Executive Section (John & Lucy) */}
           <div className="flex justify-center flex-wrap gap-6 sm:gap-8">
             {grouped.executives.map((m, i) => (
               <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
             ))}
           </div>
-          <div className="flex justify-center">
-            {grouped.gm.map((m, i) => (
+
+          {/* Management Section (Shem & Kelvin) */}
+          <div className="flex justify-center flex-wrap gap-6 sm:gap-8">
+            {grouped.management.map((m, i) => (
               <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
             ))}
           </div>
-          <div className="flex justify-center flex-wrap gap-6 sm:gap-8">
-            {grouped.partner.map((m, i) => (
-              <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
-            ))}
+
+          {/* Operations Section (Dennis) */}
+          <div className="mt-8 text-center">
+            <h2 className="text-2xl font-bold mb-4">Our Operations</h2>
+            <div className="flex justify-center flex-wrap gap-6 sm:gap-8">
+              {grouped.operations.map((m, i) => (
+                <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
+              ))}
+            </div>
+          </div>
+
+          {/* Partners Section (Hesbon) */}
+          <div className="mt-8 text-center">
+            <h2 className="text-2xl font-bold mb-4">Our Partners</h2>
+            <div className="flex justify-center flex-wrap gap-6 sm:gap-8">
+              {grouped.partner.map((m, i) => (
+                <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
+              ))}
+            </div>
           </div>
         </div>
 
@@ -134,6 +175,12 @@ const Team = () => {
                   </h2>
                   <p className="text-sm sm:text-base text-gray-500 dark:text-gray-300 mb-3">
                     {selectedMember.title}
+                    {selectedMember.roles && (
+                      <>
+                        <br />
+                        <span className="text-sm">{selectedMember.roles}</span>
+                      </>
+                    )}
                   </p>
                   <p className="text-gray-700 dark:text-gray-200 text-sm sm:text-base text-justify leading-relaxed">
                     {selectedMember.bio}

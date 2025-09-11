@@ -21,6 +21,8 @@ const Header = () => {
       ],
     },
     { name: "Schedule", href: "/schedule" },
+    { name: "News", href: "/news" },
+
   ] as const;
 
   return (

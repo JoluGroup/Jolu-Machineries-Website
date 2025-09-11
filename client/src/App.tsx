@@ -15,6 +15,8 @@ import ProductDetail from "./pages/ProductDetail";
 
 import Team from "@/pages/Team";
 import Gallery from "@/pages/Gallery";
+import News from "@/pages/News";
+
 
 const queryClient = new QueryClient();
 
@@ -32,7 +34,9 @@ const App = () => (
           <Route path="/products" element={<ProductList />} />
           <Route path="/products/:slug" element={<ProductDetail />} />
           <Route path="/team" element={<Team />} />
-          <Route path="/gallery" element={<Gallery />} /> {/* ✅ Gallery route */}
+          <Route path="/gallery" element={<Gallery />} />
+          <Route path="/news" element={<News />} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
