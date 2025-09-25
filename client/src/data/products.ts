@@ -115,38 +115,46 @@ export const products: Product[] = [
     ctaHeadline: "Looking to harvest more in less time?",
     ctaDescription: "Request a quote or talk to a specialist about the Zoomlion ZL120 Combine Harvester."
   },
-  
+
+
   {
-    id: "3",
-    slug: "implements-set",
-  name: "2 Disk Plough",
-  description: "Durable Primary Tillage Equipment",
-  image: twodiskplough,
-  longDescription: "The 2 Disk Plough is designed for initial soil breaking and turning, ideal for tough soils and virgin land. Its strong build and efficient design make it perfect for preparing your fields before planting.",
+  id: "3",
+  slug: "3-disk-plough",
+  name: "3-Disk Plough",
+  description: "Heavy-duty plough with three discs, designed for primary tillage and effective soil turning for tractors within 70–90 HP range.",
+  image: threeDiskPlough,
+  longDescription: "The 3-Disk Plough is a robust implement built for durability and efficiency in tough soil conditions. It is designed to break, lift, and turn soil effectively, making it ideal for land preparation before planting. With its heavy-duty frame and three sharp discs, it penetrates hard soils with ease and ensures uniform working depth. Compatible with tractors ranging from 70–90 HP, this plough provides reliable performance for medium-scale farming operations.",
   keySpecs: [
-    { label: "Compatibility", value: "60 HP and Below Tractors" },
-    { label: "Discs", value: "2 high-strength, heat-treated steel discs" },
-    { label: "Working Width", value: "0.6 – 0.8 m" },
-    { label: "Depth of Cut", value: "Up to 25 cm" }
+    { label: "Compatible Horse Power", value: "70–90 HP" },
+    { label: "Working Width", value: "Approx. 90 cm – 110 cm" },
+    { label: "Number of Discs", value: "3" },
+    { label: "Disc Diameter", value: "660 mm (26 in)" },
+    { label: "Approx. Weight", value: "320–350 kg" }
   ],
   advantages: [
-    "Strong penetration for hard and dry soils",
-    "Breaks clods and buries weeds effectively",
-    "Low maintenance, long service life",
-    "Easy attachment and smooth operation with tractors"
+    "Strong frame and construction for long service life",
+    "Three sharp discs for deep soil penetration and turning",
+    "Adjustable working depth for different soil conditions",
+    "Effective in hard, dry, and rocky soils",
+    "Low maintenance design with reliable performance",
+    "Suitable for medium-scale land preparation"
   ],
   specTable: {
-    headers: ["Specification", "Details"],
+    headers: ["Parameter", "Specification"],
     rows: [
-      ["No. of Discs", "2"],
-      ["Disc Diameter", "660 mm (26 inches)"],
-      ["Tractor Power", "50–120 HP"],
-      ["Weight", "Approx. 320–400 kg"]
+      ["Tractor Compatibility", "70–90 HP"],
+      ["No. of Discs", "3"],
+      ["Disc Diameter", "660 mm"],
+      ["Working Width", "90–110 cm"],
+      ["Working Depth", "25–30 cm"],
+      ["Approx. Weight", "320–350 kg"]
     ]
   },
-  ctaHeadline: "Looking for Reliable Tillage Equipment?",
-  ctaDescription: "Get in touch with us for a 2 Disk Plough built to handle tough conditions and improve your soil preparation."
+  ctaHeadline: "Prepare your land with strength and precision",
+  ctaDescription: "Upgrade your tillage with the 3-Disk Plough — built to handle tough soils while ensuring efficient land preparation."
 },
+  
+ 
 
   {
   id: "4",
@@ -785,41 +793,37 @@ export const products: Product[] = [
   ctaHeadline: "Harvest bigger, faster, and smarter with the TF150",
   ctaDescription: "Contact us today to learn how the Zoomlion TF150 can upgrade your harvest operations with unmatched power and efficiency."
 },
-{
-  id: "17",
-  slug: "3-disk-plough",
-  name: "3-Disk Plough",
-  description: "Heavy-duty plough with three discs, designed for primary tillage and effective soil turning for tractors within 70–90 HP range.",
-  image: threeDiskPlough,
-  longDescription: "The 3-Disk Plough is a robust implement built for durability and efficiency in tough soil conditions. It is designed to break, lift, and turn soil effectively, making it ideal for land preparation before planting. With its heavy-duty frame and three sharp discs, it penetrates hard soils with ease and ensures uniform working depth. Compatible with tractors ranging from 70–90 HP, this plough provides reliable performance for medium-scale farming operations.",
+
+ {
+    id: "17",
+    slug: "implements-set",
+  name: "2 Disk Plough",
+  description: "Durable Primary Tillage Equipment",
+  image: twodiskplough,
+  longDescription: "The 2 Disk Plough is designed for initial soil breaking and turning, ideal for tough soils and virgin land. Its strong build and efficient design make it perfect for preparing your fields before planting.",
   keySpecs: [
-    { label: "Compatible Horse Power", value: "70–90 HP" },
-    { label: "Working Width", value: "Approx. 90 cm – 110 cm" },
-    { label: "Number of Discs", value: "3" },
-    { label: "Disc Diameter", value: "660 mm (26 in)" },
-    { label: "Approx. Weight", value: "320–350 kg" }
+    { label: "Compatibility", value: "60 HP and Below Tractors" },
+    { label: "Discs", value: "2 high-strength, heat-treated steel discs" },
+    { label: "Working Width", value: "0.6 – 0.8 m" },
+    { label: "Depth of Cut", value: "Up to 25 cm" }
   ],
   advantages: [
-    "Strong frame and construction for long service life",
-    "Three sharp discs for deep soil penetration and turning",
-    "Adjustable working depth for different soil conditions",
-    "Effective in hard, dry, and rocky soils",
-    "Low maintenance design with reliable performance",
-    "Suitable for medium-scale land preparation"
+    "Strong penetration for hard and dry soils",
+    "Breaks clods and buries weeds effectively",
+    "Low maintenance, long service life",
+    "Easy attachment and smooth operation with tractors"
   ],
   specTable: {
-    headers: ["Parameter", "Specification"],
+    headers: ["Specification", "Details"],
     rows: [
-      ["Tractor Compatibility", "70–90 HP"],
-      ["No. of Discs", "3"],
-      ["Disc Diameter", "660 mm"],
-      ["Working Width", "90–110 cm"],
-      ["Working Depth", "25–30 cm"],
-      ["Approx. Weight", "320–350 kg"]
+      ["No. of Discs", "2"],
+      ["Disc Diameter", "660 mm (26 inches)"],
+      ["Tractor Power", "50–120 HP"],
+      ["Weight", "Approx. 320–400 kg"]
     ]
   },
-  ctaHeadline: "Prepare your land with strength and precision",
-  ctaDescription: "Upgrade your tillage with the 3-Disk Plough — built to handle tough soils while ensuring efficient land preparation."
+  ctaHeadline: "Looking for Reliable Tillage Equipment?",
+  ctaDescription: "Get in touch with us for a 2 Disk Plough built to handle tough conditions and improve your soil preparation."
 },
 
 {

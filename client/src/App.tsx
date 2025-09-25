@@ -16,6 +16,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Team from "@/pages/Team";
 import Gallery from "@/pages/Gallery";
 import News from "@/pages/News";
+import KTNInterview from "./pages/KTNInterview";
 
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/team" element={<Team />} />
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/news" element={<News />} />
+          <Route path="/ktn-interview" element={<KTNInterview />} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>

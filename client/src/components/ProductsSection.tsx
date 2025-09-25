@@ -75,22 +75,23 @@ const ProductsSection = () => {
       features: ["Weight 4080kg", "Cutting Width 2360mm", "Hydrostatic Drive"],
       badge: "Premium"
     },
-{
+
+    {
   id: 3,
-  slug: "implements-set",
-  name: "2 Disk Plough",
+  slug: "3-disk-plough",
+  name: "3-Disk Plough",
   category: "implements",
-  image: twodiskplough,
-  horsepower: "Compatible with 60 HP and Below Tractors",
+  image: threeDiskPlough,
+  horsepower: "70–90 HP",
   rating: 4.8,
-  reviews: 45,
+  reviews: 20,
   features: [
-    "2 heavy-duty heat-treated steel discs",
-    "Working depth up to 25 cm",
-    "Durable frame for tough soils",
-    "Easy tractor attachment"
+    "Heavy-duty frame for durability",
+    "Three sharp discs for effective soil cutting",
+    "Adjustable working depth",
+    "Ideal for primary tillage in tough soils"
   ],
-  badge: "Best Seller"
+  badge: "Reliable Performance"
 },
 
     {
@@ -132,41 +133,46 @@ const ProductsSection = () => {
   ],
   badge: "Durable"
 },
+
 {
   id: 6,
-  slug: "zoomlion-pg2004",
-  name: "Zoomlion PG2004 Wheeled Tractor",
+  slug: "zoomlion-rs1304-1604",
+  name: "Zoomlion RS1304/1604 Wheeled Tractor",
   category: "tractors",
-  image: tractor3,
-  horsepower: "200 HP",
+  image: tractor7,
+  horsepower: "130–160 HP",
   rating: 4.9,
-  reviews: 12,
+  reviews: 7,
   features: [
-    "48F+24R Power Shift Gears",
-    "High-pressure Turbocharged Engine",
-    "Smart Electro-Hydraulic Control",
-    "Automatic PTO & GPS Option"
+    "16F+8R Gearbox with Creeper for Precision Tasks",
+    "Powerful Turbocharged Engine for Heavy-Duty Work",
+    "Independent Dual-Speed PTO for Maximum Efficiency",
+    "High-Flow Hydraulic System with Multiple Outputs",
+    "Air-Brake System for Safe High-Speed Towing"
   ],
-  badge: "High Performance"
+  badge: "Maximum Power & Performance"
 },
+
+
 
 {
   id: 7,
-  slug: "3-disk-plough",
-  name: "3-Disk Plough",
+  slug: "implements-set",
+  name: "2 Disk Plough",
   category: "implements",
-  image: threeDiskPlough,
-  horsepower: "70–90 HP",
+  image: twodiskplough,
+  horsepower: "Compatible with 60 HP and Below Tractors",
   rating: 4.8,
-  reviews: 20,
+  reviews: 45,
   features: [
-    "Heavy-duty frame for durability",
-    "Three sharp discs for effective soil cutting",
-    "Adjustable working depth",
-    "Ideal for primary tillage in tough soils"
+    "2 heavy-duty heat-treated steel discs",
+    "Working depth up to 25 cm",
+    "Durable frame for tough soils",
+    "Easy tractor attachment"
   ],
-  badge: "Reliable Performance"
+  badge: "Best Seller"
 },
+
 
 {
   id: 8,
@@ -294,24 +300,27 @@ const ProductsSection = () => {
   ],
   badge: "Versatile"
 },
+
+
 {
   id: 14,
-  slug: "zoomlion-rs1304-1604",
-  name: "Zoomlion RS1304/1604 Wheeled Tractor",
+  slug: "zoomlion-pg2004",
+  name: "Zoomlion PG2004 Wheeled Tractor",
   category: "tractors",
-  image: tractor7,
-  horsepower: "130–160 HP",
+  image: tractor3,
+  horsepower: "200 HP",
   rating: 4.9,
-  reviews: 7,
+  reviews: 12,
   features: [
-    "16F+8R Gearbox with Creeper for Precision Tasks",
-    "Powerful Turbocharged Engine for Heavy-Duty Work",
-    "Independent Dual-Speed PTO for Maximum Efficiency",
-    "High-Flow Hydraulic System with Multiple Outputs",
-    "Air-Brake System for Safe High-Speed Towing"
+    "48F+24R Power Shift Gears",
+    "High-pressure Turbocharged Engine",
+    "Smart Electro-Hydraulic Control",
+    "Automatic PTO & GPS Option"
   ],
-  badge: "Maximum Power & Performance"
+  badge: "High Performance"
 },
+
+
 {
   id: 15,
   slug: "zoomlion-rg1804-2004",

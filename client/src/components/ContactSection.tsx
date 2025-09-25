@@ -64,7 +64,7 @@ const ContactSection = () => {
     { icon: Mail, title: "Email", details: ["info@jolumachineries.com"], action: "Send Email" },
     { icon: Phone, title: "Phone", details: ["+254 743 682 700", "+254 705 038 679"], action: "Call Now" },
     { icon: MapPin, title: "Locations", details: ["Nairobi, Kenya", "Nakuru, Kenya"], action: "Get Directions" },
-    { icon: Clock, title: "Business Hours", details: ["Mon–Fri: 8:00–18:00", "Sat: 9:00–16:00", "Sun: Closed"], action: "Schedule Visit" },
+    { icon: Clock, title: "Business Hours", details: ["Mon–Fri: 9:00–18:00", "Sat: 9:00-13:00", "Sun: Closed"], action: "Schedule Visit" },
   ];
 
   return (

@@ -1,7 +1,7 @@
 // src/pages/News.tsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Calendar, MapPin, Users, Mic, Youtube } from "lucide-react";
+import { Calendar, MapPin, Users, Mic, Youtube, ArrowUp} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -20,36 +20,55 @@ const News: React.FC = () => {
   const metaDescription =
     "The Jolu Group of Companies officially launched on Aug. 23, 2025 at Lowland Estate, Thome, Nairobi — unveiling Jolu Machineries, Jolu Group Security, and partnerships with Equity Bank, Kingdom Bank, and Britam Insurance.";
 
-  useEffect(() => {
-    document.title = metaTitle;
-    let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
-    if (!meta) {
-      meta = document.createElement("meta");
-      meta.name = "description";
-      document.head.appendChild(meta);
-    }
-    meta.content = metaDescription;
+    const [showScroll, setShowScroll] = useState(false);
 
-    const ogTitle = document.querySelector('meta[property="og:title"]') as HTMLMetaElement | null;
-    if (!ogTitle) {
-      const t = document.createElement("meta");
-      t.setAttribute("property", "og:title");
-      t.content = metaTitle;
-      document.head.appendChild(t);
-    } else {
-      ogTitle.content = metaTitle;
-    }
 
-    const ogDesc = document.querySelector('meta[property="og:description"]') as HTMLMetaElement | null;
-    if (!ogDesc) {
-      const d = document.createElement("meta");
-      d.setAttribute("property", "og:description");
-      d.content = metaDescription;
-      document.head.appendChild(d);
+// SEO metadata effect
+useEffect(() => {
+  document.title = metaTitle;
+  let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+  if (!meta) {
+    meta = document.createElement("meta");
+    meta.name = "description";
+    document.head.appendChild(meta);
+  }
+  meta.content = metaDescription;
+
+  const ogTitle = document.querySelector('meta[property="og:title"]') as HTMLMetaElement | null;
+  if (!ogTitle) {
+    const t = document.createElement("meta");
+    t.setAttribute("property", "og:title");
+    t.content = metaTitle;
+    document.head.appendChild(t);
+  } else {
+    ogTitle.content = metaTitle;
+  }
+
+  const ogDesc = document.querySelector('meta[property="og:description"]') as HTMLMetaElement | null;
+  if (!ogDesc) {
+    const d = document.createElement("meta");
+    d.setAttribute("property", "og:description");
+    d.content = metaDescription;
+    document.head.appendChild(d);
+  } else {
+    ogDesc.content = metaDescription;
+  }
+}, [metaTitle, metaDescription]);
+
+// Scroll detection effect
+useEffect(() => {
+  const handleScroll = () => {
+    if (window.scrollY > 300) {
+      setShowScroll(true);
     } else {
-      ogDesc.content = metaDescription;
+      setShowScroll(false);
     }
-  }, []);
+  };
+
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
+
 
   // Speaker data with Google Drive links
   const speakers = [
@@ -101,19 +120,22 @@ const News: React.FC = () => {
     name: "Richard Nyango",
     role: "Client – Farmer, Nandi",
     image: "/lovable-uploads/event/richard.jpg",
-    video: "https://drive.google.com/file/d/14mpWWXAK-2-4cr4BwTvTHIMfeOCcPZDv/view?usp=drive_link/preview", // use /preview for embedding
+    video: "https://drive.google.com/file/d/14mpWWXAK-2-4cr4BwTvTHIMfeOCcPZDv/preview", // use /preview for embedding
     quote: "Jolu Machineries has transformed my farming with reliable equipment and support.",
   },
   {
     name: "Faith Cherotich",
     role: "Client – Agribusiness, Eldoret",
     image: "/lovable-uploads/event/faith.jpg",
-    video: "https://drive.google.com/file/u/0/d/15-cotyYNA6hytNGvogi1KqUvthtxZ6Dd/edit",
-    quote: "The security services give us peace of mind so we can focus on growth.",
+    video: "https://drive.google.com/file/u/0/d/15-cotyYNA6hytNGvogi1KqUvthtxZ6Dd/preview",
+    quote: "I highly recommend machineries from Jolu Machineries as they are durable and their after sales services are top notch.",
   },
 ];
 
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
   return (
     <>
       <Header />
@@ -282,7 +304,7 @@ const News: React.FC = () => {
               <ul className="mb-4 list-disc list-inside">
                 <li><strong>Jolu Machineries</strong> — Agricultural machinery sales, servicing, and spare parts.</li>
                 <li><strong>Jolu Group Security</strong> — Comprehensive building and asset security services.</li>
-                <li><strong>Jolu Ventures</strong> — Customer-oriented dealership in spare parts.</li>
+                <li><strong>Jolu Ventures</strong> — Customer-oriented dealership in spare parts, leasing business and automobile</li>
                 <li>Expanding partnerships with financial institutions and insurers to support customers.</li>
               </ul>
 
@@ -298,7 +320,7 @@ const News: React.FC = () => {
                   <Button size="sm">Email Us</Button>
                 </a>
                 <Link to="/quote" aria-label="Request a demo or quote">
-                  <Button variant="outline" size="sm">Request a Demo / Quote</Button>
+                  <Button variant="outline" size="sm">Request a Quote</Button>
                 </Link>
               </div>
             </article>
@@ -343,6 +365,18 @@ const News: React.FC = () => {
           <Youtube className="w-5 h-5 text-white" />
           <span className="font-semibold text-sm text-white">Watch Full Event</span>
         </a>
+
+        {/* Scroll To Top Button */}
+        {showScroll && (
+          <button
+            onClick={scrollToTop}
+            className="fixed bottom-20 right-6 bg-[hsl(var(--primary))] hover:opacity-90 text-white p-3 rounded-full shadow-lg z-50"
+            aria-label="Scroll to top"
+          >
+            <ArrowUp className="w-5 h-5" />
+          </button>
+        )}
+
       </main>
 
 
