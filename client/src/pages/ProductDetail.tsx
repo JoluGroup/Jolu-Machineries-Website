@@ -90,7 +90,7 @@ const ProductDetail = () => {
                   </Button>
                 </Link>
                 <a
-                  href="https://wa.me/254743682700"
+                  href="https://wa.me/254705038679"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

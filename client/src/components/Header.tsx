@@ -6,35 +6,37 @@ import { Link } from "react-router-dom";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const navItems = [
-    { name: "Home", href: "/#home" },
-    { name: "Products", href: "/#products" },
-    {
-      name: "About Us",
-      dropdown: true,
-      items: [
-        { name: "About Us", href: "/#about" },
-        { name: "Team", href: "/team" },
-        { name: "Documents", href: "/#documents" },
-      ],
-    },
-    {
-      name: "Media & Events",
-      dropdown: true,
-      items: [
-        {
-          name: "Events",
-          dropdown: true,
-          items: [
-            { name: "Grand Business Launch", href: "/news#grand-launch", hot: true },
-            { name: "KTN Interview", href: "/ktn-interview", new: true },
-          ],
-        },
-        { name: "Gallery", href: "/gallery" },
-      ],
-    },
-    { name: "Schedule", href: "/schedule" },
-  ];
+const navItems = [
+  { name: "Home", href: "/#home" },
+  { name: "Products", href: "/#products" },
+  { name: "Slightly Used Tractors", href: "/used-tractors" }, // ✅ New Tab
+  {
+    name: "About Us",
+    dropdown: true,
+    items: [
+      { name: "About Us", href: "/#about" },
+      { name: "Team", href: "/team" },
+      { name: "Documents", href: "/#documents" },
+    ],
+  },
+  {
+    name: "Media & Events",
+    dropdown: true,
+    items: [
+      {
+        name: "Events",
+        dropdown: true,
+        items: [
+          { name: "Grand Business Launch", href: "/news#grand-launch", hot: true },
+          { name: "KTN Interview", href: "/ktn-interview", new: true },
+        ],
+      },
+      { name: "Gallery", href: "/gallery" },
+    ],
+  },
+  { name: "Schedule", href: "/schedule" },
+];
+
 
   return (
     <header className="bg-white/70 dark:bg-zinc-900/70 backdrop-blur supports-[backdrop-filter]:bg-white/50 sticky top-0 z-50 border-b border-zinc-200 dark:border-zinc-800">
@@ -69,7 +71,7 @@ const Header = () => {
               className="h-10 w-10 object-contain"
             />
             <div className="text-2xl font-bold text-primary">
-              JOLU MACHINERIES
+              JOLU
             </div>
           </Link>
 
