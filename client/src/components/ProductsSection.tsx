@@ -48,7 +48,7 @@ const ProductsSection = () => {
     {
       id: 1,
       slug: "zoomlion-rc904-1104",
-      name: "Zoomlion RC904/1104 Wheeled Tractor",
+      name: "ZOOMLION Model RC904/ RC1104 Wheeled Tractor",
       category: "tractors",
       image: tractor6,
       horsepower: "90–110 HP",
@@ -66,7 +66,7 @@ const ProductsSection = () => {
     {
       id: 2,
       slug: "zoomlion-zl120",
-      name: "Zoomlion ZL120 Harvester",
+      name: "ZOOMLION ZL120 Harvester",
       category: "harvesters",
       image: harvester1,
       horsepower: "120 HP",
@@ -97,7 +97,7 @@ const ProductsSection = () => {
     {
   id: 4,
   slug: "zoomlion-rk504-704",
-  name: "Zoomlion RK504/704 Wheeled Tractor",
+  name: "ZOOMLION Model RK504/ RK704 Wheeled Tractor",
   category: "tractors",
   image: tractor5,
   horsepower: "50–70 HP",
@@ -137,7 +137,7 @@ const ProductsSection = () => {
 {
   id: 6,
   slug: "zoomlion-rs1304-1604",
-  name: "Zoomlion RS1304/1604 Wheeled Tractor",
+  name: "ZOOMLION RS1304/1604 Wheeled Tractor",
   category: "tractors",
   image: tractor7,
   horsepower: "130–160 HP",
@@ -177,7 +177,7 @@ const ProductsSection = () => {
 {
   id: 8,
   slug: "zoomlion-rd504",
-  name: "Zoomlion RD504 Wheeled Tractor",
+  name: "ZOOMLION RD504 Wheeled Tractor",
   category: "tractors",
   image: tractor4,
   horsepower: "50 HP",
@@ -195,7 +195,7 @@ const ProductsSection = () => {
 {
   id: 9,
   slug: "zl105-combine-harvester",
-  name: "Zoomlion ZL105 Combine Harvester",
+  name: "ZOOMLION ZL105 Combine Harvester",
   category: "harvesters",
   image: harvester3,
   horsepower: "105 HP",
@@ -219,7 +219,7 @@ const ProductsSection = () => {
     {
   id: 10,
   slug: "zoomlion-pl2304",
-  name: "Zoomlion PL2304 Wheeled Tractor",
+  name: "ZOOMLION PL2304 Wheeled Tractor",
   category: "tractors",
   image: tractor2,
   horsepower: "230 HP",
@@ -237,7 +237,7 @@ const ProductsSection = () => {
 {
       id: 11,
       slug: "zoomlion-rn904",
-      name: "Zoomlion RN904/1104 Wheeled Tractor",
+      name: "ZOOMLION RN904/1104 Wheeled Tractor",
       category: "tractors",
       image: tractor1,
       horsepower: "90-110 HP",
@@ -278,7 +278,7 @@ const ProductsSection = () => {
 {
   id: 13,
   slug: "zc123s-combine-harvester",
-  name: "Zoomlion ZC123S Combine Harvester",
+  name: "ZOOMLION ZC123S Combine Harvester",
   category: "harvesters",
   image: harvester4,
   horsepower: "120 HP",
@@ -305,7 +305,7 @@ const ProductsSection = () => {
 {
   id: 14,
   slug: "zoomlion-pg2004",
-  name: "Zoomlion PG2004 Wheeled Tractor",
+  name: "ZOOMLION PG2004 Wheeled Tractor",
   category: "tractors",
   image: tractor3,
   horsepower: "200 HP",
@@ -324,7 +324,7 @@ const ProductsSection = () => {
 {
   id: 15,
   slug: "zoomlion-rg1804-2004",
-  name: "Zoomlion RG1804/2004 Wheeled Tractor",
+  name: "ZOOMLION RG1804/2004 Wheeled Tractor",
   category: "tractors",
   image: tractor8,
   horsepower: "180–200 HP",
@@ -342,7 +342,7 @@ const ProductsSection = () => {
 {
   id: 16,
   slug: "zoomlion-te100-combine-harvester",
-  name: "Zoomlion TE100 Combine Harvester",
+  name: "ZOOMLION TE100 Combine Harvester",
   category: "harvesters",
   image: harvester5,
   horsepower: "190 HP",
@@ -367,7 +367,7 @@ const ProductsSection = () => {
 {
   id: 17,
   slug: "zoomlion-dv3504-wheeled-tractor",
-  name: "Zoomlion DV3504 Wheeled Tractor",
+  name: "ZOOMLION DV3504 Wheeled Tractor",
   category: "tractors",
   image: tractor9,
   horsepower: "350 HP",
@@ -392,7 +392,7 @@ const ProductsSection = () => {
 {
   id: 18,
   slug: "tf150-combine-harvester",
-  name: "Zoomlion TF150 Combine Harvester",
+  name: "ZOOMLION TF150 Combine Harvester",
   category: "harvesters",
   image: harvester2,
   horsepower: "300 HP",
