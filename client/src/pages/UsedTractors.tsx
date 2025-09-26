@@ -32,7 +32,7 @@ const UsedTractors = () => {
         />
         <div className="absolute inset-0 bg-black/40 flex flex-col justify-center items-center text-center text-white px-4">
           <h1 className="text-3xl md:text-5xl font-bold">
-            RK754-A Slightly Used Tractor for Sale
+            RK754-A Slightly Used Tractor with Plough for Sale
           </h1>
           <p className="mt-4 max-w-2xl">
             A powerful, reliable, and cost-friendly tractor ideal for farmers
