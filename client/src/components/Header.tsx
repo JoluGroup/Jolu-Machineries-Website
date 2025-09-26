@@ -68,9 +68,9 @@ const navItems = [
             <img
               src="/lovable-uploads/jolu-machinery-logo.jpg"
               alt="Jolu Logo"
-              className="h-10 w-10 object-contain"
+              className="h-12 w-15 object-contain"
             />
-            <div className="text-2xl font-bold text-primary">
+            <div className="text-3xl font-bold">
               JOLU
             </div>
           </Link>

@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Cog, Gauge, Weight, Tractor } from "lucide-react";
+import React, { useState, useEffect} from "react";
 
 const UsedTractors = () => {
   // Images for RX754A
@@ -17,6 +18,19 @@ const UsedTractors = () => {
     "/lovable-uploads/used/rx754a-8.jpeg",
     "/lovable-uploads/used/rx754a-9.jpeg",
   ];
+
+  const [modalImg, setModalImg] = useState<string | null>(null);
+
+
+  // Close modal on Escape key
+  useEffect(() => {
+    if (!modalImg) return;
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setModalImg(null);
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [modalImg]);
 
   return (
     <div className="bg-background text-foreground dark:bg-background dark:text-foreground">
@@ -70,7 +84,8 @@ const UsedTractors = () => {
           {images.map((img, index) => (
             <div
               key={index}
-              className="w-full aspect-[4/3] rounded-lg overflow-hidden hover:scale-105 transition-transform"
+              className="w-full aspect-[4/3] rounded-lg overflow-hidden hover:scale-105 transition-transform cursor-pointer"
+              onClick={() => setModalImg(img)}
             >
               <img
                 src={img}
@@ -80,6 +95,27 @@ const UsedTractors = () => {
             </div>
           ))}
         </div>
+
+        {/*Modal*/}
+        {modalImg && (
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
+          <div className="relative w-full h-full flex items-center justify-center">
+            <button
+              className="absolute top-6 right-8 w-12 h-12 flex items-center justify-center rounded-full bg-white shadow-lg text-black text-4xl hover:bg-primary hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-primary z-10"
+              onClick={() => setModalImg(null)}
+              aria-label="Close"
+            >
+              &times;
+            </button>
+            <img
+              src={modalImg}
+              alt="Tractor Large"
+              className="w-full h-full object-contain"
+            />
+          </div>
+        </div>
+        )}
+
       </section>
 
       {/* Key Highlights */}
