@@ -169,7 +169,7 @@ const UsedTractors = () => {
             <thead>
               <tr className="bg-primary text-primary-foreground">
                 <th className="px-4 py-2">Specification</th>
-                <th className="px-4 py-2">RX754-A</th>
+                <th className="px-4 py-2">RK754-A</th>
               </tr>
             </thead>
             <tbody>
