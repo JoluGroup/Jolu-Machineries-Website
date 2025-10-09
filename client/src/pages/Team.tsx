@@ -41,13 +41,6 @@ const teamMembers = [
     image: "/lovable-uploads/team/Dennis.png",
     tier: "operations",
     bio: "Dennis brings extensive experience in business development and operations management. He is dedicated to expanding our market reach and optimizing our service delivery to meet the evolving needs of our clients."
-  },
-  {
-    name: "Hesbon",
-    title: "Business Partner",
-    image: "/lovable-uploads/team/Hesbon.png",
-    tier: "partner",
-    bio: "A long-standing partner in Jolu’s mission, Hesbon drives regional business development and customer relationships. His deep understanding of Kenya’s agricultural landscape helps deliver tailored equipment solutions to our farming communities."
   }
 ];
 
@@ -92,8 +85,7 @@ const Team = () => {
   const grouped = {
     executives: teamMembers.filter((m) => m.tier === "executives"),
     management: teamMembers.filter((m) => m.tier === "management"),
-    operations: teamMembers.filter((m) => m.tier === "operations"),
-    partner: teamMembers.filter((m) => m.tier === "partner")
+    operations: teamMembers.filter((m) => m.tier === "operations")
   };
 
   return (
@@ -115,35 +107,25 @@ const Team = () => {
         </div>
 
         <div className="space-y-16 max-w-7xl mx-auto">
-          {/* Executive Section (John & Lucy) */}
+          {/* Executive Section */}
           <div className="flex justify-center flex-wrap gap-6 sm:gap-8">
             {grouped.executives.map((m, i) => (
               <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
             ))}
           </div>
 
-          {/* Management Section (Shem & Kelvin) */}
+          {/* Management Section */}
           <div className="flex justify-center flex-wrap gap-6 sm:gap-8">
             {grouped.management.map((m, i) => (
               <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
             ))}
           </div>
 
-          {/* Operations Section (Dennis) */}
+          {/* Operations Section */}
           <div className="mt-8 text-center">
             <h2 className="text-2xl font-bold mb-4">Our Operations</h2>
             <div className="flex justify-center flex-wrap gap-6 sm:gap-8">
               {grouped.operations.map((m, i) => (
-                <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
-              ))}
-            </div>
-          </div>
-
-          {/* Partners Section (Hesbon) */}
-          <div className="mt-8 text-center">
-            <h2 className="text-2xl font-bold mb-4">Our Partners</h2>
-            <div className="flex justify-center flex-wrap gap-6 sm:gap-8">
-              {grouped.partner.map((m, i) => (
                 <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
               ))}
             </div>
