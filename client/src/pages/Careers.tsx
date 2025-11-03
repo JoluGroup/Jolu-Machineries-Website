@@ -155,7 +155,7 @@ const Careers: React.FC = () => {
             <h2 className="text-2xl font-bold mb-4 text-[hsl(var(--primary))]">Life at Jolu</h2>
             <p className="text-zinc-600 dark:text-zinc-300 max-w-3xl mx-auto mb-8">
               Our people are at the heart of everything we do. Whether in the field, the office, or
-              on-site, every member of the Jolu family plays a vital role in our shared mission.
+              on-site, every member of the Jolu family plays a very vital role in our shared mission.
             </p>
             <div className="grid md:grid-cols-3 gap-4">
               {[
