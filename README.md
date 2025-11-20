@@ -36,6 +36,21 @@ npm i
 npm run dev
 ```
 
+### Backend Setup
+
+The backend server requires environment variables to run correctly.
+
+1.  Navigate to the `server` directory:
+    ```sh
+    cd server
+    ```
+2.  Create a `.env` file by copying the example file:
+    ```sh
+    cp .env.example .env
+    ```
+3.  Open the `.env` file and fill in the required values for your MongoDB and SMTP configurations.
+
+
 **Edit a file directly in GitHub**
 
 - Navigate to the desired file(s).
@@ -62,7 +77,24 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/d51df4e8-9cf2-48a4-871e-367dacc1a4a7) and click on Share -> Publish.
+This project is configured for deployment on Render.
+
+### Render Deployment
+
+The `render.yaml` file in this repository is configured to deploy both the client and server. To deploy this project to Render:
+
+1.  Create a new "Blueprint" service on Render.
+2.  Connect your GitHub repository.
+3.  Render will automatically detect the `render.yaml` file and configure the services.
+4.  You will need to set the following environment variables for the `jolu-machinery-server` service in the Render dashboard:
+    *   `MONGO_URI`
+    *   `MONGO_DB_NAME`
+    *   `SMTP_HOST`
+    *   `SMTP_PORT`
+    *   `SMTP_USER`
+    *   `SMTP_PASS`
+    *   `EMAIL_TO`
+    *   `EMAIL_FROM`
 
 ## Can I connect a custom domain to my Lovable project?
 

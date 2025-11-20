@@ -13,8 +13,23 @@ services:
         value: 20.14.0
       - key: CLIENT_ORIGIN
         value: https://jolu-machinery.onrender.com
-      - fromGroup: jolu-machinery-env
-
+      - key: MONGO_URI
+        sync: false
+      - key: MONGO_DB_NAME
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: EMAIL_TO
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+        
   - type: web
     name: jolu-machinery-client
     env: static
