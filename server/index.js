@@ -17,13 +17,12 @@ app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // --- CORS setup ---
-// Allow localhost in dev, any origin in production
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // allow Postman, mobile apps, etc.
-      if (origin.includes("localhost")) return callback(null, true); // dev
-      if (process.env.NODE_ENV === "production") return callback(null, true); // deployed frontend
+      if (!origin) return callback(null, true);
+      if (origin.includes("localhost")) return callback(null, true);
+      if (process.env.NODE_ENV === "production") return callback(null, true);
       return callback(new Error(`CORS policy: origin ${origin} not allowed`));
     },
     credentials: true,
@@ -56,13 +55,12 @@ async function connectToMongo() {
   }
 }
 
-// Ensure unique indexes used by this API
+// Ensure unique indexes
 async function ensureIndexes() {
   try {
     await db.collection("subscribers").createIndex({ email: 1 }, { unique: true });
     console.log("✅ subscribers.email unique index ensured");
   } catch (e) {
-    // If it already exists, this will usually be a no-op or a harmless message
     console.error("Index creation notice:", e.message);
   }
 }
@@ -76,10 +74,14 @@ if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
   transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: smtpPort,
-    secure: smtpPort === 465, // true for 465, false for 587
+    secure: false, // SSL = false because port 587 uses STARTTLS
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
+    },
+    requireTLS: true,
+    tls: {
+      rejectUnauthorized: false,
     },
   });
 
@@ -88,7 +90,6 @@ if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
     else console.log("✅ SMTP server is ready to take messages");
   });
 }
-
 
 // --- Validation schemas ---
 const t = (min) => z.string().trim().min(min);
@@ -115,7 +116,6 @@ const scheduleSchema = z.object({
   notes: z.string().trim().optional().nullable(),
 });
 
-// ✅ New: subscribe schema
 const subscribeSchema = z.object({
   email: z.string().trim().email(),
 });
@@ -135,7 +135,7 @@ app.get("/api/health", async (_req, res) => {
   res.json({ ok: true, timestamp: new Date().toISOString() });
 });
 
-// ✅ Contact Route
+// Contact Route
 app.post("/api/contact", async (req, res) => {
   try {
     const payload = contactSchema.parse(req.body);
@@ -158,7 +158,7 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-// ✅ Schedule Route
+// Schedule Route
 app.post("/api/schedule", async (req, res) => {
   try {
     const payload = scheduleSchema.parse(req.body);
@@ -181,18 +181,17 @@ app.post("/api/schedule", async (req, res) => {
   }
 });
 
-// ✅ Quotes Route
+// Quotes Route
 const quoteRoutes = require("./routes/quoteRoutes");
 app.use("/api/quotes", quoteRoutes);
 
-// ✅ NEW: Subscribe Route
+// Subscribe Route
 app.post("/api/subscribe", async (req, res) => {
   try {
     const { email } = subscribeSchema.parse(req.body);
     const normalized = email.toLowerCase();
     const now = new Date();
 
-    // Upsert (no duplicates)
     const result = await db.collection("subscribers").updateOne(
       { email: normalized },
       { $setOnInsert: { email: normalized, createdAt: now } },
@@ -201,14 +200,13 @@ app.post("/api/subscribe", async (req, res) => {
 
     const already = result.upsertedCount === 0;
 
-    // ✅ Send different emails for new vs existing subscriber
     if (transporter && process.env.EMAIL_TO) {
       if (already) {
         await transporter.sendMail({
           to: process.env.EMAIL_TO,
           from: process.env.EMAIL_FROM || "noreply@example.com",
           subject: `⚠️ Existing subscriber tried again: ${normalized}`,
-          text: `The email ${normalized} attempted to subscribe again on ${now.toISOString()}, but is already in the subscribers list.`,
+          text: `The email ${normalized} attempted to subscribe again on ${now.toISOString()}, but is already in the list.`,
         });
       } else {
         await transporter.sendMail({
@@ -224,24 +222,23 @@ app.post("/api/subscribe", async (req, res) => {
       .status(already ? 200 : 201)
       .json({ ok: true, status: already ? "already_subscribed" : "subscribed" });
   } catch (err) {
-    if (err instanceof z.ZodError) {
+    if (err instanceof z.ZodError)
       return res.status(400).json({ ok: false, errors: err.flatten() });
-    }
-    // Handle duplicate key edge case (race conditions)
-    if (err && err.code === 11000) {
+
+    if (err && err.code === 11000)
       return res.status(200).json({ ok: true, status: "already_subscribed" });
-    }
+
     console.error("Subscribe error:", err);
     return res.status(500).json({ ok: false, message: "Server error" });
   }
 });
 
-// --- Root route ---
+// Root
 app.get("/", (req, res) => {
   res.send("🚀 Jolu Machinery API is live! Visit /api/health to check status.");
 });
 
-// --- Server start ---
+// Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 API running on http://localhost:${PORT}`);
