@@ -72,11 +72,15 @@ connectToMongo().then(() => ensureIndexes());
 // --- Email transporter ---
 let transporter = null;
 if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+  const smtpPort = Number(process.env.SMTP_PORT || 587);
   transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 465),
-    secure: Number(process.env.SMTP_PORT || 465) === 465,
-    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    port: smtpPort,
+    secure: smtpPort === 465, // true for 465, false for 587
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
   });
 
   transporter.verify((error, success) => {
@@ -84,6 +88,7 @@ if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
     else console.log("✅ SMTP server is ready to take messages");
   });
 }
+
 
 // --- Validation schemas ---
 const t = (min) => z.string().trim().min(min);
