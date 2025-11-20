@@ -46,11 +46,8 @@ const Footer = () => {
       setMessage("");
 
       // ✅ updated API_BASE logic
-      const API_BASE =
-        import.meta.env?.VITE_API_BASE ||
-        (import.meta.env.MODE === "development"
-          ? "http://localhost:5000"
-          : "https://jolu-machinery-api.onrender.com"); // 👈 your Render backend
+      const API_BASE = import.meta.env.VITE_API_URL;
+
 
       const res = await fetch(`${API_BASE}/api/subscribe`, {
         method: "POST",

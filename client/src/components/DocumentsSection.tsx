@@ -9,9 +9,9 @@ const documents = [
     file: "/lovable-uploads/docs/company-profile.pdf",
   },
   {
-    title: "Company Brochure",
+    title: "Company Catalogue",
     description: "Browse our full range of agricultural and construction equipment.",
-    file: "/lovable-uploads/docs/product-brochure.pdf",
+    file: "/lovable-uploads/docs/product-catalogue.pdf",
   },
 ];
 
