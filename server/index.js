@@ -240,6 +240,29 @@ app.get("/", (req, res) => {
 
 // Start Server
 const PORT = process.env.PORT || 5000;
+
+// --- Test Email Route ---
+app.get("/api/test-email", async (req, res) => {
+  try {
+    if (!transporter) {
+      return res.status(500).json({ ok: false, message: "SMTP transporter not configured" });
+    }
+
+    await transporter.sendMail({
+      to: process.env.EMAIL_TO,
+      from: process.env.EMAIL_FROM,
+      subject: "🔧 SMTP Test Email — Jolu Machineries",
+      text: "This is a test email confirming that SMTP (mail.jolumachineries.com) is working.",
+    });
+
+    res.json({ ok: true, message: "Test email sent successfully!" });
+  } catch (err) {
+    console.error("Test email error:", err);
+    res.status(500).json({ ok: false, message: "Failed to send test email", error: err.message });
+  }
+});
+
+
 app.listen(PORT, () => {
   console.log(`🚀 API running on http://localhost:${PORT}`);
 });
