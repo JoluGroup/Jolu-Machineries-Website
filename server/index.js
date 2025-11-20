@@ -21,13 +21,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin) return callback(null, true); // allow Postman, mobile apps, etc.
-      if (origin.includes("localhost")) return callback(null, true); // dev
-      if (process.env.NODE_ENV === "production") return callback(null, true); // deployed frontend
+      if (!origin) return callback(null, true); // Postman, curl
+      if (origin.includes("localhost")) return callback(null, true); // all localhost ports
+      if (process.env.NODE_ENV === "production") return callback(null, true); // production frontend
       return callback(new Error(`CORS policy: origin ${origin} not allowed`));
-    },
-    credentials: true,
+    }, // <-- COMMA HERE
+
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
   })
 );
 
