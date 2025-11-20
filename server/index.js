@@ -26,7 +26,6 @@ app.use(
       if (process.env.NODE_ENV === "production") return callback(null, true); // production frontend
       return callback(new Error(`CORS policy: origin ${origin} not allowed`));
     }, // <-- COMMA HERE
-
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })
@@ -63,20 +62,19 @@ async function ensureIndexes() {
     await db.collection("subscribers").createIndex({ email: 1 }, { unique: true });
     console.log("✅ subscribers.email unique index ensured");
   } catch (e) {
-    // If it already exists, this will usually be a no-op or a harmless message
     console.error("Index creation notice:", e.message);
   }
 }
 
 connectToMongo().then(() => ensureIndexes());
 
-// --- Email transporter ---
+// --- Email transporter (Brevo compatible) ---
 let transporter = null;
 if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
   transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 465),
-    secure: Number(process.env.SMTP_PORT || 465) === 465,
+    port: Number(process.env.SMTP_PORT || 587),
+    secure: false, // Brevo relay uses STARTTLS on 587
     auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
   });
 
@@ -197,7 +195,6 @@ app.post("/api/subscribe", async (req, res) => {
 
     const already = result.upsertedCount === 0;
 
-    // ✅ Send different emails for new vs existing subscriber
     if (transporter && process.env.EMAIL_TO) {
       if (already) {
         await transporter.sendMail({
@@ -223,7 +220,6 @@ app.post("/api/subscribe", async (req, res) => {
     if (err instanceof z.ZodError) {
       return res.status(400).json({ ok: false, errors: err.flatten() });
     }
-    // Handle duplicate key edge case (race conditions)
     if (err && err.code === 11000) {
       return res.status(200).json({ ok: true, status: "already_subscribed" });
     }
