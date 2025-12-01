@@ -5,11 +5,13 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend"); // <— ADDED
 const { z } = require("zod");
 const path = require("path");
 
 const app = express();
+
+app.set("trust proxy", 1);
 
 // --- Security & middleware ---
 app.use(helmet());
@@ -67,29 +69,8 @@ async function ensureIndexes() {
 
 connectToMongo().then(() => ensureIndexes());
 
-// --- Email transporter ---
-let transporter = null;
-if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
-  const smtpPort = Number(process.env.SMTP_PORT || 587);
-  transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: smtpPort,
-    secure: false, // SSL = false because port 587 uses STARTTLS
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-    requireTLS: true,
-    tls: {
-      rejectUnauthorized: false,
-    },
-  });
-
-  transporter.verify((error, success) => {
-    if (error) console.error("SMTP connection error:", error);
-    else console.log("✅ SMTP server is ready to take messages");
-  });
-}
+// --- Email via RESEND ---
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // --- Validation schemas ---
 const t = (min) => z.string().trim().min(min);
@@ -123,7 +104,7 @@ const subscribeSchema = z.object({
 // --- Exports for routes ---
 module.exports = {
   db: () => db,
-  transporter: () => transporter,
+  resend: () => resend, // <— UPDATED
   contactSchema,
   quoteSchema,
   scheduleSchema,
@@ -141,14 +122,19 @@ app.post("/api/contact", async (req, res) => {
     const payload = contactSchema.parse(req.body);
     await db.collection("contacts").insertOne({ ...payload, createdAt: new Date() });
 
-    if (transporter) {
-      await transporter.sendMail({
-        to: process.env.EMAIL_TO,
-        from: process.env.EMAIL_FROM || "noreply@example.com",
-        subject: `New Contact: ${payload.name} (${payload.productInterest || "General"})`,
-        text: `Name: ${payload.name}\nEmail: ${payload.email}\nPhone: ${payload.phone}\nCounty: ${payload.county}\nArea: ${payload.area}\nInterest: ${payload.productInterest || "N/A"}\nMessage:\n${payload.message}`,
-      });
-    }
+    await resend.emails.send({
+      from: process.env.EMAIL_FROM,
+      to: process.env.EMAIL_TO,
+      subject: `New Contact: ${payload.name} (${payload.productInterest || "General"})`,
+      text: `Name: ${payload.name}
+Email: ${payload.email}
+Phone: ${payload.phone}
+County: ${payload.county}
+Area: ${payload.area}
+Interest: ${payload.productInterest || "N/A"}
+Message:
+${payload.message}`,
+    });
 
     res.status(201).json({ ok: true, message: "Contact saved & email sent" });
   } catch (err) {
@@ -164,14 +150,19 @@ app.post("/api/schedule", async (req, res) => {
     const payload = scheduleSchema.parse(req.body);
     await db.collection("schedules").insertOne({ ...payload, createdAt: new Date() });
 
-    if (transporter) {
-      await transporter.sendMail({
-        to: process.env.EMAIL_TO,
-        from: process.env.EMAIL_FROM || "noreply@example.com",
-        subject: `Demo Request: ${payload.name} — ${payload.product}`,
-        text: `Name: ${payload.name}\nEmail: ${payload.email}\nPhone: ${payload.phone}\nPreferred Date: ${payload.preferredDate}\nPreferred Time: ${payload.preferredTime}\nProduct: ${payload.product}\nNotes:\n${payload.notes || "N/A"}`,
-      });
-    }
+    await resend.emails.send({
+      from: process.env.EMAIL_FROM,
+      to: process.env.EMAIL_TO,
+      subject: `Demo Request: ${payload.name} — ${payload.product}`,
+      text: `Name: ${payload.name}
+Email: ${payload.email}
+Phone: ${payload.phone}
+Preferred Date: ${payload.preferredDate}
+Preferred Time: ${payload.preferredTime}
+Product: ${payload.product}
+Notes:
+${payload.notes || "N/A"}`,
+    });
 
     res.status(201).json({ ok: true, message: "Schedule saved & email sent" });
   } catch (err) {
@@ -200,23 +191,16 @@ app.post("/api/subscribe", async (req, res) => {
 
     const already = result.upsertedCount === 0;
 
-    if (transporter && process.env.EMAIL_TO) {
-      if (already) {
-        await transporter.sendMail({
-          to: process.env.EMAIL_TO,
-          from: process.env.EMAIL_FROM || "noreply@example.com",
-          subject: `⚠️ Existing subscriber tried again: ${normalized}`,
-          text: `The email ${normalized} attempted to subscribe again on ${now.toISOString()}, but is already in the list.`,
-        });
-      } else {
-        await transporter.sendMail({
-          to: process.env.EMAIL_TO,
-          from: process.env.EMAIL_FROM || "noreply@example.com",
-          subject: `✅ New newsletter subscriber: ${normalized}`,
-          text: `A new subscriber signed up at ${now.toISOString()}.\nEmail: ${normalized}`,
-        });
-      }
-    }
+    await resend.emails.send({
+      from: process.env.EMAIL_FROM,
+      to: process.env.EMAIL_TO,
+      subject: already
+        ? `⚠️ Existing subscriber tried again: ${normalized}`
+        : `✅ New newsletter subscriber: ${normalized}`,
+      text: already
+        ? `The email ${normalized} attempted to subscribe again on ${now.toISOString()}, but is already in the list.`
+        : `A new subscriber signed up at ${now.toISOString()}.\nEmail: ${normalized}`,
+    });
 
     return res
       .status(already ? 200 : 201)
@@ -240,28 +224,6 @@ app.get("/", (req, res) => {
 
 // Start Server
 const PORT = process.env.PORT || 5000;
-
-// --- Test Email Route ---
-app.get("/api/test-email", async (req, res) => {
-  try {
-    if (!transporter) {
-      return res.status(500).json({ ok: false, message: "SMTP transporter not configured" });
-    }
-
-    await transporter.sendMail({
-      to: process.env.EMAIL_TO,
-      from: process.env.EMAIL_FROM,
-      subject: "🔧 SMTP Test Email — Jolu Machineries",
-      text: "This is a test email confirming that SMTP (mail.jolumachineries.com) is working.",
-    });
-
-    res.json({ ok: true, message: "Test email sent successfully!" });
-  } catch (err) {
-    console.error("Test email error:", err);
-    res.status(500).json({ ok: false, message: "Failed to send test email", error: err.message });
-  }
-});
-
 
 app.listen(PORT, () => {
   console.log(`🚀 API running on http://localhost:${PORT}`);

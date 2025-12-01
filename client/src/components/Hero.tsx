@@ -148,7 +148,7 @@ const Hero = () => {
                 </a>
               </Button>
 
-              <a href="tel:+254743682700">
+              <a href="tel:+254705038679">
                 <Button
                   size="lg"
                   className="text-white border-white/30 hover:bg-white/10 text-lg px-6 sm:px-8 py-3 sm:py-4"

@@ -62,7 +62,7 @@ const ContactSection = () => {
 
   const contactInfo = [
     { icon: Mail, title: "Email", details: ["info@jolumachineries.com"], action: "Send Email" },
-    { icon: Phone, title: "Phone", details: ["+254 743 682 700", "+254 705 038 679"], action: "Call Now" },
+    { icon: Phone, title: "Phone", details: ["+254 705 038 679"], action: "Call Now" },
     { icon: MapPin, title: "Locations", details: ["Nairobi, Kenya", "Nakuru, Kenya"], action: "Get Directions" },
     { icon: Clock, title: "Business Hours", details: ["Mon–Fri: 9:00–18:00", "Sat: 9:00-13:00", "Sun: Closed"], action: "Schedule Visit" },
   ];
@@ -101,7 +101,7 @@ const ContactSection = () => {
                           <Button
                             variant="secondary"
                             className="w-full justify-start"
-                            onClick={() => window.open("tel:+254743682700")}
+                            onClick={() => window.open("tel:+254705038679")}
                           >
                             <Phone size={16} className="mr-2" /> Call Now
                           </Button>
