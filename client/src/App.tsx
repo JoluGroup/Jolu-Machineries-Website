@@ -19,6 +19,7 @@ import News from "@/pages/News";
 import KTNInterview from "./pages/KTNInterview";
 import UsedTractors from "./pages/UsedTractors";
 import Careers from "./pages/Careers";
+import Mud4Fun from "./pages/Mud4Fun";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
           <Route path="/ktn-interview" element={<KTNInterview />} />
           <Route path="/used-tractors" element={<UsedTractors />} />
           <Route path="/careers" element={<Careers />} />
+          <Route path="/mud4fun" element={<Mud4Fun />} />
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />

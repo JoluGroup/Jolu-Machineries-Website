@@ -36,16 +36,7 @@ const Careers: React.FC = () => {
 
   // Sample job openings
   const openings = [
-    {
-      title: "Accountant",
-      location: "Nairobi, Kenya",
-      type: "Full-Time",
-      description:
-        "Play a key role in managing finances, ensuring accurate reporting, compliance, and providing insightful analysis to support strategic decisions.",
-      image: "/lovable-uploads/careers/accountant.jpg",
-      link: "mailto:info@jolumachineries.com?subject=Application%20for%20Accountant%20Position",
-      deadline: "31st October 2025",
-    },
+
   ];
 
   return (

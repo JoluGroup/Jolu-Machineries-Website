@@ -4,46 +4,85 @@ import Header from "@/components/Header";
 import { X } from "lucide-react";
 import { motion } from "framer-motion";
 
+/* =========================
+   TEAM DATA (3-LEVEL STRUCTURE)
+   ========================= */
 const teamMembers = [
+  // -------- 1st LEVEL (EXECUTIVES) --------
   {
     name: "John",
-    title: "Chief Executive Officer",
+    title: "Chief Executive Officer (CEO)",
     image: "/lovable-uploads/team/John.png",
     tier: "executives",
-    bio: "With over 15 years of industry experience, John has led Jolu Machineries from a humble beginning to becoming Kenya's leading dealer for Zoomlion agricultural equipment. His dedication to farmer success and innovative practices have shaped the company’s trusted reputation nationwide."
+    bio: "John provides overall strategic leadership and direction for the organization, ensuring sustainable growth, strong governance, and long-term value creation."
   },
   {
     name: "Lucy",
-    title: "Managing Director",
+    title: "Managing Director (MD)",
     image: "/lovable-uploads/team/Lucy.png",
     tier: "executives",
-    bio: "Lucy brings strong leadership in business operations and customer service. Her strategic insight and passion for agricultural advancement have been instrumental in building strong partnerships and delivering value to clients across Kenya."
+    bio: "Lucy oversees executive operations and organizational performance, ensuring alignment between strategy, execution, and stakeholder value."
   },
+
+  // -------- 2nd LEVEL (MANAGEMENT) --------
   {
-    name: "Shem",
-    title: "Director of Operations",
-    roles: "Overall Operations, After Sales Services and Customer Relations, In-charge of all Company Documentation and Contracts, Digital Marketing & Graphic Design",
-    image: "/lovable-uploads/team/Shem.png",
+    name: "Catherine",
+    title: "Human Resource Manager",
+    roles: "Talent Acquisition, Employee Relations, Training & Development",
+    image: "/lovable-uploads/team/Catherine.png",
     tier: "management",
-    bio: "Shem oversees operational strategy and execution, ensuring efficiency and consistency in service delivery. His leadership drives smooth coordination across departments and enhances customer satisfaction."
+    bio: "Catherine leads human resource strategy, staff welfare, compliance, and performance management, fostering a productive and positive workplace culture."
   },
   {
     name: "Kelvin",
-    title: "General Manager",
-    roles: "Finance, HR, IT and Sales Management",
+    title: "Head of Finance & Operations",
+    roles: "Financial Management, Budgeting, Operations Oversight",
     image: "/lovable-uploads/team/Kelvin.png",
     tier: "management",
-    bio: "Kelvin provides overall leadership and direction for Jolu Machineries. His vision for growth and commitment to excellence continues to strengthen the company’s position as a trusted partner for farmers across Kenya."
+    bio: "Kelvin oversees financial control and operational efficiency, ensuring accountability, optimized resource allocation, and smooth day-to-day operations."
+  },
+
+  // -------- 3rd LEVEL (OPERATIONS) --------
+  {
+    name: "Musyoka",
+    title: "Senior Technician",
+    image: "/lovable-uploads/team/Musyoka.png",
+    tier: "operations",
+    bio: "Musyoka leads technical diagnostics, installations, and complex repairs, ensuring high-quality service delivery and equipment reliability."
+  },
+  {
+    name: "Dickson",
+    title: "Assistant Technician & Driver",
+    image: "/lovable-uploads/team/Dickson.png",
+    tier: "operations",
+    bio: "Dickson supports technical operations and logistics, ensuring timely transportation, field assistance, and operational support."
+  },
+  {
+    name: "Mercy",
+    title: "Office Administrator – Nakuru",
+    image: "/lovable-uploads/team/Mercy.png",
+    tier: "operations",
+    bio: "Mercy manages office administration and coordination at the Nakuru branch, ensuring efficient records management and office operations."
   },
   {
     name: "Dennis",
-    title: "Head of Operations and Business Development",
+    title: "Head of Business Development – Migori",
     image: "/lovable-uploads/team/Dennis.png",
     tier: "operations",
-    bio: "Dennis brings extensive experience in business development and operations management. He is dedicated to expanding our market reach and optimizing our service delivery to meet the evolving needs of our clients."
+    bio: "Dennis leads business development initiatives in the Migori region, focusing on partnerships, client acquisition, and market expansion."
+  },
+  {
+    name: "Ngeno",
+    title: "Head of Business Development – Rift Valley",
+    image: "/lovable-uploads/team/Benard.png",
+    tier: "operations",
+    bio: "Benard drives sales growth and market penetration across the Rift Valley region through strategic partnerships and client engagement."
   }
 ];
 
+/* =========================
+   TEAM CARD COMPONENT
+   ========================= */
 const TeamCard = ({ member, setSelectedMember }) => (
   <motion.div
     onClick={() => setSelectedMember(member)}
@@ -75,6 +114,9 @@ const TeamCard = ({ member, setSelectedMember }) => (
   </motion.div>
 );
 
+/* =========================
+   MAIN TEAM PAGE
+   ========================= */
 const Team = () => {
   const [selectedMember, setSelectedMember] = useState(null);
 
@@ -93,12 +135,15 @@ const Team = () => {
       <Header />
 
       <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
+        {/* Page Intro */}
         <div className="relative mb-12 max-w-5xl mx-auto">
           <h1 className="text-3xl sm:text-4xl font-bold text-center mb-4">
             Meet Our Team
           </h1>
           <p className="text-center text-gray-700 dark:text-gray-300 text-sm sm:text-base max-w-2xl mx-auto">
-            At Jolu Machineries, we believe that strong partnerships begin with strong leadership. Our dedicated team brings decades of experience, commitment to agricultural innovation, and a passion for transforming Kenya’s farming landscape.
+            At Jolu Machineries, our strength lies in experienced leadership,
+            effective management, and a dedicated operations team working
+            together to deliver excellence.
           </p>
           <div className="absolute top-1 transform -translate-y-1 w-full flex justify-between mt-6">
             <div className="w-1/5 h-1 bg-green-700" />
@@ -106,30 +151,42 @@ const Team = () => {
           </div>
         </div>
 
-        <div className="space-y-16 max-w-7xl mx-auto">
-          {/* Executive Section */}
-          <div className="flex justify-center flex-wrap gap-6 sm:gap-8">
-            {grouped.executives.map((m, i) => (
-              <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
-            ))}
-          </div>
+        <div className="space-y-20 max-w-7xl mx-auto">
+          {/* Executives */}
+          <section>
+            <h2 className="text-2xl font-bold text-center mb-6">
+              Executive Leadership
+            </h2>
+            <div className="flex justify-center flex-wrap gap-6 sm:gap-8">
+              {grouped.executives.map((m, i) => (
+                <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
+              ))}
+            </div>
+          </section>
 
-          {/* Management Section */}
-          <div className="flex justify-center flex-wrap gap-6 sm:gap-8">
-            {grouped.management.map((m, i) => (
-              <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
-            ))}
-          </div>
+          {/* Management */}
+          <section>
+            <h2 className="text-2xl font-bold text-center mb-6">
+              Management Team
+            </h2>
+            <div className="flex justify-center flex-wrap gap-6 sm:gap-8">
+              {grouped.management.map((m, i) => (
+                <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
+              ))}
+            </div>
+          </section>
 
-          {/* Operations Section */}
-          <div className="mt-8 text-center">
-            <h2 className="text-2xl font-bold mb-4">Our Operations</h2>
+          {/* Operations */}
+          <section>
+            <h2 className="text-2xl font-bold text-center mb-6">
+              Operations &  Business Development
+            </h2>
             <div className="flex justify-center flex-wrap gap-6 sm:gap-8">
               {grouped.operations.map((m, i) => (
                 <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
               ))}
             </div>
-          </div>
+          </section>
         </div>
 
         {/* Modal */}

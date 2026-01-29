@@ -27,8 +27,9 @@ const Header = () => {
           name: "Events",
           dropdown: true,
           items: [
-            { name: "Grand Business Launch", href: "/news#grand-launch", hot: true },
-            { name: "KTN Interview", href: "/ktn-interview", new: true },
+            { name: "Mud4Fun 4x4 Challenge", href: "/mud4fun", new: true }, // ✅ NEW
+            { name: "Grand Business Launch", href: "/news#grand-launch", hot: true }, // HOT
+            { name: "KTN Interview", href: "/ktn-interview", hot: true }, // HOT
           ],
         },
         { name: "Gallery", href: "/gallery" },
