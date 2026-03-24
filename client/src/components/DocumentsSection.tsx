@@ -11,7 +11,11 @@ const documents = [
   {
     title: "Company Catalogue",
     description: "Browse our full range of agricultural and construction equipment.",
+<<<<<<< HEAD
     file: "/lovable-uploads/docs/product-catalogue..pdf",
+=======
+    file: "/lovable-uploads/docs/product-catalogue.pdf",
+>>>>>>> f8539282837b6b3fdd1ab7290716553e26b3e658
   },
 ];
 

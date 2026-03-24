@@ -13,6 +13,10 @@ import ScrollToTop from "./components/ScrollToTop";
 import ProductList from "./pages/ProductList";
 import ProductDetail from "./pages/ProductDetail";
 
+<<<<<<< HEAD
+=======
+import Team from "@/pages/Team";
+>>>>>>> f8539282837b6b3fdd1ab7290716553e26b3e658
 import Gallery from "@/pages/Gallery";
 import News from "@/pages/News";
 import KTNInterview from "./pages/KTNInterview";
@@ -35,6 +39,10 @@ const App = () => (
           <Route path="/schedule" element={<ScheduleVisit />} />
           <Route path="/products" element={<ProductList />} />
           <Route path="/products/:slug" element={<ProductDetail />} />
+<<<<<<< HEAD
+=======
+          <Route path="/team" element={<Team />} />
+>>>>>>> f8539282837b6b3fdd1ab7290716553e26b3e658
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/news" element={<News />} />
           <Route path="/ktn-interview" element={<KTNInterview />} />

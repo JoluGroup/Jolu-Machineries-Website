@@ -11,10 +11,18 @@ const Header = () => {
     { name: "Products", href: "/#products" },
     { name: "Slightly Used Tractors", href: "/used-tractors" }, // ✅ New Tab
     {
+<<<<<<< HEAD
       name: "About",
       dropdown: true,
       items: [
         { name: "About Us", href: "/#about" },
+=======
+      name: "About Us",
+      dropdown: true,
+      items: [
+        { name: "About Us", href: "/#about" },
+        { name: "Team", href: "/team" },
+>>>>>>> f8539282837b6b3fdd1ab7290716553e26b3e658
         { name: "Documents", href: "/#documents" },
       ],
     },

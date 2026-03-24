@@ -137,6 +137,7 @@ const Footer = () => {
                 <span className="text-white/80">info@jolumachineries.com</span>
               </div>
               <div className="flex items-start space-x-3">
+<<<<<<< HEAD
                 <MapPin size={20} className="text-primary-glow mt-1" />
                 <span className="text-white/80">
                   Head Office - Nairobi, Kenya
@@ -159,6 +160,23 @@ const Footer = () => {
                   Migori, Kenya
                 </span>
               </div>
+=======
+                <MapPin size={35} className="text-primary-glow mt-1" />
+                <span className="text-white/80">
+                  Main Office<br />
+                  Simba Close, Along New Garden Estate Rd, Thome Estate<br />
+                  Nairobi, Kenya
+                </span>
+              </div>
+              <div className="flex items-start space-x-3">
+                <MapPin size={44} className="text-primary-glow mt-1" />
+                <span className="text-white/80">
+                  Regional Office<br />
+                  KFA Building Along Geoffrey Kamau Avenue, Next to Rubis Petrol Station<br />
+                  Nakuru, Kenya
+                </span>
+              </div>
+>>>>>>> f8539282837b6b3fdd1ab7290716553e26b3e658
             </div>
           </div>
 
