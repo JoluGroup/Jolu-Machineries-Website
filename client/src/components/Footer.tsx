@@ -12,7 +12,7 @@ const Footer = () => {
 
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false); // ✅ Loader state
+  const [loading, setLoading] = useState(false);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -21,33 +21,22 @@ const Footer = () => {
   const handleInternalNav = (sectionId: string) => {
     if (isHomePage) {
       const el = document.getElementById(sectionId);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
-      }
+      if (el) el.scrollIntoView({ behavior: "smooth" });
     } else {
       window.location.href = `/#${sectionId}`;
     }
   };
 
   const handleSubscribe = async () => {
-    if (!email) {
-      setMessage("⚠️ Please enter an email address.");
-      return;
-    }
-
+    if (!email) return setMessage("⚠️ Please enter an email address.");
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setMessage("⚠️ Please enter a valid email.");
-      return;
-    }
+    if (!emailRegex.test(email)) return setMessage("⚠️ Please enter a valid email.");
 
     try {
-      setLoading(true); // ✅ show loader
+      setLoading(true);
       setMessage("");
 
-      // ✅ updated API_BASE logic
       const API_BASE = import.meta.env.VITE_API_BASE;
-
 
       const res = await fetch(`${API_BASE}/api/subscribe`, {
         method: "POST",
@@ -55,16 +44,11 @@ const Footer = () => {
         body: JSON.stringify({ email }),
       });
 
-      let data: any = {};
-      try {
-        data = await res.json();
-      } catch {
+      const data = await res.json().catch(() => {
         throw new Error("Invalid JSON response from server");
-      }
+      });
 
-      if (!res.ok || !data.ok) {
-        throw new Error(data?.message || "Subscription failed");
-      }
+      if (!res.ok || !data.ok) throw new Error(data?.message || "Subscription failed");
 
       if (data.status === "already_subscribed") {
         setMessage("ℹ️ You’re already subscribed with this email.");
@@ -76,7 +60,7 @@ const Footer = () => {
       console.error(err);
       setMessage("⚠️ Could not subscribe right now. Please try again later.");
     } finally {
-      setLoading(false); // ✅ hide loader
+      setLoading(false);
     }
   };
 
@@ -137,46 +121,36 @@ const Footer = () => {
                 <span className="text-white/80">info@jolumachineries.com</span>
               </div>
               <div className="flex items-start space-x-3">
-<<<<<<< HEAD
-                <MapPin size={20} className="text-primary-glow mt-1" />
-                <span className="text-white/80">
-                  Head Office - Nairobi, Kenya
-                </span>
-              </div>
-              <div className="flex items-start space-x-3">
-                <MapPin size={20} className="text-primary-glow mt-1" />
-                <span className="text-white/80">
-                  Regional Office & Showroom<br />
-                  Located along West Road, <br />
-                  Opposite Nakuru Athletics, <br />
-                  Next to Evans Hospital, <br />
-                  Nakuru, Kenya
-                </span>
-              </div>
-              <div className="flex items-start space-x-3">
-                <MapPin size={20} className="text-primary-glow mt-1" />
-                <span className="text-white/80">
-                  Branch Offices - Kisumu & Rongo - Quickfill Service Station, <br />
-                  Migori, Kenya
-                </span>
-              </div>
-=======
                 <MapPin size={35} className="text-primary-glow mt-1" />
                 <span className="text-white/80">
-                  Main Office<br />
-                  Simba Close, Along New Garden Estate Rd, Thome Estate<br />
+                  Main Office - Thome <br />
                   Nairobi, Kenya
                 </span>
               </div>
               <div className="flex items-start space-x-3">
-                <MapPin size={44} className="text-primary-glow mt-1" />
+                <MapPin size={35} className="text-primary-glow mt-1" />
                 <span className="text-white/80">
-                  Regional Office<br />
+                  Regional Office & Showroom <br />
+                  Along West Road, Opposite Nakuru Athletics, Next to Evans Hospital<br />
+                  Nakuru, Kenya
+                </span>
+              </div>
+              <div className="flex items-start space-x-3">
+                <MapPin size={35} className="text-primary-glow mt-1" />
+                <span className="text-white/80">
+                  Security Office<br />
                   KFA Building Along Geoffrey Kamau Avenue, Next to Rubis Petrol Station<br />
                   Nakuru, Kenya
                 </span>
               </div>
->>>>>>> f8539282837b6b3fdd1ab7290716553e26b3e658
+              <div className="flex items-start space-x-3">
+                <MapPin size={35} className="text-primary-glow mt-1" />
+                <span className="text-white/80">
+                  Branch Office<br />
+                  Quickfill Rongo Station<br />
+                  Migori, Kenya
+                </span>
+              </div>
             </div>
           </div>
 
@@ -239,7 +213,6 @@ const Footer = () => {
               farming tips, and exclusive offers.
             </p>
 
-            {/* ✅ Updated Section with loader */}
             <div className="space-y-3">
               <div className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
                 <Input
@@ -248,14 +221,14 @@ const Footer = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
-                  disabled={loading} // ✅ disable input when loading
+                  disabled={loading}
                 />
                 <Button
                   onClick={handleSubscribe}
                   className="bg-primary hover:bg-primary-glow px-6"
-                  disabled={loading} // ✅ disable button when loading
+                  disabled={loading}
                 >
-                  {loading ? "Subscribing..." : "Subscribe"} {/* ✅ loader text */}
+                  {loading ? "Subscribing..." : "Subscribe"}
                 </Button>
               </div>
               {message && (

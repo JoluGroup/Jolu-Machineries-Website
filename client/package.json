@@ -45,10 +45,7 @@
     "cmdk": "^1.0.0",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.3.0",
-<<<<<<< HEAD
-    "framer-motion": "^12.34.3",
-=======
->>>>>>> f8539282837b6b3fdd1ab7290716553e26b3e658
+    "framer-motion": "^12.38.0",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.462.0",
     "mongodb": "^6.20.0",
