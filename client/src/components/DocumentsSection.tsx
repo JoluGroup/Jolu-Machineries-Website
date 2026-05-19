@@ -6,7 +6,7 @@ const documents = [
   {
     title: "Company Profile",
     description: "Learn more about our history, mission, and achievements.",
-    file: "/lovable-uploads/docs/company-profile.pdf",
+    file: "/lovable-uploads/docs/company-profile..pdf",
   },
   {
     title: "Company Catalogue",

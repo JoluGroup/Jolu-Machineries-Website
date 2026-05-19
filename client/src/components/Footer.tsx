@@ -1,4 +1,4 @@
-import { Mail, Phone, MapPin, Facebook, Linkedin, ArrowUp } from "lucide-react";
+import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -255,6 +255,14 @@ const Footer = () => {
                     className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-glow transition-colors duration-200"
                   >
                     <Facebook size={18} />
+                  </a>
+                  <a
+                    href="https://www.instagram.com/jolu_machineries/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-glow transition-colors duration-200"
+                  >
+                    <Instagram size={18} />
                   </a>
                   <a
                     href="https://www.tiktok.com/@jolumachineries?_t=ZM-8ySBE3JW9Cg&_r=1"

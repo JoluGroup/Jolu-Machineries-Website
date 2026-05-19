@@ -20,7 +20,9 @@ const KTNInterview = lazy(() => import("./pages/KTNInterview"));
 const UsedTractors = lazy(() => import("./pages/UsedTractors"));
 const Careers = lazy(() => import("./pages/Careers"));
 const Mud4Fun = lazy(() => import("./pages/Mud4Fun"));
+const NakuruLaunch = lazy(() => import("./pages/NakuruLaunch"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+
 
 const queryClient = new QueryClient();
 
@@ -55,6 +57,7 @@ const App = () => {
               <Route path="/news" element={<News />} />
               <Route path="/ktn-interview" element={<KTNInterview />} />
               <Route path="/mud4fun" element={<Mud4Fun />} />
+              <Route path="/showroom-launch" element={<NakuruLaunch />} />
 
               {/* Catch-all */}
               <Route path="*" element={<NotFound />} />
