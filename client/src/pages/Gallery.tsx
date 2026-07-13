@@ -5,32 +5,32 @@ import { motion } from "framer-motion";
 
 const galleryItems = [
 {
-  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/godown-1.jpg`,
-  caption: "Zoomlion Machinery Showcase – Jolu Showroom, Nakuru",
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/jolu-group.jpg`,
+  caption: "Jolu Team at the Head Office, Nairobi",
 },
 {
-  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/handover-1.jpg`,
-  caption: "Official Tractor Handover Ceremony – Nairobi",
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/jolu-team.jpg`,
+  caption: "The Jolu Group",
 },
 {
-  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/machines-1.jpg`,
-  caption: "Wide Range of Agricultural Machines – Nakuru Yard",
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/jolu-boardroom.jpg`,
+  caption: "The Jolu Team in Boardroom – Nairobi",
 },
 {
-  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/trailer-1.jpg`,
-  caption: "Heavy-Duty Trailer Prepared for Delivery",
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/directors.jpg`,
+  caption: "Jolu Group Directors ",
 },
 {
-  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/operator-1.jpeg`,
-  caption: "Certified Tractor Operator – Nakuru",
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/ceo.jpg`,
+  caption: "Jolu Group CEO",
 },
 {
-  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/john-tractor1.jpg`,
-  caption: "Our CEO at the Nakuru Showroom",
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/head-of-business.jpg`,
+  caption: "The Jolu Group Head of Business",
 },
 {
-  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/implement-1.jpg`,
-  caption: "Demonstrating a Modern Farm Implement",
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/managing-director.jpg`,
+  caption: "Jolu Group Managing Director",
 },
 {
   src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/john-tractor-1.jpg`,
