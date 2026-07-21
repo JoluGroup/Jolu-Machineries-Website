@@ -25,12 +25,21 @@ const galleryItems = [
   caption: "Jolu Group CEO",
 },
 {
+<<<<<<< HEAD
   src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/managing-director.jpg`,
   caption: "Jolu Group Managing Director",
 },
 {
   src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/head-of-business.jpg`,
   caption: "The Jolu Group Head of Business",
+=======
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/head-of-business.jpg`,
+  caption: "The Jolu Group Head of Business",
+},
+{
+  src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/managing-director.jpg`,
+  caption: "Jolu Group Managing Director",
+>>>>>>> f0b8c8777d8752704a4e9efa26145d329594fac6
 },
 {
   src: `${import.meta.env.BASE_URL}lovable-uploads/gallery/john-tractor-1.jpg`,
