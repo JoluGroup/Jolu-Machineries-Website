@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 
 /* =========================
    TEAM DATA (3-LEVEL STRUCTURE)
-========================= */
+   ========================= */
 const teamMembers = [
   // -------- 1st LEVEL (EXECUTIVES) --------
   {
@@ -42,42 +42,47 @@ const teamMembers = [
     bio: "Kelvin oversees financial control and operational efficiency, ensuring accountability, optimized resource allocation, and smooth day-to-day operations."
   },
 
-  // -------- 3rd LEVEL (OPERATIONS — MODULE A) --------
+  // -------- 3rd LEVEL (OPERATIONS) --------
   {
     name: "Musyoka",
     title: "Senior Technician",
     image: "/lovable-uploads/team/Musyoka.png",
-    tier: "operationsA",
+    tier: "operations",
     bio: "Musyoka leads technical diagnostics, installations, and complex repairs, ensuring high-quality service delivery and equipment reliability."
   },
   {
     name: "Dickson",
     title: "Assistant Technician & Driver",
     image: "/lovable-uploads/team/Dickson.png",
-    tier: "operationsA",
+    tier: "operations",
     bio: "Dickson supports technical operations and logistics, ensuring timely transportation, field assistance, and operational support."
   },
-
-  // -------- 3rd LEVEL (OPERATIONS — MODULE B) --------
   {
     name: "Mercy",
     title: "Office Administrator – Nakuru",
     image: "/lovable-uploads/team/Mercy.png",
-    tier: "operationsB",
+    tier: "operations",
     bio: "Mercy manages office administration and coordination at the Nakuru branch, ensuring efficient records management and office operations."
   },
   {
     name: "Dennis",
     title: "Head of Business Development – Migori",
     image: "/lovable-uploads/team/Dennis.png",
-    tier: "operationsB",
+    tier: "operations",
     bio: "Dennis leads business development initiatives in the Migori region, focusing on partnerships, client acquisition, and market expansion."
+  },
+  {
+    name: "Ngeno",
+    title: "Head of Business Development – Rift Valley",
+    image: "/lovable-uploads/team/Benard.png",
+    tier: "operations",
+    bio: "Benard drives sales growth and market penetration across the Rift Valley region through strategic partnerships and client engagement."
   }
 ];
 
 /* =========================
-   TEAM CARD
-========================= */
+   TEAM CARD COMPONENT
+   ========================= */
 const TeamCard = ({ member, setSelectedMember }) => (
   <motion.div
     onClick={() => setSelectedMember(member)}
@@ -86,7 +91,11 @@ const TeamCard = ({ member, setSelectedMember }) => (
     className="cursor-pointer bg-white dark:bg-zinc-800 rounded-xl shadow-md overflow-hidden w-full max-w-xs"
   >
     <div className="w-full h-36 sm:h-40 bg-gray-100 dark:bg-zinc-900 flex items-center justify-center overflow-hidden">
-      <img src={member.image} alt={member.name} className="w-full h-full object-contain p-2" />
+      <img
+        src={member.image}
+        alt={member.name}
+        className="w-full h-full object-contain p-2"
+      />
     </div>
     <div className="p-4 text-center">
       <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
@@ -107,7 +116,7 @@ const TeamCard = ({ member, setSelectedMember }) => (
 
 /* =========================
    MAIN TEAM PAGE
-========================= */
+   ========================= */
 const Team = () => {
   const [selectedMember, setSelectedMember] = useState(null);
 
@@ -118,8 +127,7 @@ const Team = () => {
   const grouped = {
     executives: teamMembers.filter((m) => m.tier === "executives"),
     management: teamMembers.filter((m) => m.tier === "management"),
-    operationsA: teamMembers.filter((m) => m.tier === "operationsA"),
-    operationsB: teamMembers.filter((m) => m.tier === "operationsB")
+    operations: teamMembers.filter((m) => m.tier === "operations")
   };
 
   return (
@@ -127,48 +135,100 @@ const Team = () => {
       <Header />
 
       <main className="flex-grow py-12 px-4 sm:px-6 lg:px-8">
-        <div className="space-y-20 max-w-7xl mx-auto">
+        {/* Page Intro */}
+        <div className="relative mb-12 max-w-5xl mx-auto">
+          <h1 className="text-3xl sm:text-4xl font-bold text-center mb-4">
+            Meet Our Team
+          </h1>
+          <p className="text-center text-gray-700 dark:text-gray-300 text-sm sm:text-base max-w-2xl mx-auto">
+            At Jolu Machineries, our strength lies in experienced leadership,
+            effective management, and a dedicated operations team working
+            together to deliver excellence.
+          </p>
+          <div className="absolute top-1 transform -translate-y-1 w-full flex justify-between mt-6">
+            <div className="w-1/5 h-1 bg-green-700" />
+            <div className="w-1/5 h-1 bg-green-700" />
+          </div>
+        </div>
 
-          {/* EXECUTIVES */}
+        <div className="space-y-20 max-w-7xl mx-auto">
+          {/* Executives */}
           <section>
-            <h2 className="text-2xl font-bold text-center mb-6">Executive Leadership</h2>
-            <div className="flex justify-center flex-wrap gap-8">
+            <h2 className="text-2xl font-bold text-center mb-6">
+              Executive Leadership
+            </h2>
+            <div className="flex justify-center flex-wrap gap-6 sm:gap-8">
               {grouped.executives.map((m, i) => (
                 <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
               ))}
             </div>
           </section>
 
-          {/* MANAGEMENT */}
+          {/* Management */}
           <section>
-            <h2 className="text-2xl font-bold text-center mb-6">Management Team</h2>
-            <div className="flex justify-center flex-wrap gap-8">
+            <h2 className="text-2xl font-bold text-center mb-6">
+              Management Team
+            </h2>
+            <div className="flex justify-center flex-wrap gap-6 sm:gap-8">
               {grouped.management.map((m, i) => (
                 <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
               ))}
             </div>
           </section>
 
-          {/* OPERATIONS MODULE A */}
+          {/* Operations */}
           <section>
-            <h2 className="text-2xl font-bold text-center mb-6">Operations Unit A</h2>
-            <div className="flex justify-center flex-wrap gap-8">
-              {grouped.operationsA.map((m, i) => (
-                <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
-              ))}
-            </div>
-          </section>
-
-          {/* OPERATIONS MODULE B */}
-          <section>
-            <h2 className="text-2xl font-bold text-center mb-6">Operations Unit B</h2>
-            <div className="flex justify-center flex-wrap gap-8">
-              {grouped.operationsB.map((m, i) => (
+            <h2 className="text-2xl font-bold text-center mb-6">
+              Operations &  Business Development
+            </h2>
+            <div className="flex justify-center flex-wrap gap-6 sm:gap-8">
+              {grouped.operations.map((m, i) => (
                 <TeamCard key={i} member={m} setSelectedMember={setSelectedMember} />
               ))}
             </div>
           </section>
         </div>
+
+        {/* Modal */}
+        {selectedMember && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-2 sm:px-4 overflow-y-auto">
+            <div className="bg-white dark:bg-zinc-800 rounded-xl shadow-xl w-full max-w-xl sm:max-w-2xl max-h-screen overflow-y-auto p-4 sm:p-6 relative">
+              <button
+                className="absolute top-3 right-3 text-gray-500 dark:text-gray-300 hover:text-red-600"
+                onClick={() => setSelectedMember(null)}
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-center">
+                <div className="w-full md:w-[40%] h-48 sm:h-60 bg-gray-100 dark:bg-zinc-700 rounded-lg overflow-hidden flex items-center justify-center">
+                  <img
+                    src={selectedMember.image}
+                    alt={selectedMember.name}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div className="w-full md:w-[60%]">
+                  <h2 className="text-xl sm:text-2xl font-bold">
+                    {selectedMember.name}
+                  </h2>
+                  <p className="text-sm sm:text-base text-gray-500 dark:text-gray-300 mb-3">
+                    {selectedMember.title}
+                    {selectedMember.roles && (
+                      <>
+                        <br />
+                        <span className="text-sm">{selectedMember.roles}</span>
+                      </>
+                    )}
+                  </p>
+                  <p className="text-gray-700 dark:text-gray-200 text-sm sm:text-base text-justify leading-relaxed">
+                    {selectedMember.bio}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       <Footer />

@@ -9,13 +9,11 @@ const Header = () => {
   const navItems = [
     { name: "Home", href: "/#home" },
     { name: "Products", href: "/#products" },
-    { name: "Slightly Used Tractors", href: "/used-tractors" }, // ✅ New Tab
     {
-      name: "About Us",
+      name: "About",
       dropdown: true,
       items: [
         { name: "About Us", href: "/#about" },
-        { name: "Team", href: "/team" },
         { name: "Documents", href: "/#documents" },
       ],
     },
@@ -27,8 +25,9 @@ const Header = () => {
           name: "Events",
           dropdown: true,
           items: [
-            { name: "Mud4Fun 4x4 Challenge", href: "/mud4fun", new: true }, // ✅ NEW
-            { name: "Grand Business Launch", href: "/news#grand-launch", hot: true }, // HOT
+            { name: "Nakuru Regional Office & Showroom Grand Launch", href: "/showroom-launch", new: true},
+            { name: "Mud4Fun 4x4 Challenge", href: "/mud4fun", hot: true }, // ✅ NEW
+            { name: "Head Office - Nairobi Business Launch", href: "/news#grand-launch", hot: true }, // HOT
             { name: "KTN Interview", href: "/ktn-interview", hot: true }, // HOT
           ],
         },

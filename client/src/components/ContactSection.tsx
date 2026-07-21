@@ -62,8 +62,8 @@ const ContactSection = () => {
 
   const contactInfo = [
     { icon: Mail, title: "Email", details: ["info@jolumachineries.com"], action: "Send Email" },
-    { icon: Phone, title: "Phone", details: ["+254 705 038 679"], action: "Call Now" },
-    { icon: MapPin, title: "Locations", details: ["Nairobi, Kenya", "Nakuru, Kenya"], action: "Get Directions" },
+    { icon: Phone, title: "Phone", details: ["+254 705 038 679 | +254 743 682 700"], action: "Call Now" },
+    { icon: MapPin, title: "Locations", details: ["Nairobi, Kenya", "Nakuru, Kenya", "Rongo, Migori"], action: "Get Directions" },
     { icon: Clock, title: "Business Hours", details: ["Mon–Fri: 9:00–18:00", "Sat: 9:00-13:00", "Sun: Closed"], action: "Schedule Visit" },
   ];
 
@@ -251,12 +251,16 @@ const ContactSection = () => {
                     {/* Maps Section */}
                     <div className="mt-10 space-y-6">
                       <h3 className="text-xl font-semibold">Find Us</h3>
-                      <div className="grid md:grid-cols-2 gap-6">
                         {/* Nairobi Map */}
                         <div>
-                          <h4 className="font-medium mb-2">Nairobi – Simba Close, Thome</h4>
+                          <h4 className="font-medium mb-2">1. Jolu Head Office – Thome, Nairobi</h4>
+                        </div>
+                      <div className="grid md:grid-cols-2 gap-6">
+                        {/* Nakuru Map */}
+                        <div>
+                          <h4 className="font-medium mb-2">2. Jolu Regional Office & Showroom – Nakuru, Kenya</h4>
                           <iframe
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2760.7176816752344!2d36.86981770972918!3d-1.2271689765895926!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182f15e36827a427%3A0x99f4140fa95df719!2sSimba%20Close%2C%20Nairobi!5e0!3m2!1sen!2ske!4v1755332232084!5m2!1sen!2ske"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1328.126918773704!2d36.06425771376447!3d-0.29232555730089016!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x18298dc3daec4f73%3A0x9502bd597c8842f0!2sP357%2B5JP%2C%20Nakuru!5e0!3m2!1sen!2ske!4v1774359316918!5m2!1sen!2ske"
                             width="100%"
                             height="250"
                             style={{ border: 0 }}
@@ -266,11 +270,24 @@ const ContactSection = () => {
                           ></iframe>
                         </div>
 
-                        {/* Nakuru Map */}
+                        {/* Nakuru KFA Map */}
                         <div>
-                          <h4 className="font-medium mb-2">Nakuru – KFA Building</h4>
+                          <h4 className="font-medium mb-2">3. Jolu Security Office – KFA Building, Nakuru</h4>
                           <iframe
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15958.37956243454!2d36.05669568715821!3d-0.28648409808689044!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182aa60a63f693e9%3A0xaba0a02d31f7b4d5!2sKFA%20Building%2C%20Nakuru!5e0!3m2!1sen!2ske!4v1723810622341!5m2!1sen!2ske"
+                            width="100%"
+                            height="250"
+                            style={{ border: 0 }}
+                            allowFullScreen={true}
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                          ></iframe>
+                        </div>
+                                                {/* Rongo Map */}
+                        <div>
+                          <h4 className="font-medium mb-2">4. Jolu Office - Quickfill Service Station – Rongo, Migori</h4>
+                          <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.472100426641!2d34.606213499999996!3d-0.7548144999999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182b496e03a56399%3A0xc2ad096c1f16c391!2sQUICKFILL%20RONGO%20STATION!5e0!3m2!1sen!2ske!4v1774360053586!5m2!1sen!2ske"
                             width="100%"
                             height="250"
                             style={{ border: 0 }}
