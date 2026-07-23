@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { db, transporter, quoteSchema, z } = require("../index.js");
+const { db, resend, quoteSchema, z } = require("../index.js");
 
 router.post("/", async (req, res) => {
   try {
@@ -16,24 +16,20 @@ router.post("/", async (req, res) => {
     });
 
     // Send email
-    const mailTransporter = transporter();
-    if (mailTransporter) {
-      await mailTransporter.sendMail({
-        to: process.env.EMAIL_TO,
-        from: process.env.EMAIL_FROM || "noreply@example.com",
-        subject: `New Quote Request: ${payload.name} (${
-          payload.productInterest || "General"
-        })`,
-        text: `Name: ${payload.name}
+await resend().emails.send({
+  from: process.env.EMAIL_FROM,
+  to: process.env.EMAIL_TO,
+  subject: `New Quote Request: ${payload.name} (${payload.productInterest || "General"})`,
+  text: `Name: ${payload.name}
 Email: ${payload.email}
 Phone: ${payload.phone}
 County: ${payload.county}
 Area: ${payload.area}
 Interest: ${payload.productInterest || "N/A"}
+
 Message:
 ${payload.message}`,
-      });
-    }
+});
 
     res.status(201).json({ ok: true, message: "Quote request saved & email sent" });
   } catch (err) {
