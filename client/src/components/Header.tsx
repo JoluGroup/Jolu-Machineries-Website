@@ -80,53 +80,54 @@ const Header = () => {
               "dropdown" in item ? (
                 <div key={item.name} className="relative group">
                   <button className="hover:text-primary">{item.name}</button>
-                  <div className="absolute left-0 mt-2 w-44 bg-white dark:bg-zinc-800 shadow rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
-                    <ul className="py-1">
-                      {item.items.map((sub) =>
-                        "dropdown" in sub ? (
-                          <li key={sub.name} className="relative group">
-                            <button className="flex items-center justify-between w-full px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700">
-                              {sub.name}
-                              <ChevronRight size={14} />
-                            </button>
-                            {/* Nested dropdown */}
-                            <div className="absolute left-full top-0 ml-1 w-44 bg-white dark:bg-zinc-800 shadow rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
-                              <ul className="py-1">
-                                {sub.items.map((nested) => (
-                                  <li key={nested.name}>
-                                    <Link
-                                      to={nested.href}
-                                      className="flex items-center justify-between px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700"
-                                    >
-                                      <span>{nested.name}</span>
-                                      {nested.hot && (
-                                        <span className="ml-2 text-[10px] font-bold bg-red-600 text-white px-2 py-0.5 rounded-full animate-pulse">
-                                          HOT
-                                        </span>
-                                      )}
-                                      {nested.new && (
-                                        <span className="ml-2 text-[10px] font-bold bg-green-600 text-white px-2 py-0.5 rounded-full animate-bounce">
-                                          NEW
-                                        </span>
-                                      )}
-                                    </Link>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          </li>
-                        ) : (
-                          <li key={sub.name}>
-                            <Link
-                              to={sub.href}
-                              className="block px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700"
-                            >
-                              {sub.name}
-                            </Link>
-                          </li>
-                        )
-                      )}
-                    </ul>
+                  <div className="absolute left-0 mt-2 w-72 rounded-lg border border-primary-glow/30 bg-primary text-primary-foreground shadow-[0_16px_40px_-12px_hsl(var(--primary)/0.6)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden py-1">
+                    {(() => {
+                      const hasSection = item.items.some((s) => "dropdown" in s);
+                      return item.items.map((sub) =>
+                      "dropdown" in sub ? (
+                        <div key={sub.name}>
+                          <p className="px-4 pt-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary-glow">
+                            {sub.name}
+                          </p>
+                          <ul>
+                            {sub.items.map((nested) => (
+                              <li key={nested.name}>
+                                <Link
+                                  to={nested.href}
+                                  className="flex items-start gap-2 px-4 py-2 hover:bg-primary-glow/15 transition-colors"
+                                >
+                                  <span className="flex-1 min-w-0 text-sm leading-snug line-clamp-2">
+                                    {nested.name}
+                                  </span>
+                                  {nested.hot && (
+                                    <span className="shrink-0 mt-0.5 text-[10px] font-bold bg-red-600 text-white px-2 py-0.5 rounded-full">
+                                      HOT
+                                    </span>
+                                  )}
+                                  {nested.new && (
+                                    <span className="shrink-0 mt-0.5 text-[10px] font-bold bg-accent text-primary px-2 py-0.5 rounded-full">
+                                      NEW
+                                    </span>
+                                  )}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ) : (
+                        <Link
+                          key={sub.name}
+                          to={sub.href}
+                          className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium hover:bg-primary-glow/15 transition-colors ${
+                            hasSection ? "mt-1 border-t border-primary-glow/20" : ""
+                          }`}
+                        >
+                          <ChevronRight size={14} className="text-primary-glow" />
+                          {sub.name}
+                        </Link>
+                      )
+                    );
+                    })()}
                   </div>
                 </div>
               ) : (
@@ -161,26 +162,28 @@ const Header = () => {
                   <ul className="pl-4 mt-2 space-y-1">
                     {item.items.map((sub) =>
                       "dropdown" in sub ? (
-                        <details key={sub.name} className="pl-2">
-                          <summary className="cursor-pointer flex items-center justify-between">
+                        <li key={sub.name}>
+                          <p className="pt-1 pb-0.5 text-[11px] font-semibold uppercase tracking-wider text-primary">
                             {sub.name}
-                          </summary>
-                          <ul className="pl-4 mt-1 space-y-1">
+                          </p>
+                          <ul className="pl-2 space-y-1">
                             {sub.items.map((nested) => (
                               <li key={nested.name}>
                                 <Link
                                   to={nested.href}
                                   onClick={() => setIsMenuOpen(false)}
-                                  className="flex items-center justify-between py-1"
+                                  className="flex items-start gap-2 py-1"
                                 >
-                                  <span>{nested.name}</span>
+                                  <span className="flex-1 min-w-0 text-sm leading-snug">
+                                    {nested.name}
+                                  </span>
                                   {nested.hot && (
-                                    <span className="ml-2 text-[10px] font-bold bg-red-600 text-white px-2 py-0.5 rounded-full animate-pulse">
+                                    <span className="shrink-0 mt-0.5 text-[10px] font-bold bg-red-600 text-white px-2 py-0.5 rounded-full">
                                       HOT
                                     </span>
                                   )}
                                   {nested.new && (
-                                    <span className="ml-2 text-[10px] font-bold bg-green-600 text-white px-2 py-0.5 rounded-full animate-bounce">
+                                    <span className="shrink-0 mt-0.5 text-[10px] font-bold bg-accent text-primary px-2 py-0.5 rounded-full">
                                       NEW
                                     </span>
                                   )}
@@ -188,13 +191,13 @@ const Header = () => {
                               </li>
                             ))}
                           </ul>
-                        </details>
+                        </li>
                       ) : (
                         <li key={sub.name}>
                           <Link
                             to={sub.href}
                             onClick={() => setIsMenuOpen(false)}
-                            className="block py-1"
+                            className="block py-1 text-sm font-medium"
                           >
                             {sub.name}
                           </Link>
