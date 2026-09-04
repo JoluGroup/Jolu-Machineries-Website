@@ -2,7 +2,7 @@ import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin, ArrowUp } from "luc
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { FaTiktok } from "react-icons/fa";
+import { FaTiktok, FaWhatsapp } from "react-icons/fa";
 import { useLocation, Link } from "react-router-dom";
 import { useState } from "react";
 
@@ -113,43 +113,45 @@ const Footer = () => {
 
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
-                <Phone size={18} className="text-primary-glow" />
+                <Phone size={18} className="text-primary-glow shrink-0" />
                 <span className="text-white/80">0705 038 679</span>
               </div>
               <div className="flex items-center space-x-3">
-                <Mail size={18} className="text-primary-glow" />
+                <Mail size={18} className="text-primary-glow shrink-0" />
                 <span className="text-white/80">info@jolumachineries.com</span>
               </div>
+
               <div className="flex items-start space-x-3">
-                <MapPin size={35} className="text-primary-glow mt-1" />
-                <span className="text-white/80">
-                  Main Office - Thome <br />
-                  Nairobi, Kenya
-                </span>
+                <MapPin size={18} className="text-primary-glow mt-0.5 shrink-0" />
+                <div className="leading-snug">
+                  <p className="font-semibold text-white">Nairobi</p>
+                  <p className="text-sm text-white/70">Main Office - Thome, Nairobi, Kenya</p>
+                </div>
               </div>
               <div className="flex items-start space-x-3">
-                <MapPin size={35} className="text-primary-glow mt-1" />
-                <span className="text-white/80">
-                  Regional Office & Showroom <br />
-                  Along West Road, Opposite Nakuru Athletics, Next to Evans Hospital<br />
-                  Nakuru, Kenya
-                </span>
+                <MapPin size={18} className="text-primary-glow mt-0.5 shrink-0" />
+                <div className="leading-snug">
+                  <p className="font-semibold text-white">Nakuru — Regional Office & Showroom</p>
+                  <p className="text-sm text-white/70">
+                    Along West Road, Opposite Nakuru Athletics, Next to Evans Hospital, Nakuru, Kenya
+                  </p>
+                </div>
               </div>
               <div className="flex items-start space-x-3">
-                <MapPin size={35} className="text-primary-glow mt-1" />
-                <span className="text-white/80">
-                  Security Office<br />
-                  KFA Building Along Geoffrey Kamau Avenue, Next to Rubis Petrol Station<br />
-                  Nakuru, Kenya
-                </span>
+                <MapPin size={18} className="text-primary-glow mt-0.5 shrink-0" />
+                <div className="leading-snug">
+                  <p className="font-semibold text-white">Nakuru — Security Office</p>
+                  <p className="text-sm text-white/70">
+                    KFA Building Along Geoffrey Kamau Avenue, Next to Rubis Petrol Station, Nakuru, Kenya
+                  </p>
+                </div>
               </div>
               <div className="flex items-start space-x-3">
-                <MapPin size={35} className="text-primary-glow mt-1" />
-                <span className="text-white/80">
-                  Branch Office<br />
-                  Quickfill Rongo Station<br />
-                  Migori, Kenya
-                </span>
+                <MapPin size={18} className="text-primary-glow mt-0.5 shrink-0" />
+                <div className="leading-snug">
+                  <p className="font-semibold text-white">Migori — Branch Office</p>
+                  <p className="text-sm text-white/70">Quickfill Rongo Station, Migori, Kenya</p>
+                </div>
               </div>
             </div>
           </div>
@@ -162,7 +164,7 @@ const Footer = () => {
                 <li key={index}>
                   <button
                     onClick={() => handleInternalNav(link.id)}
-                    className="text-white/80 hover:text-primary-glow transition-colors duration-200 relative group"
+                    className="text-white/80 no-underline hover:text-primary-glow transition-colors duration-200 relative group"
                   >
                     {link.name}
                     <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-glow transition-all duration-300 group-hover:w-full"></span>
@@ -174,13 +176,17 @@ const Footer = () => {
 
           {/* Products & Services */}
           <div>
-            <h4 className="text-xl font-semibold mb-6">Our Products</h4>
-            <ul className="space-y-3">
+            <h4 className="text-xl font-semibold mb-6">Products &amp; Services</h4>
+
+            <p className="text-sm font-semibold uppercase tracking-wider text-primary-glow mb-3">
+              Our Products
+            </p>
+            <ul className="space-y-3 mb-8">
               {productCategories.map((item, index) => (
                 <li key={index}>
                   <button
                     onClick={() => handleInternalNav(item.id)}
-                    className="text-white/80 hover:text-primary-glow transition-colors duration-200 relative group"
+                    className="text-white/80 no-underline hover:text-primary-glow transition-colors duration-200 relative group"
                   >
                     {item.name}
                     <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-glow transition-all duration-300 group-hover:w-full"></span>
@@ -189,13 +195,15 @@ const Footer = () => {
               ))}
             </ul>
 
-            <h4 className="text-xl font-semibold mb-6 mt-8">Services</h4>
+            <p className="text-sm font-semibold uppercase tracking-wider text-primary-glow mb-3">
+              Services
+            </p>
             <ul className="space-y-3">
               {services.map((service, index) => (
                 <li key={index}>
                   <button
                     onClick={() => handleInternalNav(service.id)}
-                    className="text-white/80 hover:text-primary-glow transition-colors duration-200 relative group"
+                    className="text-white/80 no-underline hover:text-primary-glow transition-colors duration-200 relative group"
                   >
                     {service.name}
                     <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary-glow transition-all duration-300 group-hover:w-full"></span>
@@ -220,7 +228,7 @@ const Footer = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                  className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                  className="bg-white text-primary-dark border border-white placeholder:text-primary-dark/50 focus-visible:ring-primary-glow"
                   disabled={loading}
                 />
                 <Button
@@ -271,6 +279,15 @@ const Footer = () => {
                     className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-glow transition-colors duration-200"
                   >
                     <FaTiktok size={18} />
+                  </a>
+                  <a
+                    href="https://wa.me/254705038679"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Chat with us on WhatsApp"
+                    className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-glow transition-colors duration-200"
+                  >
+                    <FaWhatsapp size={18} />
                   </a>
                 </div>
               </div>
