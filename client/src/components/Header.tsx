@@ -10,6 +10,7 @@ const Header = () => {
   const navItems = [
     { name: "Home", href: "/#home" },
     { name: "Products", href: "/#products" },
+    { name: "Spare Parts", href: "/spare-parts" },
     {
       name: "About",
       dropdown: true,

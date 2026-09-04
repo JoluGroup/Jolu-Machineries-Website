@@ -26,6 +26,9 @@ export type QuoteProduct = {
   name: string;
   category?: string | null;
   hp?: string | null;
+  // Optional explicit "Product Interest" override. When provided it wins over
+  // the HP/category auto-match (used e.g. by spare parts).
+  interest?: string | null;
 };
 
 type QuoteDrawerProps = {
@@ -62,7 +65,9 @@ const QuoteDrawer = ({ trigger, product }: QuoteDrawerProps) => {
   // Reset + auto-fill Product Interest each time the drawer opens.
   useEffect(() => {
     if (!open) return;
-    const productInterest = product ? matchProductInterest(product) : "";
+    const productInterest = product
+      ? product.interest || matchProductInterest(product)
+      : "";
     setForm({ ...emptyForm, productInterest });
   }, [open, product]);
 
