@@ -32,6 +32,20 @@ import tractor9 from "@/assets/tractor-9.png";
 
 
 
+// Derive at-a-glance specs (gearbox, weight) from the existing product data
+// without restructuring it. Gearbox/weight live inside the `features` strings
+// (e.g. "16F+8R Gearbox…", "Weight 4080kg"), so we pull them out with regex.
+const deriveQuickSpecs = (product: { horsepower?: string; features: string[] }) => {
+  const features = product.features.join(" ");
+  const gearboxMatch = features.match(/\d+F\s*\+\s*\d+R/i);
+  const weightMatch = features.match(/(\d[\d,.]*)\s*kg/i);
+  return {
+    hp: product.horsepower || "—",
+    gearbox: gearboxMatch ? gearboxMatch[0].replace(/\s+/g, "") : "—",
+    weight: weightMatch ? `${weightMatch[1]} kg` : "—",
+  };
+};
+
 const ProductsSection = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -502,9 +516,10 @@ const ProductsSection = () => {
             <Card key={product.id} className="product-card group">
               <CardHeader className="p-0 relative">
                 {product.badge && (
-                  <Badge className="absolute top-4 left-4 z-10 bg-primary text-primary-foreground">
+                  <span className="absolute top-4 left-4 z-20 inline-flex items-center gap-1.5 rounded-sm border border-accent/70 bg-zinc-950/90 px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-accent shadow-sm backdrop-blur-sm">
+                    <span className="h-1.5 w-1.5 rounded-[1px] bg-accent" aria-hidden="true" />
                     {product.badge}
-                  </Badge>
+                  </span>
                 )}
                 <div className="relative overflow-hidden rounded-t-xl">
                   <img
@@ -512,7 +527,39 @@ const ProductsSection = () => {
                     alt={product.name}
                     className="w-full h-48 object-contain transition-transform duration-500 group-hover:scale-110"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  {/* Tactical quick-spec overlay revealed on hover */}
+                  {(() => {
+                    const specs = deriveQuickSpecs(product);
+                    const rows: { label: string; value: string }[] = [
+                      { label: "HP", value: specs.hp },
+                      { label: "Gearbox", value: specs.gearbox },
+                      { label: "Weight", value: specs.weight },
+                    ];
+                    return (
+                      <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-zinc-950/95 via-zinc-950/70 to-transparent opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
+                        <div className="p-4">
+                          <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.2em] text-accent/80">
+                            At a glance
+                          </p>
+                          <dl className="grid grid-cols-3 gap-2">
+                            {rows.map((row) => (
+                              <div
+                                key={row.label}
+                                className="rounded-sm border border-white/10 bg-white/5 px-2 py-1.5"
+                              >
+                                <dt className="font-mono text-[9px] uppercase tracking-wider text-white/50">
+                                  {row.label}
+                                </dt>
+                                <dd className="font-mono text-xs font-semibold text-white">
+                                  {row.value}
+                                </dd>
+                              </div>
+                            ))}
+                          </dl>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               </CardHeader>
 
