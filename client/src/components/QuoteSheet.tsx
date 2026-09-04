@@ -64,13 +64,43 @@ export const resolveProductInterest = (product?: QuoteProduct): string => {
   }
 
   // Treat everything else as a tractor and bucket it by horsepower.
-  const firstHp = product.horsepower?.match(/\d+/)?.[0];
-  const hp = firstHp ? parseInt(firstHp, 10) : NaN;
+  const nums = (product.horsepower ?? "").match(/\d+/g)?.map(Number) ?? [];
 
-  if (!Number.isNaN(hp)) {
-    if (hp < 100) return "Tractors (50-100 HP)";
-    if (hp < 150) return "Tractors (100-150 HP)";
-    return "Tractors (150+ HP)";
+  if (nums.length > 0) {
+    const lo = Math.min(...nums);
+    const hi = Math.max(...nums);
+
+    // Tractor bands as numeric ranges (upper bound open-ended for the top band).
+    const bands: { label: string; lo: number; hi: number }[] = [
+      { label: "Tractors (50-100 HP)", lo: 50, hi: 100 },
+      { label: "Tractors (100-150 HP)", lo: 100, hi: 150 },
+      { label: "Tractors (150+ HP)", lo: 150, hi: Infinity },
+    ];
+
+    // Score each band by how much the product's HP range overlaps it.
+    // For a single-point HP value, fall back to the range midpoint's distance.
+    const mid = (lo + hi) / 2;
+    let best = bands[0];
+    let bestScore = -Infinity;
+
+    for (const band of bands) {
+      const overlap = Math.min(hi, band.hi) - Math.max(lo, band.lo);
+      // Overlap can be 0 for a point value or a gap; break ties by proximity
+      // of the midpoint to the band, and prefer the higher band on exact ties
+      // (so a boundary range like 90-110 lands in 100-150, not 50-100).
+      const proximity =
+        mid >= band.lo && mid <= band.hi
+          ? 0.001
+          : -Math.min(Math.abs(mid - band.lo), Math.abs(mid - band.hi)) / 1000;
+      const score = overlap + proximity;
+
+      if (score >= bestScore) {
+        bestScore = score;
+        best = band;
+      }
+    }
+
+    return best.label;
   }
 
   return "General Inquiry";
