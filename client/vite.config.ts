@@ -6,6 +6,8 @@ export default defineConfig({
   server: {
     host: "::",
     port: 8080,
+    // Allow v0 preview sandbox hosts (wildcards cover all current/future previews)
+    allowedHosts: [".vercel.run", ".v0.build", "localhost"],
   },
   plugins: [react()],
   resolve: {
