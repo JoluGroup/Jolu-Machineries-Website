@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Menu, X, Phone, Mail, MapPin, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import QuoteDrawer from "@/components/QuoteDrawer";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -134,9 +135,7 @@ const Header = () => {
                 </Link>
               )
             )}
-            <Link to="/quote">
-              <Button size="sm">Request a Quote</Button>
-            </Link>
+            <QuoteDrawer trigger={<Button size="sm">Request a Quote</Button>} />
           </nav>
 
           {/* Mobile Menu Button */}
@@ -215,9 +214,13 @@ const Header = () => {
                 </Link>
               )
             )}
-            <Link to="/quote" onClick={() => setIsMenuOpen(false)}>
-              <Button className="w-full mt-2">Request a Quote</Button>
-            </Link>
+            <QuoteDrawer
+              trigger={
+                <Button className="w-full mt-2" onClick={() => setIsMenuOpen(false)}>
+                  Request a Quote
+                </Button>
+              }
+            />
           </div>
         )}
       </div>
