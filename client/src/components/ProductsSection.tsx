@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
+import QuoteSheet from "@/components/QuoteSheet";
 import tractor1 from "@/assets/tractor-1.png";
 import harvester1 from "@/assets/harvester-1.png";
 import harvester2 from "@/assets/harvester-2.png";
@@ -554,11 +555,17 @@ const ProductsSection = () => {
                   </Button>
                 </Link>
 
-                <Link to="/quote" className="flex-1">
-                  <Button variant="outline" className="w-full">
-                    Get Quote
+                <QuoteSheet
+                  product={{
+                    name: product.name,
+                    category: product.category,
+                    horsepower: product.horsepower,
+                  }}
+                >
+                  <Button variant="outline" className="flex-1 w-full">
+                    Request a Quote
                   </Button>
-                </Link>
+                </QuoteSheet>
               </CardFooter>
             </Card>
           ))}

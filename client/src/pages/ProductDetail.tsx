@@ -1,8 +1,9 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { products } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import QuoteSheet from "@/components/QuoteSheet";
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -11,6 +12,14 @@ const ProductDetail = () => {
   if (!product) {
     return <div className="text-center text-red-600 mt-20">Product not found</div>;
   }
+
+  const hpSpec = product.keySpecs?.find((s) =>
+    /horse\s*power|tractor\s*power/i.test(s.label)
+  );
+  const quoteProduct = {
+    name: product.name,
+    horsepower: hpSpec ? hpSpec.value : undefined,
+  };
 
   return (
     <>
@@ -33,9 +42,9 @@ const ProductDetail = () => {
                   ))}
                 </ul>
               )}
-              <Link to="/quote">
+              <QuoteSheet product={quoteProduct}>
                 <Button className="mt-6 btn-agricultural">Request a Quote</Button>
-              </Link>
+              </QuoteSheet>
             </div>
           </div>
 
@@ -84,11 +93,11 @@ const ProductDetail = () => {
               <h2 className="text-3xl sm:text-4xl font-bold mb-4">{product.ctaHeadline}</h2>
               <p className="text-lg mb-6 max-w-2xl mx-auto">{product.ctaDescription}</p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Link to="/quote">
+                <QuoteSheet product={quoteProduct}>
                   <Button className="bg-primary-dark text-white hover:bg-primary border border-primary-dark font-semibold px-6 py-3 transition-colors">
                     Request a Quote
                   </Button>
-                </Link>
+                </QuoteSheet>
                 <a
                   href="https://wa.me/254705038679"
                   target="_blank"

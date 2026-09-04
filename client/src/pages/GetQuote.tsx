@@ -94,7 +94,7 @@ const GetQuote = () => {
             </div>
 
             <div className="flex gap-3">
-              <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Sending..." : "Request Quote"}</Button>
+              <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Sending..." : "Request a Quote"}</Button>
               <Button type="button" variant="secondary" onClick={() => setForm({ name: "", email: "", phone: "", county: "", area: "", productInterest: "", message: "" })}>
                 Clear
               </Button>
