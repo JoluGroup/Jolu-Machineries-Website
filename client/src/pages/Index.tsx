@@ -10,6 +10,7 @@ import AboutSection from "@/components/AboutSection";
 import DocumentsSection from "@/components/DocumentsSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import { Reveal } from "@/components/Reveal";
 
 
 const Index = () => {
@@ -28,11 +29,21 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <Hero />
-      <CategoryJump />
-      <ProductsSection />
+      {/* Each wrapper fades + slides up once as it scrolls into view (native IntersectionObserver).
+          AboutSection keeps its own framer-motion entrance, so it is intentionally not wrapped. */}
+      <Reveal>
+        <CategoryJump />
+      </Reveal>
+      <Reveal>
+        <ProductsSection />
+      </Reveal>
       <AboutSection />
-      <DocumentsSection />
-      <ContactSection />
+      <Reveal>
+        <DocumentsSection />
+      </Reveal>
+      <Reveal>
+        <ContactSection />
+      </Reveal>
       <Footer />
     </div>
   );

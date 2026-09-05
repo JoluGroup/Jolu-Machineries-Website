@@ -55,8 +55,8 @@ const Header = () => {
       className={cn(
         "sticky top-0 z-50 backdrop-blur-md transition-all duration-300",
         scrolled
-          ? "bg-slate-900/90 border-b border-emerald-500/20 shadow-lg shadow-emerald-500/10"
-          : "bg-slate-900/80 border-b border-transparent"
+          ? "bg-slate-900/95 border-b border-emerald-500/40 shadow-lg shadow-emerald-500/20"
+          : "bg-slate-900/60 border-b border-transparent"
       )}
     >
       {/* Top Bar */}
