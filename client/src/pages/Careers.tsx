@@ -109,31 +109,33 @@ const Careers: React.FC = () => {
           <section className="grid md:grid-cols-3 gap-6 mb-16">
             {[
               {
-                icon: <HeartHandshake className="w-10 h-10 text-[#A6CE39]" />,
+                icon: <HeartHandshake className="w-8 h-8 text-[#0B3D24]" />,
                 title: "Purpose & Impact",
                 text: "Your work makes a real difference — helping communities across Kenya thrive through security, mechanization, and enterprise.",
               },
               {
-                icon: <Users className="w-10 h-10 text-[#A6CE39]" />,
+                icon: <Users className="w-8 h-8 text-[#0B3D24]" />,
                 title: "People & Culture",
                 text: "You'll join a warm, supportive team where every voice matters and people genuinely look out for one another.",
               },
               {
-                icon: <Lightbulb className="w-10 h-10 text-[#A6CE39]" />,
+                icon: <Lightbulb className="w-8 h-8 text-[#0B3D24]" />,
                 title: "Growth & Learning",
                 text: "We invest in your growth with hands-on learning, mentorship, and leadership programs — so you keep moving forward.",
               },
             ].map((card, idx) => (
               <motion.div
                 key={idx}
-                className="bg-white border border-[#DCE8D2] p-6 rounded-xl shadow-sm"
-                whileHover={{ y: -5 }}
+                className="relative bg-[#F0F6EA] border border-[#DCE8D2] border-t-4 border-t-[#A6CE39] p-7 rounded-2xl shadow-sm hover:shadow-lg transition-shadow"
+                whileHover={{ y: -6 }}
               >
-                <div className="mb-3">{card.icon}</div>
-                <h3 className="text-lg font-semibold mb-2 text-[#0B3D24]">
+                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#A6CE39]/25 ring-4 ring-[#A6CE39]/10">
+                  {card.icon}
+                </div>
+                <h3 className="text-xl font-bold mb-2 text-[#0B3D24]">
                   {card.title}
                 </h3>
-                <p className="text-sm text-[#3F6F35]">{card.text}</p>
+                <p className="text-sm leading-relaxed text-[#3F6F35]">{card.text}</p>
               </motion.div>
             ))}
           </section>
@@ -157,7 +159,13 @@ const Careers: React.FC = () => {
                 and we&apos;ll keep you in mind for future roles.
               </p>
             ) : (
-              <div className="grid gap-8 md:grid-cols-2">
+              <div
+                className={`grid gap-8 mx-auto ${
+                  openings.length === 1
+                    ? "max-w-3xl grid-cols-1"
+                    : "md:grid-cols-2 xl:grid-cols-3"
+                }`}
+              >
                 {openings.map((job, idx) => (
                   <motion.article
                     key={idx}
@@ -274,18 +282,25 @@ const Careers: React.FC = () => {
               on-site, every member of the Jolu family plays a very vital role in our shared mission.
             </p>
 
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 md:grid-rows-2 gap-4 md:h-[480px]">
               {[
                 "/lovable-uploads/event/tractor.jpg",
                 "/lovable-uploads/event/handover.jpg",
                 "/lovable-uploads/event/cakecutting.jpg",
               ].map((img, idx) => (
-                <img
+                <div
                   key={idx}
-                  src={img}
-                  alt={`Life at Jolu ${idx + 1}`}
-                  className="w-full h-56 object-cover rounded-lg shadow-md"
-                />
+                  className={`group relative overflow-hidden rounded-2xl shadow-md ${
+                    idx === 0 ? "md:row-span-2 h-56 md:h-full" : "h-56 md:h-full"
+                  }`}
+                >
+                  <img
+                    src={img}
+                    alt={`Life at Jolu ${idx + 1}`}
+                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B3D24]/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                </div>
               ))}
             </div>
           </section>
