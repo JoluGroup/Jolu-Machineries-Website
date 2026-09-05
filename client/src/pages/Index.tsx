@@ -4,6 +4,7 @@ import { scrollToHash } from "@/utils/scrollToHash";
 
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import CategoryJump from "@/components/CategoryJump";
 import ProductsSection from "@/components/ProductsSection";
 import AboutSection from "@/components/AboutSection";
 import DocumentsSection from "@/components/DocumentsSection";
@@ -27,6 +28,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header />
       <Hero />
+      <CategoryJump />
       <ProductsSection />
       <AboutSection />
       <DocumentsSection />

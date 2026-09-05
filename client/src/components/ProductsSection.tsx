@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Filter, Grid, List, Search, Star, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +6,9 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import QuoteDrawer from "@/components/QuoteDrawer";
+import { useInView } from "@/hooks/use-in-view";
+import { cn } from "@/lib/utils";
+import { FILTER_CATEGORY_EVENT } from "@/components/CategoryJump";
 import tractor1 from "@/assets/tractor-1.png";
 import harvester1 from "@/assets/harvester-1.png";
 import harvester2 from "@/assets/harvester-2.png";
@@ -51,6 +54,22 @@ const ProductsSection = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [visibleCount, setVisibleCount] = useState(6); // Load 6 products initially
+
+  // Grid fade-up entrance on scroll into view (zero-dependency IntersectionObserver).
+  const { ref: gridRef, inView: gridInView } = useInView<HTMLDivElement>({ once: true });
+
+  // Quick-jump pills (CategoryJump) drive this existing filter via a window event —
+  // no duplicate filtering component, the state stays owned here.
+  useEffect(() => {
+    const handleFilter = (e: Event) => {
+      const category = (e as CustomEvent<string>).detail;
+      if (!category) return;
+      setSelectedCategory(category);
+      setVisibleCount(6);
+    };
+    window.addEventListener(FILTER_CATEGORY_EVENT, handleFilter);
+    return () => window.removeEventListener(FILTER_CATEGORY_EVENT, handleFilter);
+  }, []);
 
   const categories = [
     { id: 'all', name: 'All Products', count: 18 },
@@ -511,7 +530,14 @@ const ProductsSection = () => {
           </div>
         </div>
 
-        <div className={`grid gap-6 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+        <div
+          ref={gridRef}
+          className={cn(
+            "grid gap-6 transition-all duration-300 ease-out",
+            viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1',
+            gridInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-[15px]"
+          )}
+        >
           {visibleProducts.map((product) => (
             <Card key={product.id} className="product-card group">
               <CardHeader className="p-0 relative">

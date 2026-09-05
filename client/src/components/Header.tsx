@@ -1,11 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X, Phone, Mail, MapPin, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import QuoteDrawer from "@/components/QuoteDrawer";
+import { cn } from "@/lib/utils";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // Lightweight scroll state: deepen the glass + add a glow border past 20px.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const navItems = [
     { name: "Home", href: "/#home" },
@@ -41,7 +51,14 @@ const Header = () => {
   ];
 
   return (
-    <header className="bg-white/70 dark:bg-zinc-900/70 backdrop-blur supports-[backdrop-filter]:bg-white/50 sticky top-0 z-50 border-b border-zinc-200 dark:border-zinc-800">
+    <header
+      className={cn(
+        "sticky top-0 z-50 backdrop-blur-md transition-all duration-300",
+        scrolled
+          ? "bg-slate-900/90 border-b border-emerald-500/20 shadow-lg shadow-emerald-500/10"
+          : "bg-slate-900/80 border-b border-transparent"
+      )}
+    >
       {/* Top Bar */}
       <div className="bg-primary text-primary-foreground text-xs py-2">
         <div className="container mx-auto px-4 flex items-center justify-between">
@@ -72,7 +89,7 @@ const Header = () => {
               alt="Jolu Logo"
               className="h-12 w-15 object-contain"
             />
-            <div className="text-3xl font-bold">JOLU</div>
+            <div className="text-3xl font-bold text-white">JOLU</div>
           </Link>
 
           {/* Desktop Menu */}
@@ -80,7 +97,7 @@ const Header = () => {
             {navItems.map((item) =>
               "dropdown" in item ? (
                 <div key={item.name} className="relative group">
-                  <button className="hover:text-primary">{item.name}</button>
+                  <button className="text-white/90 hover:text-primary-glow transition-colors">{item.name}</button>
                   <div className="absolute left-0 mt-2 w-72 rounded-lg border border-primary-glow/30 bg-primary text-primary-foreground shadow-[0_16px_40px_-12px_hsl(var(--primary)/0.6)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden py-1">
                     {(() => {
                       const hasSection = item.items.some((s) => "dropdown" in s);
@@ -132,7 +149,11 @@ const Header = () => {
                   </div>
                 </div>
               ) : (
-                <Link key={item.name} to={item.href} className="hover:text-primary">
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className="text-white/90 hover:text-primary-glow transition-colors"
+                >
                   {item.name}
                 </Link>
               )
@@ -142,7 +163,7 @@ const Header = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden"
+            className="md:hidden text-white"
             onClick={() => setIsMenuOpen((s) => !s)}
             aria-label="Toggle menu"
           >
@@ -152,12 +173,12 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden mt-4 space-y-2">
+          <div className="md:hidden mt-4 space-y-2 text-white">
             {navItems.map((item) =>
               "dropdown" in item ? (
                 <details
                   key={item.name}
-                  className="bg-zinc-100 dark:bg-zinc-800 rounded-lg p-2"
+                  className="bg-white/10 rounded-lg p-2"
                 >
                   <summary className="cursor-pointer">{item.name}</summary>
                   <ul className="pl-4 mt-2 space-y-1">
@@ -212,7 +233,7 @@ const Header = () => {
                   key={item.name}
                   to={item.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className="block"
+                  className="block text-white/90"
                 >
                   {item.name}
                 </Link>
