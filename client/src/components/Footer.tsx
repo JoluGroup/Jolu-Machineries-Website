@@ -140,15 +140,6 @@ const Footer = () => {
               <div className="flex items-start space-x-3">
                 <MapPin size={18} className="text-primary-glow mt-0.5 shrink-0" />
                 <div className="leading-snug">
-                  <p className="font-semibold text-white">Nakuru — Security Office</p>
-                  <p className="text-sm text-white/70">
-                    KFA Building Along Geoffrey Kamau Avenue, Next to Rubis Petrol Station, Nakuru, Kenya
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <MapPin size={18} className="text-primary-glow mt-0.5 shrink-0" />
-                <div className="leading-snug">
                   <p className="font-semibold text-white">Migori — Branch Office</p>
                   <p className="text-sm text-white/70">Quickfill Rongo Station, Migori, Kenya</p>
                 </div>
