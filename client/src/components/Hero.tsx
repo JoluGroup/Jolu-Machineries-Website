@@ -92,9 +92,10 @@ const Hero = () => {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center md:items-center pt-20 md:pt-0 overflow-hidden"
+      className="relative min-h-screen flex items-center md:items-center pt-20 md:pt-0 overflow-hidden bg-[#0a0c0a]"
     >
-      {/* Sliding Background Images */}
+      {/* Sliding Background Images — darkened and desaturated so they read as
+          industrial texture against the near-black base */}
       <div
         className="absolute inset-0 flex transition-transform duration-1000 ease-in-out"
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
@@ -104,12 +105,45 @@ const Hero = () => {
             <img
               src={slide.image}
               alt="Agricultural Machinery"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover opacity-55 contrast-110 saturate-[0.85]"
             />
-            <div className="absolute inset-0 bg-black/40"></div>
           </div>
         ))}
       </div>
+
+      {/* Grid-line texture (lime accent, very low opacity) */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[1] opacity-[0.10]"
+        style={{
+          backgroundImage:
+            "linear-gradient(hsl(var(--primary-glow)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary-glow)) 1px, transparent 1px)",
+          backgroundSize: "64px 64px",
+          maskImage:
+            "radial-gradient(ellipse 90% 80% at 30% 40%, black 40%, transparent 100%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 90% 80% at 30% 40%, black 40%, transparent 100%)",
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Contrast + industrial vignette: strong near-black gradient from the
+          left (where text sits) guaranteeing WCAG AA, plus a lime edge glow */}
+      <div
+        className="pointer-events-none absolute inset-0 z-[2]"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(6,8,6,0.94) 0%, rgba(6,8,6,0.82) 42%, rgba(6,8,6,0.55) 100%)",
+        }}
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute inset-0 z-[2]"
+        style={{
+          background:
+            "linear-gradient(0deg, rgba(6,8,6,0.85) 0%, transparent 45%), radial-gradient(circle at 85% 15%, hsl(var(--primary-glow) / 0.14), transparent 55%)",
+        }}
+        aria-hidden="true"
+      />
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4">
@@ -163,7 +197,7 @@ const Hero = () => {
           <div
             ref={statsRef}
             className={cn(
-              "grid grid-cols-1 md:grid-cols-3 gap-6 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 transition-all duration-300 ease-out",
+              "grid grid-cols-1 md:grid-cols-3 gap-6 bg-black/40 backdrop-blur-md rounded-2xl p-6 border border-primary-glow/25 transition-all duration-300 ease-out",
               statsInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-[15px]"
             )}
           >
