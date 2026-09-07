@@ -1,11 +1,20 @@
 import { useState, useEffect } from "react";
-import { Filter, Grid, List, Search, Star, ArrowRight } from "lucide-react";
+import { createPortal } from "react-dom";
+import { Filter, Grid, List, Search, Star, ArrowRight, X, Check, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
 import QuoteDrawer from "@/components/QuoteDrawer";
+import { useToast } from "@/hooks/use-toast";
 import { useInView } from "@/hooks/use-in-view";
 import { cn } from "@/lib/utils";
 import { FILTER_CATEGORY_EVENT } from "@/components/CategoryJump";
@@ -49,6 +58,25 @@ const deriveQuickSpecs = (product: { horsepower?: string; features: string[] }) 
   };
 };
 
+// Shared shape for the comparison feature. Some products expose `capacity`
+// instead of `horsepower` (e.g. the water bowser), so both are optional and
+// any absent field is simply omitted from the comparison — never faked.
+type CompareProduct = {
+  id: number;
+  slug: string;
+  name: string;
+  category: string;
+  image: string;
+  rating: number;
+  reviews: number;
+  features: string[];
+  horsepower?: string;
+  capacity?: string;
+  badge?: string;
+};
+
+const MAX_COMPARE = 3;
+
 const ProductsSection = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -70,6 +98,32 @@ const ProductsSection = () => {
     window.addEventListener(FILTER_CATEGORY_EVENT, handleFilter);
     return () => window.removeEventListener(FILTER_CATEGORY_EVENT, handleFilter);
   }, []);
+
+  // --- Product comparison (additive; capped at MAX_COMPARE) ---
+  const { toast } = useToast();
+  const [compareIds, setCompareIds] = useState<number[]>([]);
+  const [compareOpen, setCompareOpen] = useState(false);
+
+  const toggleCompare = (id: number) => {
+    setCompareIds((prev) => {
+      if (prev.includes(id)) return prev.filter((x) => x !== id);
+      if (prev.length >= MAX_COMPARE) {
+        toast({
+          title: "Comparison limit reached",
+          description: `You can compare up to ${MAX_COMPARE} products at once. Remove one to add another.`,
+        });
+        return prev;
+      }
+      return [...prev, id];
+    });
+  };
+
+  const removeCompare = (id: number) =>
+    setCompareIds((prev) => prev.filter((x) => x !== id));
+  const clearCompare = () => {
+    setCompareIds([]);
+    setCompareOpen(false);
+  };
 
   const categories = [
     { id: 'all', name: 'All Products', count: 18 },
@@ -460,6 +514,16 @@ const ProductsSection = () => {
 
   const visibleProducts = filteredProducts.slice(0, visibleCount);
 
+  // Resolve selected ids to full product objects (order preserved).
+  const compareProducts = compareIds
+    .map((id) => products.find((p) => p.id === id))
+    .filter(Boolean) as CompareProduct[];
+
+  // Never show the comparison view for fewer than 2 products.
+  useEffect(() => {
+    if (compareOpen && compareProducts.length < 2) setCompareOpen(false);
+  }, [compareOpen, compareProducts.length]);
+
   return (
     <section id="products" className="py-16 bg-muted/30">
       <div className="container mx-auto px-4">
@@ -547,6 +611,25 @@ const ProductsSection = () => {
                     {product.badge}
                   </span>
                 )}
+                {(() => {
+                  const isSelected = compareIds.includes(product.id);
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => toggleCompare(product.id)}
+                      aria-pressed={isSelected}
+                      className={cn(
+                        "absolute top-4 right-4 z-30 inline-flex items-center gap-1.5 rounded-sm border px-2.5 py-1 font-mono text-[10px] font-semibold uppercase tracking-[0.15em] backdrop-blur-sm transition-colors",
+                        isSelected
+                          ? "border-accent bg-accent text-accent-foreground"
+                          : "border-border/70 bg-background/85 text-foreground/80 hover:border-accent hover:text-accent"
+                      )}
+                    >
+                      {isSelected ? <Check size={12} /> : <Scale size={12} />}
+                      {isSelected ? "Added" : "Compare"}
+                    </button>
+                  );
+                })()}
                 <div className="relative overflow-hidden rounded-t-xl">
                   <img
                     src={product.image}
@@ -658,6 +741,143 @@ const ProductsSection = () => {
           </div>
         )}
       </div>
+
+      {/* Persistent compare bar — portaled to <body> so the ancestor Reveal
+          transform can't break its fixed positioning. Raised on mobile
+          (bottom-24) so it never sits under the WhatsApp floating button. */}
+      {compareIds.length > 0 &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div className="fixed bottom-24 left-1/2 z-40 -translate-x-1/2 animate-in fade-in slide-in-from-bottom-4 duration-200 sm:bottom-6">
+            <div className="flex items-center gap-2 rounded-full border border-border bg-background/95 px-3 py-2 shadow-2xl backdrop-blur sm:gap-3 sm:px-4 sm:py-2.5">
+              <Scale className="shrink-0 text-primary" size={18} />
+              <span className="whitespace-nowrap text-sm font-medium text-foreground">
+                Compare ({compareIds.length})
+              </span>
+              <Button
+                size="sm"
+                className="btn-agricultural rounded-full"
+                disabled={compareIds.length < 2}
+                onClick={() => setCompareOpen(true)}
+                title={
+                  compareIds.length < 2
+                    ? "Select at least 2 products to compare"
+                    : undefined
+                }
+              >
+                Compare
+              </Button>
+              <button
+                type="button"
+                onClick={clearCompare}
+                aria-label="Clear comparison"
+                className="rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                <X size={18} />
+              </button>
+            </div>
+          </div>,
+          document.body
+        )}
+
+      {/* Side-by-side comparison view (only meaningful for 2+ products) */}
+      <Sheet open={compareOpen} onOpenChange={setCompareOpen}>
+        <SheetContent side="bottom" className="flex h-[85vh] flex-col">
+          <SheetHeader className="text-left">
+            <SheetTitle>Compare Products</SheetTitle>
+            <SheetDescription>
+              Side-by-side specs from our catalog. Remove items or request a tailored quote.
+            </SheetDescription>
+          </SheetHeader>
+
+          <div className="mt-6 flex flex-1 gap-4 overflow-auto pb-6 md:justify-center">
+            {compareProducts.map((p) => {
+              const categoryLabel =
+                p.category.charAt(0).toUpperCase() + p.category.slice(1);
+              return (
+                <div
+                  key={p.id}
+                  className="relative flex w-64 shrink-0 flex-col rounded-xl border border-border bg-card p-4"
+                >
+                  <button
+                    type="button"
+                    onClick={() => removeCompare(p.id)}
+                    aria-label={`Remove ${p.name} from comparison`}
+                    className="absolute right-2 top-2 z-10 rounded-full bg-background/90 p-1 text-muted-foreground shadow transition-colors hover:text-destructive"
+                  >
+                    <X size={16} />
+                  </button>
+
+                  <div className="mb-3 flex h-32 items-center justify-center rounded-lg bg-muted/40">
+                    <img
+                      src={p.image}
+                      alt={p.name}
+                      className="h-full w-full object-contain p-2"
+                    />
+                  </div>
+
+                  <Badge className="mb-2 w-fit bg-primary/10 text-primary hover:bg-primary/20">
+                    {categoryLabel}
+                  </Badge>
+                  <h3 className="mb-3 font-semibold leading-snug text-foreground">
+                    {p.name}
+                  </h3>
+
+                  <dl className="mb-3 space-y-2 border-t border-border pt-3 text-sm">
+                    {p.horsepower && (
+                      <div className="flex justify-between gap-2">
+                        <dt className="text-muted-foreground">Power</dt>
+                        <dd className="text-right font-medium text-foreground">
+                          {p.horsepower}
+                        </dd>
+                      </div>
+                    )}
+                    {p.capacity && (
+                      <div className="flex justify-between gap-2">
+                        <dt className="text-muted-foreground">Capacity</dt>
+                        <dd className="text-right font-medium text-foreground">
+                          {p.capacity}
+                        </dd>
+                      </div>
+                    )}
+                    <div className="flex justify-between gap-2">
+                      <dt className="text-muted-foreground">Rating</dt>
+                      <dd className="flex items-center gap-1 font-medium text-foreground">
+                        <Star className="fill-current text-yellow-400" size={14} />
+                        {p.rating}
+                      </dd>
+                    </div>
+                  </dl>
+
+                  <div className="mb-4 flex-1">
+                    <p className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      Features
+                    </p>
+                    <div className="flex flex-wrap gap-1">
+                      {p.features.map((feature, index) => (
+                        <Badge key={index} variant="secondary" className="text-xs">
+                          {feature}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  <QuoteDrawer
+                    product={{
+                      name: p.name,
+                      category: p.category,
+                      hp: p.horsepower,
+                    }}
+                    trigger={
+                      <Button className="btn-agricultural w-full">Request a Quote</Button>
+                    }
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </SheetContent>
+      </Sheet>
     </section>
   );
 };
