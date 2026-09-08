@@ -120,12 +120,16 @@ const Footer = () => {
                 <Mail size={18} className="text-primary-glow shrink-0" />
                 <span className="text-white/80">info@jolumachineries.com</span>
               </div>
+              <div className="flex items-center space-x-3">
+                <Phone size={18} className="text-primary-glow shrink-0" />
+                <span className="text-white/80">After-Sales Department: 0721 700 393</span>
+              </div>
 
               <div className="flex items-start space-x-3">
                 <MapPin size={18} className="text-primary-glow mt-0.5 shrink-0" />
                 <div className="leading-snug">
                   <p className="font-semibold text-white">Nairobi</p>
-                  <p className="text-sm text-white/70">Main Office - Thome, Nairobi, Kenya</p>
+                  <p className="text-sm text-white/70">Head Office - Thome, Nairobi, Kenya</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
@@ -135,13 +139,14 @@ const Footer = () => {
                   <p className="text-sm text-white/70">
                     Along West Road, Opposite Nakuru Athletics, Next to Evans Hospital, Nakuru, Kenya
                   </p>
+                  <p className="text-sm text-white/70">0743 682 700</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <MapPin size={18} className="text-primary-glow mt-0.5 shrink-0" />
                 <div className="leading-snug">
                   <p className="font-semibold text-white">Migori — Branch Office</p>
-                  <p className="text-sm text-white/70">Quickfill Rongo Station, Migori, Kenya</p>
+                  <p className="text-sm text-white/70">Near KENGAS Rongo, Migori, Kenya</p>
                 </div>
               </div>
             </div>
@@ -248,7 +253,7 @@ const Footer = () => {
                 <p className="text-white/80 mb-3">Follow us on social media:</p>
                 <div className="flex space-x-3">
                   <a
-                    href="https://www.facebook.com/share/19TLWAd3aF/"
+                    href="https://www.facebook.com/search/top?q=jolu%20group"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-glow transition-colors duration-200"
@@ -264,7 +269,7 @@ const Footer = () => {
                     <Instagram size={18} />
                   </a>
                   <a
-                    href="https://www.tiktok.com/@jolumachineries?_t=ZM-8ySBE3JW9Cg&_r=1"
+                    href="https://www.tiktok.com/@jolumachineries"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-glow transition-colors duration-200"
