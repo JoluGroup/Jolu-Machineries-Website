@@ -419,7 +419,7 @@ const NakuruLaunch: React.FC = () => {
 
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link to="/quote">
-                <Button className="btn-quote">Request a Free Quote</Button>
+                <Button className="btn-quote">Request a Quote</Button>
               </Link>
 
               <a href="mailto:info@jolumachineries.com">

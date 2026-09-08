@@ -1,14 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Menu, X, Phone, Mail, MapPin, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import QuoteDrawer from "@/components/QuoteDrawer";
+import { cn } from "@/lib/utils";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // Lightweight scroll state: deepen the glass + add a glow border past 20px.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const navItems = [
     { name: "Home", href: "/#home" },
     { name: "Products", href: "/#products" },
+    { name: "Spare Parts", href: "/spare-parts" },
     {
       name: "About",
       dropdown: true,
@@ -39,14 +51,21 @@ const Header = () => {
   ];
 
   return (
-    <header className="bg-white/70 dark:bg-zinc-900/70 backdrop-blur supports-[backdrop-filter]:bg-white/50 sticky top-0 z-50 border-b border-zinc-200 dark:border-zinc-800">
+    <header
+      className={cn(
+        "sticky top-0 z-50 backdrop-blur-md transition-[background-color,box-shadow,border-color] duration-300",
+        scrolled
+          ? "bg-slate-900/95 border-b border-emerald-500/50 shadow-lg shadow-emerald-500/20"
+          : "bg-slate-900/40 border-b border-transparent shadow-none"
+      )}
+    >
       {/* Top Bar */}
       <div className="bg-primary text-primary-foreground text-xs py-2">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-2">
               <Phone size={14} />
-              <span>+254 705 038 679</span>
+              <span>+254 705 038 679 | 0743 682 700</span>
             </div>
             <div className="flex items-center space-x-2">
               <Mail size={14} />
@@ -70,7 +89,7 @@ const Header = () => {
               alt="Jolu Logo"
               className="h-12 w-15 object-contain"
             />
-            <div className="text-3xl font-bold">JOLU</div>
+            <div className="text-3xl font-bold text-white">JOLU</div>
           </Link>
 
           {/* Desktop Menu */}
@@ -78,70 +97,73 @@ const Header = () => {
             {navItems.map((item) =>
               "dropdown" in item ? (
                 <div key={item.name} className="relative group">
-                  <button className="hover:text-primary">{item.name}</button>
-                  <div className="absolute left-0 mt-2 w-44 bg-white dark:bg-zinc-800 shadow rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
-                    <ul className="py-1">
-                      {item.items.map((sub) =>
-                        "dropdown" in sub ? (
-                          <li key={sub.name} className="relative group">
-                            <button className="flex items-center justify-between w-full px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700">
-                              {sub.name}
-                              <ChevronRight size={14} />
-                            </button>
-                            {/* Nested dropdown */}
-                            <div className="absolute left-full top-0 ml-1 w-44 bg-white dark:bg-zinc-800 shadow rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">
-                              <ul className="py-1">
-                                {sub.items.map((nested) => (
-                                  <li key={nested.name}>
-                                    <Link
-                                      to={nested.href}
-                                      className="flex items-center justify-between px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700"
-                                    >
-                                      <span>{nested.name}</span>
-                                      {nested.hot && (
-                                        <span className="ml-2 text-[10px] font-bold bg-red-600 text-white px-2 py-0.5 rounded-full animate-pulse">
-                                          HOT
-                                        </span>
-                                      )}
-                                      {nested.new && (
-                                        <span className="ml-2 text-[10px] font-bold bg-green-600 text-white px-2 py-0.5 rounded-full animate-bounce">
-                                          NEW
-                                        </span>
-                                      )}
-                                    </Link>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          </li>
-                        ) : (
-                          <li key={sub.name}>
-                            <Link
-                              to={sub.href}
-                              className="block px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-700"
-                            >
-                              {sub.name}
-                            </Link>
-                          </li>
-                        )
-                      )}
-                    </ul>
+                  <button className="text-white/90 hover:text-primary-glow transition-colors">{item.name}</button>
+                  <div className="absolute left-0 mt-2 w-72 rounded-lg border border-primary-glow/30 bg-primary text-primary-foreground shadow-[0_16px_40px_-12px_hsl(var(--primary)/0.6)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden py-1">
+                    {(() => {
+                      const hasSection = item.items.some((s) => "dropdown" in s);
+                      return item.items.map((sub) =>
+                      "dropdown" in sub ? (
+                        <div key={sub.name}>
+                          <p className="px-4 pt-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-primary-glow">
+                            {sub.name}
+                          </p>
+                          <ul>
+                            {sub.items.map((nested) => (
+                              <li key={nested.name}>
+                                <Link
+                                  to={nested.href}
+                                  className="flex items-start gap-2 px-4 py-2 hover:bg-primary-glow/15 transition-colors"
+                                >
+                                  <span className="flex-1 min-w-0 text-sm leading-snug line-clamp-2">
+                                    {nested.name}
+                                  </span>
+                                  {nested.hot && (
+                                    <span className="shrink-0 mt-0.5 text-[10px] font-bold bg-red-600 text-white px-2 py-0.5 rounded-full">
+                                      HOT
+                                    </span>
+                                  )}
+                                  {nested.new && (
+                                    <span className="shrink-0 mt-0.5 text-[10px] font-bold bg-accent text-primary px-2 py-0.5 rounded-full">
+                                      NEW
+                                    </span>
+                                  )}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ) : (
+                        <Link
+                          key={sub.name}
+                          to={sub.href}
+                          className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium hover:bg-primary-glow/15 transition-colors ${
+                            hasSection ? "mt-1 border-t border-primary-glow/20" : ""
+                          }`}
+                        >
+                          <ChevronRight size={14} className="text-primary-glow" />
+                          {sub.name}
+                        </Link>
+                      )
+                    );
+                    })()}
                   </div>
                 </div>
               ) : (
-                <Link key={item.name} to={item.href} className="hover:text-primary">
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className="text-white/90 hover:text-primary-glow transition-colors"
+                >
                   {item.name}
                 </Link>
               )
             )}
-            <Link to="/quote">
-              <Button size="sm">Request a Quote</Button>
-            </Link>
+            <QuoteDrawer trigger={<Button size="sm">Request a Quote</Button>} />
           </nav>
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden"
+            className="md:hidden text-white"
             onClick={() => setIsMenuOpen((s) => !s)}
             aria-label="Toggle menu"
           >
@@ -151,37 +173,39 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden mt-4 space-y-2">
+          <div className="md:hidden mt-4 space-y-2 text-white">
             {navItems.map((item) =>
               "dropdown" in item ? (
                 <details
                   key={item.name}
-                  className="bg-zinc-100 dark:bg-zinc-800 rounded-lg p-2"
+                  className="bg-white/10 rounded-lg p-2"
                 >
                   <summary className="cursor-pointer">{item.name}</summary>
                   <ul className="pl-4 mt-2 space-y-1">
                     {item.items.map((sub) =>
                       "dropdown" in sub ? (
-                        <details key={sub.name} className="pl-2">
-                          <summary className="cursor-pointer flex items-center justify-between">
+                        <li key={sub.name}>
+                          <p className="pt-1 pb-0.5 text-[11px] font-semibold uppercase tracking-wider text-primary">
                             {sub.name}
-                          </summary>
-                          <ul className="pl-4 mt-1 space-y-1">
+                          </p>
+                          <ul className="pl-2 space-y-1">
                             {sub.items.map((nested) => (
                               <li key={nested.name}>
                                 <Link
                                   to={nested.href}
                                   onClick={() => setIsMenuOpen(false)}
-                                  className="flex items-center justify-between py-1"
+                                  className="flex items-start gap-2 py-1"
                                 >
-                                  <span>{nested.name}</span>
+                                  <span className="flex-1 min-w-0 text-sm leading-snug">
+                                    {nested.name}
+                                  </span>
                                   {nested.hot && (
-                                    <span className="ml-2 text-[10px] font-bold bg-red-600 text-white px-2 py-0.5 rounded-full animate-pulse">
+                                    <span className="shrink-0 mt-0.5 text-[10px] font-bold bg-red-600 text-white px-2 py-0.5 rounded-full">
                                       HOT
                                     </span>
                                   )}
                                   {nested.new && (
-                                    <span className="ml-2 text-[10px] font-bold bg-green-600 text-white px-2 py-0.5 rounded-full animate-bounce">
+                                    <span className="shrink-0 mt-0.5 text-[10px] font-bold bg-accent text-primary px-2 py-0.5 rounded-full">
                                       NEW
                                     </span>
                                   )}
@@ -189,13 +213,13 @@ const Header = () => {
                               </li>
                             ))}
                           </ul>
-                        </details>
+                        </li>
                       ) : (
                         <li key={sub.name}>
                           <Link
                             to={sub.href}
                             onClick={() => setIsMenuOpen(false)}
-                            className="block py-1"
+                            className="block py-1 text-sm font-medium"
                           >
                             {sub.name}
                           </Link>
@@ -209,15 +233,19 @@ const Header = () => {
                   key={item.name}
                   to={item.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className="block"
+                  className="block text-white/90"
                 >
                   {item.name}
                 </Link>
               )
             )}
-            <Link to="/quote" onClick={() => setIsMenuOpen(false)}>
-              <Button className="w-full mt-2">Request a Quote</Button>
-            </Link>
+            <QuoteDrawer
+              trigger={
+                <Button className="w-full mt-2" onClick={() => setIsMenuOpen(false)}>
+                  Request a Quote
+                </Button>
+              }
+            />
           </div>
         )}
       </div>

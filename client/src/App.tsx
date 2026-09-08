@@ -13,6 +13,7 @@ const GetQuote = lazy(() => import("./pages/GetQuote"));
 const ScheduleVisit = lazy(() => import("./pages/ScheduleVisit"));
 const ProductList = lazy(() => import("./pages/ProductList"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const SpareParts = lazy(() => import("./pages/SpareParts"));
 const Team = lazy(() => import("@/pages/Team"));
 const Gallery = lazy(() => import("@/pages/Gallery"));
 const News = lazy(() => import("@/pages/News"));
@@ -46,6 +47,7 @@ const App = () => {
               {/* Products */}
               <Route path="/products" element={<ProductList />} />
               <Route path="/products/:slug" element={<ProductDetail />} />
+              <Route path="/spare-parts" element={<SpareParts />} />
               <Route path="/used-tractors" element={<UsedTractors />} />
 
               {/* Company */}

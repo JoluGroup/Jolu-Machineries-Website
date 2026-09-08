@@ -1,10 +1,7 @@
-import { Award, Users, Wrench, ShieldCheck, Truck, Clock } from "lucide-react";
+import { Award, Users, Wrench, ShieldCheck, Truck, Clock, Quote } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import faithYegon from "@/assets/testimonials/faith-yegon.jpeg";
-import geoffreyBosire from "@/assets/testimonials/geoffrey-bosire.jpeg";
-import johnOuma from "@/assets/testimonials/john-ouma.jpeg";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -61,7 +58,6 @@ const testimonials = [
     name: "Faith Yegon",
     role: "Large Scale Maize Farmer",
     location: "Eldoret",
-    photo: faithYegon,
     comment:
       "Jolu Machineries delivered my tractor on time and gave me hands-on training. It has completely transformed my farm’s efficiency.",
     rating: 5
@@ -70,7 +66,6 @@ const testimonials = [
     name: "Geoffrey Bosire",
     role: "Large Scale Farmer",
     location: "Awasi",
-    photo: geoffreyBosire,
     comment:
       "My tractor has been running perfectly for over 3 years with minimal downtime thanks to their excellent maintenance support.",
     rating: 5
@@ -79,7 +74,6 @@ const testimonials = [
     name: "John Ouma",
     role: "Tea Plantation Owner",
     location: "Nandi Hills",
-    photo: johnOuma,
     comment:
       "The equipment is reliable and the after-sales service is outstanding. I recommend Jolu Machineries to every serious farmer.",
     rating: 5
@@ -219,16 +213,15 @@ const testimonials = [
 >
   {testimonials.map((testimonial, index) => (
     <motion.div key={index} variants={fadeUp}>
-      <Card className="product-card hover:shadow-lg transition-shadow duration-300">
-        <CardContent className="p-6 text-center">
-          <div className="w-[300px] h-[300px] mx-auto mb-4">
-            <img
-              src={testimonial.photo}
-              alt={testimonial.name}
-              className="w-full h-full rounded-lg object-cover"
-            />
-          </div>
-          <div className="flex justify-center mb-4">
+      <Card className="product-card h-full hover:shadow-lg transition-shadow duration-300">
+        <CardContent className="flex h-full flex-col p-8">
+          <Quote
+            className="w-12 h-12 text-accent mb-6"
+            fill="currentColor"
+            strokeWidth={0}
+            aria-hidden="true"
+          />
+          <div className="flex mb-5">
             {[...Array(testimonial.rating)].map((_, i) => (
               <svg
                 key={i}
@@ -239,11 +232,11 @@ const testimonials = [
               </svg>
             ))}
           </div>
-          <p className="text-muted-foreground mb-4 italic">
+          <p className="text-muted-foreground italic leading-relaxed mb-6 flex-1">
             "{testimonial.comment}"
           </p>
-          <div>
-            <div className="font-semibold text-foreground">{testimonial.name}</div>
+          <div className="border-t border-border pt-5">
+            <div className="font-bold text-foreground">{testimonial.name}</div>
             <div className="text-sm text-primary">{testimonial.role}</div>
             <div className="text-sm text-muted-foreground">{testimonial.location}</div>
           </div>
