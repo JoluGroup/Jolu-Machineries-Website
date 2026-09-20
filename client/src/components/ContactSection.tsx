@@ -69,10 +69,10 @@ const ContactSection = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <main className="flex-grow bg-white dark:bg-zinc-900 text-black dark:text-white">
+      <div className="flex-grow bg-white dark:bg-zinc-900 text-black dark:text-white">
         
         {/* ✅ Contact section now has an id */}
-        <section id="contact" className="py-12 md:py-16">
+        <section id="contact" aria-label="Contact and locations" className="py-12 md:py-16">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-4xl md:text-5xl font-bold mb-4">Contact Jolu Machineries</h2>
@@ -260,6 +260,7 @@ const ContactSection = () => {
                         <div>
                           <h4 className="font-medium mb-2">2. Jolu Regional Office & Showroom – Nakuru, Kenya</h4>
                           <iframe
+                            title="Map showing Jolu Machineries Nakuru Regional Office & Showroom"
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1328.126918773704!2d36.06425771376447!3d-0.29232555730089016!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x18298dc3daec4f73%3A0x9502bd597c8842f0!2sP357%2B5JP%2C%20Nakuru!5e0!3m2!1sen!2ske!4v1774359316918!5m2!1sen!2ske"
                             width="100%"
                             height="250"
@@ -274,6 +275,7 @@ const ContactSection = () => {
                         <div>
                           <h4 className="font-medium mb-2">3. Jolu Security Office – KFA Building, Nakuru</h4>
                           <iframe
+                            title="Map showing Jolu Machineries Nakuru branch (KFA Building)"
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15958.37956243454!2d36.05669568715821!3d-0.28648409808689044!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182aa60a63f693e9%3A0xaba0a02d31f7b4d5!2sKFA%20Building%2C%20Nakuru!5e0!3m2!1sen!2ske!4v1723810622341!5m2!1sen!2ske"
                             width="100%"
                             height="250"
@@ -287,6 +289,7 @@ const ContactSection = () => {
                         <div>
                           <h4 className="font-medium mb-2">4. Jolu Office - Quickfill Service Station – Rongo, Migori</h4>
                           <iframe
+                            title="Map showing Jolu Machineries Rongo/Migori branch"
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.472100426641!2d34.606213499999996!3d-0.7548144999999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182b496e03a56399%3A0xc2ad096c1f16c391!2sQUICKFILL%20RONGO%20STATION!5e0!3m2!1sen!2ske!4v1774360053586!5m2!1sen!2ske"
                             width="100%"
                             height="250"
@@ -304,7 +307,7 @@ const ContactSection = () => {
             </div>
           </div>
         </section>
-      </main>
+      </div>
     </div>
   );
 };

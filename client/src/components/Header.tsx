@@ -56,7 +56,7 @@ const Header = () => {
         "sticky top-0 z-50 backdrop-blur-md transition-[background-color,box-shadow,border-color] duration-300",
         scrolled
           ? "bg-slate-900/95 border-b border-emerald-500/50 shadow-lg shadow-emerald-500/20"
-          : "bg-slate-900/40 border-b border-transparent shadow-none"
+          : "bg-slate-900/80 border-b border-transparent shadow-none"
       )}
     >
       {/* Top Bar */}

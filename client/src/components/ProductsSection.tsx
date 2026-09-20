@@ -525,7 +525,7 @@ const ProductsSection = () => {
   }, [compareOpen, compareProducts.length]);
 
   return (
-    <section id="products" className="py-16 bg-muted/30">
+    <section id="products" aria-label="Products" className="py-16 bg-muted/30">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
