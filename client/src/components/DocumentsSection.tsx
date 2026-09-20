@@ -7,11 +7,13 @@ const documents = [
     title: "Company Profile",
     description: "Learn more about our history, mission, and achievements.",
     file: "/lovable-uploads/docs/company-profile..pdf",
+    downloadLabel: "Download company profile PDF",
   },
   {
     title: "Company Catalogue",
     description: "Browse our full range of agricultural and construction equipment.",
     file: "/lovable-uploads/docs/new-product-catalogue.pdf",
+    downloadLabel: "Download product catalogue PDF",
   },
 ];
 
@@ -22,7 +24,7 @@ const fadeUp = {
 
 const DocumentsSection = () => {
   return (
-    <section id="documents" className="py-16 bg-muted/30">
+    <section id="documents" aria-label="Company documents" className="py-16 bg-muted/30">
       <div className="container mx-auto px-4 text-center">
         <motion.h2
           className="text-4xl font-bold mb-6 text-foreground"
@@ -66,6 +68,7 @@ const DocumentsSection = () => {
                     <a
                     href={doc.file}
                     download
+                    aria-label={doc.downloadLabel}
                     className="p-2 rounded-full bg-primary text-white hover:bg-[#B5D646] transition-colors"
                     >
                     <Download size={20} />

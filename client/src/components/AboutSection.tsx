@@ -82,7 +82,7 @@ const testimonials = [
 
 
   return (
-    <section id="about" className="py-16 bg-background">
+    <section id="about" aria-label="About Jolu Machineries" className="py-16 bg-background">
       <div className="container mx-auto px-4">
         {/* Header */}
         <motion.div

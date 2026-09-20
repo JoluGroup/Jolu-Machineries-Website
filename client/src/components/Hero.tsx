@@ -92,6 +92,7 @@ const Hero = () => {
   return (
     <section
       id="home"
+      aria-label="Hero"
       className="relative min-h-screen flex items-center md:items-center pt-20 md:pt-0 overflow-hidden bg-[#0a0c0a]"
     >
       {/* Sliding Background Images — darkened and desaturated so they read as
@@ -221,6 +222,8 @@ const Hero = () => {
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
+              aria-label={`Go to slide ${index + 1}`}
+              aria-current={index === currentSlide ? "true" : undefined}
               className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                 index === currentSlide
                   ? "bg-primary-glow scale-125"
@@ -234,12 +237,14 @@ const Hero = () => {
       {/* Arrow Buttons */}
       <button
         onClick={prevSlide}
+        aria-label="Previous slide"
         className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-2 rounded-full z-20"
       >
         <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
       </button>
       <button
         onClick={nextSlide}
+        aria-label="Next slide"
         className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-2 rounded-full z-20"
       >
         <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />

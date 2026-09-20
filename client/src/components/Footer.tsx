@@ -256,6 +256,7 @@ const Footer = () => {
                     href="https://www.facebook.com/search/top?q=jolu%20group"
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="Visit our Facebook page"
                     className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-glow transition-colors duration-200"
                   >
                     <Facebook size={18} />
@@ -264,6 +265,7 @@ const Footer = () => {
                     href="https://www.instagram.com/jolu_machineries/"
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="Visit our Instagram page"
                     className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-glow transition-colors duration-200"
                   >
                     <Instagram size={18} />
@@ -272,6 +274,7 @@ const Footer = () => {
                     href="https://www.tiktok.com/@jolumachineries"
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="Visit our TikTok page"
                     className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-glow transition-colors duration-200"
                   >
                     <FaTiktok size={18} />
