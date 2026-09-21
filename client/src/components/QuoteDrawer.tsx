@@ -167,7 +167,7 @@ const QuoteDrawer = ({ trigger, product }: QuoteDrawerProps) => {
                 value={form.county || undefined}
                 onValueChange={(v) => setForm((s) => ({ ...s, county: v }))}
               >
-                <SelectTrigger>
+                <SelectTrigger aria-label="County">
                   <SelectValue placeholder="Select County" />
                 </SelectTrigger>
                 <SelectContent className="max-h-60 overflow-y-auto">
@@ -198,8 +198,8 @@ const QuoteDrawer = ({ trigger, product }: QuoteDrawerProps) => {
               value={form.productInterest || undefined}
               onValueChange={(v) => setForm((s) => ({ ...s, productInterest: v }))}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select product category" />
+                <SelectTrigger aria-label="Product Interest">
+                  <SelectValue placeholder="Select product category" />
               </SelectTrigger>
               <SelectContent>
                 {productOptions.map((p) => (

@@ -88,6 +88,7 @@ const Footer = () => {
     <footer className="bg-primary-dark text-white relative">
       <Button
         onClick={scrollToTop}
+        aria-label="Back to top"
         className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full bg-primary hover:bg-primary-glow shadow-lg"
       >
         <ArrowUp size={20} />

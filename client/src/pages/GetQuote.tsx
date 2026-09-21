@@ -65,7 +65,7 @@ const GetQuote = () => {
               <div>
                 <label className="block mb-2 font-medium">County *</label>
                 <Select onValueChange={(v) => setForm((s) => ({ ...s, county: v }))}>
-                  <SelectTrigger><SelectValue placeholder="Select County" /></SelectTrigger>
+                  <SelectTrigger aria-label="County"><SelectValue placeholder="Select County" /></SelectTrigger>
                   <SelectContent className="max-h-60 overflow-y-auto">
                     {countyOptions.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
                   </SelectContent>
@@ -81,7 +81,7 @@ const GetQuote = () => {
             <div>
               <label className="block mb-2 font-medium">Product Interest</label>
               <Select onValueChange={(v) => setForm((s) => ({ ...s, productInterest: v }))}>
-                <SelectTrigger><SelectValue placeholder="Select product category" /></SelectTrigger>
+                <SelectTrigger aria-label="Product Interest"><SelectValue placeholder="Select product category" /></SelectTrigger>
                 <SelectContent>
                   {productOptions.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
                 </SelectContent>
