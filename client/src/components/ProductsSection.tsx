@@ -578,6 +578,8 @@ const ProductsSection = () => {
                 variant={viewMode === 'grid' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('grid')}
+                aria-label="Grid view"
+                aria-pressed={viewMode === 'grid'}
                 className={viewMode === 'grid' ? "btn-agricultural" : ""}
               >
                 <Grid size={18} />
@@ -586,6 +588,8 @@ const ProductsSection = () => {
                 variant={viewMode === 'list' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('list')}
+                aria-label="List view"
+                aria-pressed={viewMode === 'list'}
                 className={viewMode === 'list' ? "btn-agricultural" : ""}
               >
                 <List size={18} />

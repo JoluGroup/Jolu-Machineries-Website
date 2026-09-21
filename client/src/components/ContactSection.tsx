@@ -185,7 +185,7 @@ const ContactSection = () => {
                             value={formData.county}
                             onValueChange={(value) => setFormData((s) => ({ ...s, county: value }))}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger aria-label="County">
                               <SelectValue placeholder="Select County" />
                             </SelectTrigger>
                             <SelectContent className="max-h-60 overflow-y-auto">
@@ -213,7 +213,7 @@ const ContactSection = () => {
                             value={formData.productInterest || ""}
                             onValueChange={(value) => setFormData((s) => ({ ...s, productInterest: value }))}
                           >
-                            <SelectTrigger>
+                            <SelectTrigger aria-label="Product Interest">
                               <SelectValue placeholder="Select product category" />
                             </SelectTrigger>
                             <SelectContent>
