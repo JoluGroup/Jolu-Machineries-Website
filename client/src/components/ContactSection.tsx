@@ -251,14 +251,21 @@ const ContactSection = () => {
                     {/* Maps Section */}
                     <div className="mt-10 space-y-6">
                       <h3 className="text-xl font-semibold">Find Us</h3>
-                        {/* Nairobi Map */}
-                        <div>
-                          <h4 className="font-medium mb-2">1. Jolu Head Office – Thome, Nairobi</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Nairobi — location name only, intentionally map-free */}
+                        <div className="border border-slate-200 rounded-xl bg-card p-5 shadow-sm transition-shadow duration-300 hover:shadow-lg">
+                          <div className="flex items-start gap-2">
+                            <MapPin className="h-5 w-5 shrink-0 text-primary mt-0.5" />
+                            <h4 className="font-medium">Jolu Head Office – Thome, Nairobi</h4>
+                          </div>
                         </div>
-                      <div className="grid md:grid-cols-2 gap-6">
+
                         {/* Nakuru Map */}
-                        <div>
-                          <h4 className="font-medium mb-2">2. Jolu Regional Office & Showroom – Nakuru, Kenya</h4>
+                        <div className="border border-slate-200 rounded-xl bg-card p-5 shadow-sm transition-shadow duration-300 hover:shadow-lg">
+                          <div className="flex items-start gap-2 mb-3">
+                            <MapPin className="h-5 w-5 shrink-0 text-primary mt-0.5" />
+                            <h4 className="font-medium">Jolu Regional Office & Showroom – Nakuru, Kenya</h4>
+                          </div>
                           <iframe
                             title="Map showing Jolu Machineries Nakuru Regional Office & Showroom"
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1328.126918773704!2d36.06425771376447!3d-0.29232555730089016!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x18298dc3daec4f73%3A0x9502bd597c8842f0!2sP357%2B5JP%2C%20Nakuru!5e0!3m2!1sen!2ske!4v1774359316918!5m2!1sen!2ske"
@@ -268,12 +275,16 @@ const ContactSection = () => {
                             allowFullScreen={true}
                             loading="lazy"
                             referrerPolicy="no-referrer-when-downgrade"
+                            className="rounded-lg"
                           ></iframe>
                         </div>
 
                         {/* Nakuru KFA Map */}
-                        <div>
-                          <h4 className="font-medium mb-2">3. Jolu Security Office – KFA Building, Nakuru</h4>
+                        <div className="border border-slate-200 rounded-xl bg-card p-5 shadow-sm transition-shadow duration-300 hover:shadow-lg">
+                          <div className="flex items-start gap-2 mb-3">
+                            <MapPin className="h-5 w-5 shrink-0 text-primary mt-0.5" />
+                            <h4 className="font-medium">Jolu Office (Machineries & Security) – KFA Building, Nakuru</h4>
+                          </div>
                           <iframe
                             title="Map showing Jolu Machineries Nakuru branch (KFA Building)"
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15958.37956243454!2d36.05669568715821!3d-0.28648409808689044!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182aa60a63f693e9%3A0xaba0a02d31f7b4d5!2sKFA%20Building%2C%20Nakuru!5e0!3m2!1sen!2ske!4v1723810622341!5m2!1sen!2ske"
@@ -283,11 +294,16 @@ const ContactSection = () => {
                             allowFullScreen={true}
                             loading="lazy"
                             referrerPolicy="no-referrer-when-downgrade"
+                            className="rounded-lg"
                           ></iframe>
                         </div>
-                                                {/* Rongo Map */}
-                        <div>
-                          <h4 className="font-medium mb-2">4. Jolu Office - Quickfill Service Station – Rongo, Migori</h4>
+
+                        {/* Rongo Map */}
+                        <div className="border border-slate-200 rounded-xl bg-card p-5 shadow-sm transition-shadow duration-300 hover:shadow-lg">
+                          <div className="flex items-start gap-2 mb-3">
+                            <MapPin className="h-5 w-5 shrink-0 text-primary mt-0.5" />
+                            <h4 className="font-medium">Jolu Office - Quickfill Service Station – Rongo, Migori</h4>
+                          </div>
                           <iframe
                             title="Map showing Jolu Machineries Rongo/Migori branch"
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.472100426641!2d34.606213499999996!3d-0.7548144999999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182b496e03a56399%3A0xc2ad096c1f16c391!2sQUICKFILL%20RONGO%20STATION!5e0!3m2!1sen!2ske!4v1774360053586!5m2!1sen!2ske"
@@ -297,6 +313,7 @@ const ContactSection = () => {
                             allowFullScreen={true}
                             loading="lazy"
                             referrerPolicy="no-referrer-when-downgrade"
+                            className="rounded-lg"
                           ></iframe>
                         </div>
                       </div>
