@@ -15,7 +15,6 @@ import {
 import { Link } from "react-router-dom";
 import QuoteDrawer from "@/components/QuoteDrawer";
 import { useToast } from "@/hooks/use-toast";
-import { useInView } from "@/hooks/use-in-view";
 import { cn } from "@/lib/utils";
 import { FILTER_CATEGORY_EVENT } from "@/components/CategoryJump";
 import tractor1 from "@/assets/tractor-1.png";
@@ -82,9 +81,6 @@ const ProductsSection = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [visibleCount, setVisibleCount] = useState(6); // Load 6 products initially
-
-  // Grid fade-up entrance on scroll into view (zero-dependency IntersectionObserver).
-  const { ref: gridRef, inView: gridInView } = useInView<HTMLDivElement>({ once: true });
 
   // Quick-jump pills (CategoryJump) drive this existing filter via a window event —
   // no duplicate filtering component, the state stays owned here.
@@ -599,11 +595,9 @@ const ProductsSection = () => {
         </div>
 
         <div
-          ref={gridRef}
           className={cn(
             "grid gap-6 transition-all duration-300 ease-out",
-            viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1',
-            gridInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-[15px]"
+            viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'
           )}
         >
           {visibleProducts.map((product) => (
