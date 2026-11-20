@@ -1,4 +1,5 @@
 // src/pages/Careers.tsx
+import ResponsiveImage from "@/components/ResponsiveImage";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -97,7 +98,7 @@ const Careers: React.FC = () => {
               transition={{ duration: 0.7 }}
               className="mt-10"
             >
-              <img
+              <ResponsiveImage sizes="(min-width: 1280px) 1200px, 100vw" priority
                 src="/lovable-uploads/careers/hero.png"
                 alt="Careers at Jolu Group"
                className="w-full h-[650px] object-cover rounded-3xl shadow-2xl"
@@ -176,7 +177,7 @@ const Careers: React.FC = () => {
                   >
                     {/* Image header */}
                     <div className="relative h-52">
-                      <img
+                      <ResponsiveImage sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                         src={job.image}
                         alt={job.title}
                         className="absolute inset-0 w-full h-full object-cover"
@@ -294,7 +295,7 @@ const Careers: React.FC = () => {
                     idx === 0 ? "md:row-span-2 h-56 md:h-full" : "h-56 md:h-full"
                   }`}
                 >
-                  <img
+                  <ResponsiveImage sizes="(min-width: 1024px) 25vw, 50vw"
                     src={img}
                     alt={`Life at Jolu ${idx + 1}`}
                     className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"

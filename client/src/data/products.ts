@@ -1,22 +1,22 @@
-import tractor1 from "@/assets/tractor-1.png";
-import harvester1 from "@/assets/harvester-1.png";
-import twodiskplough from "@/assets/twodiskplough.png";
-import tractor2 from "@/assets/tractor-2.png";
-import harvester2 from "@/assets/harvester-2.png";
-import harvester3 from "@/assets/harvester-3.png";
-import harvester4 from "@/assets/harvester-4.png";
-import harvester5 from "@/assets/harvester-5.png";
-import diskHarrow18 from "@/assets/diskHarrow18.jpeg"
-import threeDiskPlough from "@/assets/threeDiskPlough.webp"
-import waterBowser from "@/assets/waterBowser.jpg"
+const tractor1 = "@/assets/tractor-1.png";
+const harvester1 = "@/assets/harvester-1.png";
+const twodiskplough = "@/assets/twodiskplough.png";
+const tractor2 = "@/assets/tractor-2.png";
+const harvester2 = "@/assets/harvester-2.png";
+const harvester3 = "@/assets/harvester-3.png";
+const harvester4 = "@/assets/harvester-4.png";
+const harvester5 = "@/assets/harvester-5.png";
+const diskHarrow18 = "@/assets/diskHarrow18.jpeg";
+const threeDiskPlough = "@/assets/threeDiskPlough.webp";
+const waterBowser = "@/assets/waterBowser.jpg";
 
-import tractor3 from "@/assets/tractor-3.png";
-import tractor4 from "@/assets/tractor-4.png";
-import tractor5 from "@/assets/tractor-5.png";
-import tractor6 from "@/assets/tractor-6.png";
-import tractor7 from "@/assets/tractor-7.png";
-import tractor8 from "@/assets/tractor-8.png";
-import tractor9 from "@/assets/tractor-9.png";
+const tractor3 = "@/assets/tractor-3.png";
+const tractor4 = "@/assets/tractor-4.png";
+const tractor5 = "@/assets/tractor-5.png";
+const tractor6 = "@/assets/tractor-6.png";
+const tractor7 = "@/assets/tractor-7.png";
+const tractor8 = "@/assets/tractor-8.png";
+const tractor9 = "@/assets/tractor-9.png";
 
 
 

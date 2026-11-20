@@ -1,0 +1,94 @@
+{
+ "gallery": {
+  "el": "IMG .1:41395/_img/uploads-gallery-jolu-group.5823b9d1bc-800.webp size=108864",
+  "lcp": 4332,
+  "cls": 0,
+  "initialImgKB": 25,
+  "initialTotalKB": 292,
+  "fullImgKB": 563,
+  "fullTotalKB": 830,
+  "fullImgCount": 7,
+  "settleSec": 9,
+  "runs": [
+   {
+    "el": "IMG .1:41395/_img/uploads-gallery-jolu-group.5823b9d1bc-800.webp size=108864",
+    "lcp": 4332,
+    "cls": 0,
+    "initialImgKB": 25,
+    "initialTotalKB": 292,
+    "fullImgKB": 563,
+    "fullTotalKB": 830,
+    "fullImgCount": 7,
+    "settleSec": 9
+   },
+   {
+    "el": "IMG .1:41395/_img/uploads-gallery-jolu-group.5823b9d1bc-800.webp size=108864",
+    "lcp": 4316,
+    "cls": 0,
+    "initialImgKB": 25,
+    "initialTotalKB": 292,
+    "fullImgKB": 563,
+    "fullTotalKB": 830,
+    "fullImgCount": 7,
+    "settleSec": 9
+   },
+   {
+    "el": "IMG .1:41395/_img/uploads-gallery-jolu-group.5823b9d1bc-800.webp size=108864",
+    "lcp": 4448,
+    "cls": 0.002,
+    "initialImgKB": 25,
+    "initialTotalKB": 292,
+    "fullImgKB": 563,
+    "fullTotalKB": 830,
+    "fullImgCount": 7,
+    "settleSec": 9
+   }
+  ]
+ },
+ "news": {
+  "el": "IMG 0.1:41395/_img/uploads-event-launch-hero.a23598a6dd-800.webp size=96140",
+  "lcp": 3764,
+  "cls": 0.002,
+  "initialImgKB": 118,
+  "initialTotalKB": 351,
+  "fullImgKB": 567,
+  "fullTotalKB": 800,
+  "fullImgCount": 12,
+  "settleSec": 9,
+  "runs": [
+   {
+    "el": "IMG 0.1:41395/_img/uploads-event-launch-hero.a23598a6dd-800.webp size=96140",
+    "lcp": 3048,
+    "cls": 0.002,
+    "initialImgKB": 266,
+    "initialTotalKB": 499,
+    "fullImgKB": 266,
+    "fullTotalKB": 499,
+    "fullImgCount": 4,
+    "settleSec": 8
+   },
+   {
+    "el": "IMG 0.1:41395/_img/uploads-event-launch-hero.a23598a6dd-800.webp size=96140",
+    "lcp": 3772,
+    "cls": 0.002,
+    "initialImgKB": 118,
+    "initialTotalKB": 351,
+    "fullImgKB": 567,
+    "fullTotalKB": 800,
+    "fullImgCount": 12,
+    "settleSec": 9
+   },
+   {
+    "el": "IMG 0.1:41395/_img/uploads-event-launch-hero.a23598a6dd-800.webp size=96140",
+    "lcp": 3764,
+    "cls": 0,
+    "initialImgKB": 118,
+    "initialTotalKB": 351,
+    "fullImgKB": 567,
+    "fullTotalKB": 800,
+    "fullImgCount": 12,
+    "settleSec": 9
+   }
+  ]
+ }
+}

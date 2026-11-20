@@ -1,3 +1,4 @@
+import ResponsiveImage from "@/components/ResponsiveImage";
 import { useParams } from "react-router-dom";
 import { products } from "@/data/products";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,7 @@ const ProductDetail = () => {
       <main className="bg-background text-foreground">
         <section className="max-w-7xl mx-auto px-4 py-16">
           <div className="grid md:grid-cols-2 gap-10 items-center">
-            <img
+            <ResponsiveImage sizes="(min-width: 768px) 50vw, 100vw" priority
               src={product.image}
               alt={product.name}
               className="rounded-xl shadow-lg w-full object-contain"

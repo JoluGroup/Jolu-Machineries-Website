@@ -1,4 +1,5 @@
 // src/pages/Mud4Fun.tsx
+import ResponsiveImage from "@/components/ResponsiveImage";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Calendar, MapPin, Users, Youtube, ArrowUp } from "lucide-react";
@@ -14,6 +15,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+
+const MotionResponsiveImage = motion.create(ResponsiveImage);
 
 const Mud4Fun: React.FC = () => {
   const metaTitle = "Mud4Fun 4x4 Challenge Highlights — Dec 2025";
@@ -54,7 +57,7 @@ const Mud4Fun: React.FC = () => {
 
       {/* HERO */}
       <section className="relative h-[70vh] flex items-center justify-center bg-black">
-        <img
+        <ResponsiveImage sizes="100vw" priority
           src="/lovable-uploads/mud4fun/hero.jpg"
           alt="Mud4Fun Event"
           className="absolute inset-0 w-full h-full object-cover object-bottom opacity-60"
@@ -112,8 +115,9 @@ const Mud4Fun: React.FC = () => {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {highlights.map((item, idx) =>
                 item.type === "image" ? (
-                  <motion.img
+                  <MotionResponsiveImage
                     key={idx}
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                     src={item.src}
                     alt={item.alt}
                     whileHover={{ scale: 1.05 }}
@@ -127,6 +131,7 @@ const Mud4Fun: React.FC = () => {
                         className="relative rounded-2xl shadow-xl overflow-hidden cursor-pointer"
                       >
                         <img
+                          loading="lazy"
                           src="https://img.youtube.com/vi/CXWhcNIrnFw/hqdefault.jpg"
                           alt={item.alt}
                           className="h-64 w-full object-cover"
