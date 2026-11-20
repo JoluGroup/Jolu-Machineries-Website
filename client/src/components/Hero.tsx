@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   ArrowRight,
   Tractor,
@@ -13,12 +13,13 @@ import { Reveal } from "@/components/Reveal";
 import { CountUp } from "@/components/CountUp";
 import { useInView } from "@/hooks/use-in-view";
 import { cn } from "@/lib/utils";
+import ResponsiveImage from "@/components/ResponsiveImage";
 
-import heroImage1 from "@/assets/hero/tractor1.jpg";
-import heroImage2 from "@/assets/hero/tractor2.png";
-import heroImage3 from "@/assets/hero/hero-tractor.jpg";
-import heroImage4 from "@/assets/hero/hero-field.jpg";
-import heroImage5 from "@/assets/hero/tractor3.jpg";
+const heroImage1 = "@/assets/hero/tractor1.jpg";
+const heroImage2 = "@/assets/hero/tractor2.png";
+const heroImage3 = "@/assets/hero/hero-tractor.jpg";
+const heroImage4 = "@/assets/hero/hero-field.jpg";
+const heroImage5 = "@/assets/hero/tractor3.jpg";
 
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -74,13 +75,53 @@ const Hero = () => {
     },
   ];
 
-  // Auto-slide
+  // Only the first slide is requested immediately. Neighbouring slides are
+  // requested once the page has loaded and again whenever the slide changes,
+  // so the next image is normally ready before its transition begins.
+  const [activeSlides, setActiveSlides] = useState<Set<number>>(() => new Set([0]));
+  const settledSlides = useRef<Set<number>>(new Set());
+  const slideCount = heroSlides.length;
+
+  const activateSlides = useCallback((...indexes: number[]) => {
+    setActiveSlides((prev) => {
+      if (indexes.every((i) => prev.has(i))) return prev;
+      const next = new Set(prev);
+      indexes.forEach((i) => next.add(i));
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    const warm = () => activateSlides(1, slideCount - 1);
+    if (document.readyState === "complete") {
+      const t = setTimeout(warm, 300);
+      return () => clearTimeout(t);
+    }
+    let t: ReturnType<typeof setTimeout>;
+    const onLoad = () => {
+      t = setTimeout(warm, 300);
+    };
+    window.addEventListener("load", onLoad, { once: true });
+    return () => {
+      window.removeEventListener("load", onLoad);
+      clearTimeout(t);
+    };
+  }, [activateSlides, slideCount]);
+
+  useEffect(() => {
+    activateSlides((currentSlide + 1) % slideCount, (currentSlide - 1 + slideCount) % slideCount);
+  }, [currentSlide, activateSlides, slideCount]);
+
+  // Auto-slide (waits for the next image so a slide is never blank)
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+      setCurrentSlide((prev) => {
+        const next = (prev + 1) % slideCount;
+        return settledSlides.current.has(next) ? next : prev;
+      });
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [slideCount]);
 
   const nextSlide = () =>
     setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
@@ -103,11 +144,19 @@ const Hero = () => {
       >
         {heroSlides.map((slide, index) => (
           <div key={index} className="w-full h-full flex-shrink-0 relative">
-            <img
-              src={slide.image}
-              alt="Agricultural Machinery"
-              className="w-full h-full object-cover opacity-55 contrast-110 saturate-[0.85]"
-            />
+            {activeSlides.has(index) && (
+              <ResponsiveImage
+                src={slide.image}
+                alt="Agricultural Machinery"
+                sizes="100vw"
+                priority={index === 0}
+                loading="eager"
+                fetchPriority={index === 0 ? "high" : "low"}
+                onLoad={() => settledSlides.current.add(index)}
+                onError={() => settledSlides.current.add(index)}
+                className="w-full h-full object-cover opacity-55 contrast-110 saturate-[0.85]"
+              />
+            )}
           </div>
         ))}
       </div>

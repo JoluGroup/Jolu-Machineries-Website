@@ -1,4 +1,5 @@
 // src/pages/KTNInterview.tsx
+import ResponsiveImage from "@/components/ResponsiveImage";
 import React from "react";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
@@ -11,7 +12,7 @@ const KTNInterview = () => {
 
       {/* Hero Banner */}
       <div className="relative w-full h-72 md:h-[28rem] mb-12">
-        <img
+        <ResponsiveImage sizes="100vw" priority
           src="/lovable-uploads/ktn/ktnbanner.jpg"
           alt="KTN Interview Banner"
           className="w-full h-full object-cover rounded-b-2xl"
@@ -121,7 +122,7 @@ const KTNInterview = () => {
                   transition={{ duration: 0.7, delay: idx * 0.1 }}
                   className="relative group overflow-hidden rounded-2xl"
                 >
-                  <img
+                  <ResponsiveImage sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                     src={img.src}
                     alt={img.alt}
                     className="w-full h-56 object-cover transform group-hover:scale-110 transition duration-500"
@@ -138,7 +139,7 @@ const KTNInterview = () => {
 
       {/* Call-to-Action Section */}
       <section className="relative w-full h-80 mt-0">
-        <img
+        <ResponsiveImage sizes="100vw"
           src="/lovable-uploads/ktn/hero-field.jpg"
           alt="Agriculture Background"
           className="w-full h-full object-cover"
