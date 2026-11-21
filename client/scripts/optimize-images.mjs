@@ -13,10 +13,17 @@
 //  - EXIF orientation is baked in and output is sRGB, so a photo looks the same
 //    as the original <img>.
 //  - Logos, favicons, the social-sharing image and PDFs are never converted.
-//  - Output filenames contain a hash of the source bytes and the encoder
-//    settings, so they are safe to cache for a year and stable across builds.
+//  - Output filenames are content-addressed: they contain a hash of the ACTUAL
+//    ENCODED BYTES of the file (not of its inputs). A URL can therefore never
+//    serve different bytes, which is what makes `Cache-Control: immutable` safe,
+//    even if sharp/libvips or the encoder settings change.
+//  - A separate generation cache (git-ignored, default node_modules/.cache/
+//    jolu-images) is keyed by the *inputs* (source bytes, encoder version, sharp
+//    and libvips versions, settings, width). It only decides whether encoding
+//    can be skipped; it never decides a public file name.
+//  - Manifest dimensions are read back from the encoded files themselves.
 //
-// Environment overrides (used by the tests): IMG_OUT_DIR, IMG_MANIFEST, IMG_ONLY.
+// Environment overrides (used by the tests): IMG_OUT_DIR, IMG_MANIFEST, IMG_ONLY, IMG_CACHE_DIR.
 import crypto from "node:crypto"
 import fs from "node:fs"
 import path from "node:path"
@@ -27,6 +34,9 @@ export const ENCODER_VERSION = "webp-q82-effort4-v1"
 export const STANDARD_WIDTHS = [480, 800, 1200, 1600]
 export const MAX_WIDTH = 1600
 const WEBP_COPY_THROUGH_BYTES = 150 * 1024 // small existing WebP files are copied, not re-encoded
+export const CONTENT_HASH_LENGTH = 16 // hex chars of sha256(encoded bytes) used in public file names
+
+const ENCODE_OPTIONS = (hasAlpha) => ({ quality: hasAlpha ? 84 : 82, alphaQuality: 90, effort: 4, smartSubsample: true })
 
 const CLIENT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 
@@ -45,6 +55,48 @@ export function planWidths(width) {
   const top = Math.min(width, MAX_WIDTH)
   const below = STANDARD_WIDTHS.filter((w) => w < top)
   return [...below, top]
+}
+
+/** sha256 hex of a buffer. */
+export const sha256 = (...parts) => {
+  const h = crypto.createHash("sha256")
+  for (const p of parts) h.update(p)
+  return h.digest("hex")
+}
+
+/**
+ * Identity of one *generation* (input side). Changes whenever anything that could
+ * change the encoded bytes changes. Used only for the build cache, never in URLs.
+ */
+export function generationKey({ sourceBytes, width, copyThrough, hasAlpha, versions = encoderVersions() }) {
+  const identity = JSON.stringify({
+    encoder: ENCODER_VERSION,
+    sharp: versions.sharp,
+    vips: versions.vips,
+    width,
+    copyThrough,
+    options: copyThrough ? null : ENCODE_OPTIONS(hasAlpha),
+  })
+  return sha256(sourceBytes, "\0", identity).slice(0, 32)
+}
+
+export function encoderVersions() {
+  return { sharp: sharp.versions.sharp ?? "unknown", vips: sharp.versions.vips ?? "unknown" }
+}
+
+/** A cache entry is only trusted if it still decodes as a WebP of the expected width. */
+async function isValidWebp(file, expectedWidth) {
+  try {
+    const m = await sharp(file, { failOn: "none" }).metadata()
+    return m.format === "webp" && Boolean(m.width) && (expectedWidth === null || m.width === expectedWidth)
+  } catch {
+    return false
+  }
+}
+
+/** Public file name derived from the encoded bytes. */
+export function contentName(slug, width, encodedBytes) {
+  return `${slug}-${width}.${sha256(encodedBytes).slice(0, CONTENT_HASH_LENGTH)}.webp`
 }
 
 function walk(dir) {
@@ -66,17 +118,21 @@ export async function generate({
   outDir = process.env.IMG_OUT_DIR ? path.resolve(process.env.IMG_OUT_DIR) : path.join(root, "public/_img"),
   manifestPath = process.env.IMG_MANIFEST ? path.resolve(process.env.IMG_MANIFEST) : path.join(root, "src/generated/image-manifest.json"),
   only = process.env.IMG_ONLY ? new RegExp(process.env.IMG_ONLY) : null,
+  cacheDir = process.env.IMG_CACHE_DIR ? path.resolve(process.env.IMG_CACHE_DIR) : path.join(root, "node_modules/.cache/jolu-images"),
   quiet = false,
 } = {}) {
   fs.mkdirSync(outDir, { recursive: true })
+  fs.mkdirSync(cacheDir, { recursive: true })
+  const versions = encoderVersions()
   fs.mkdirSync(path.dirname(manifestPath), { recursive: true })
 
   const manifest = {}
   const keep = new Set()
   let originalBytes = 0
   let derivativeBytes = 0
-  let generated = 0
-  let reused = 0
+  let encoded = 0
+  let fromCache = 0
+  let written = 0
 
   for (const tree of SOURCE_TREES) {
     const base = path.join(root, tree.dir)
@@ -89,7 +145,6 @@ export async function generate({
 
       const bytes = fs.readFileSync(file)
       const sourceHash = crypto.createHash("sha256").update(bytes).digest("hex")
-      const hash = crypto.createHash("sha256").update(bytes).update(ENCODER_VERSION).digest("hex").slice(0, 10)
       const meta = await sharp(bytes, { failOn: "none" }).metadata()
       const swap = (meta.orientation || 1) >= 5
       const width = swap ? meta.height : meta.width
@@ -103,29 +158,41 @@ export async function generate({
       const variants = []
 
       for (const w of widths) {
-        const name = `${slug}.${hash}-${w}.webp`
+        // 1. Obtain the encoded bytes: from the generation cache, or by encoding.
+        const gKey = generationKey({ sourceBytes: bytes, width: w, copyThrough, hasAlpha: Boolean(meta.hasAlpha), versions })
+        const cached = path.join(cacheDir, `${gKey}.webp`)
+        let data
+        if (fs.existsSync(cached) && (await isValidWebp(cached, copyThrough ? null : w))) {
+          data = fs.readFileSync(cached)
+          fromCache++
+        } else {
+          data = copyThrough
+            ? bytes
+            : await sharp(bytes, { failOn: "none" })
+                .rotate()
+                .resize({ width: w, withoutEnlargement: true })
+                .toColorspace("srgb")
+                .webp(ENCODE_OPTIONS(meta.hasAlpha))
+                .toBuffer()
+          fs.writeFileSync(cached + ".tmp", data)
+          fs.renameSync(cached + ".tmp", cached)
+          encoded++
+        }
+
+        // 2. Public name comes from the ACTUAL bytes. Same name => same bytes.
+        const name = contentName(slug, w, data)
         const out = path.join(outDir, name)
         keep.add(name)
-        let size
-        if (fs.existsSync(out)) {
-          size = fs.statSync(out).size
-          reused++
-        } else {
-          if (copyThrough) {
-            fs.writeFileSync(out, bytes)
-          } else {
-            await sharp(bytes, { failOn: "none" })
-              .rotate()
-              .resize({ width: w, withoutEnlargement: true })
-              .toColorspace("srgb")
-              .webp({ quality: meta.hasAlpha ? 84 : 82, alphaQuality: 90, effort: 4, smartSubsample: true })
-              .toFile(out)
-          }
-          size = fs.statSync(out).size
-          generated++
+        if (!fs.existsSync(out) || sha256(fs.readFileSync(out)) !== sha256(data)) {
+          fs.writeFileSync(out, data)
+          written++
         }
-        variants.push({ w, h: Math.round((height * w) / width), file: `/_img/${name}`, bytes: size })
-        derivativeBytes += size
+
+        // 3. Dimensions come from the encoded file, not from arithmetic.
+        const actual = await sharp(data, { failOn: "none" }).metadata()
+        if (actual.format !== "webp" || !actual.width || !actual.height) throw new Error(`Encoded file for ${key}@${w} is not a valid WebP`)
+        variants.push({ w: actual.width, h: actual.height, file: `/_img/${name}`, bytes: data.length })
+        derivativeBytes += data.length
       }
       originalBytes += bytes.length
       manifest[key] = { w: width, h: height, alpha: Boolean(meta.hasAlpha), originalBytes: bytes.length, sourceHash, variants }
@@ -142,7 +209,7 @@ export async function generate({
   if (!quiet) {
     const mb = (n) => (n / 1048576).toFixed(1)
     console.log(
-      `[images] ${Object.keys(sorted).length} sources -> ${keep.size} variants (${generated} written, ${reused} reused); originals ${mb(originalBytes)} MB, all variants ${mb(derivativeBytes)} MB`,
+      `[images] ${Object.keys(sorted).length} sources -> ${keep.size} variants (${encoded} encoded, ${fromCache} from cache, ${written} files written); originals ${mb(originalBytes)} MB, all variants ${mb(derivativeBytes)} MB`,
     )
   }
   return sorted

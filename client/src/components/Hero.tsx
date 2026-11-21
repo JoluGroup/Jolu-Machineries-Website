@@ -14,6 +14,7 @@ import { CountUp } from "@/components/CountUp";
 import { useInView } from "@/hooks/use-in-view";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "@/components/ResponsiveImage";
+import { createSlideNavigator, wrapIndex } from "@/lib/slide-navigation";
 
 const heroImage1 = "@/assets/hero/tractor1.jpg";
 const heroImage2 = "@/assets/hero/tractor2.png";
@@ -112,23 +113,42 @@ const Hero = () => {
     activateSlides((currentSlide + 1) % slideCount, (currentSlide - 1 + slideCount) % slideCount);
   }, [currentSlide, activateSlides, slideCount]);
 
-  // Auto-slide (waits for the next image so a slide is never blank)
+  // Navigation never swaps in a slide whose image is not ready: the current slide
+  // stays visible until the requested one has loaded (see lib/slide-navigation.ts).
+  const currentRef = useRef(0);
+  currentRef.current = currentSlide;
+  const navigator = useRef<ReturnType<typeof createSlideNavigator> | null>(null);
+  if (navigator.current === null) {
+    navigator.current = createSlideNavigator({
+      count: slideCount,
+      isReady: (i) => settledSlides.current.has(i),
+      show: (i) => setCurrentSlide(i),
+      prepare: (i) => activateSlides(i),
+    });
+  }
+  const nav = navigator.current;
+  useEffect(() => () => nav.cancel(), [nav]);
+
+  const markSettled = useCallback(
+    (index: number) => {
+      settledSlides.current.add(index);
+      nav.settled(index);
+    },
+    [nav],
+  );
+
+  // Auto-slide: skipped while the next image is not ready or a manual request is pending.
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => {
-        const next = (prev + 1) % slideCount;
-        return settledSlides.current.has(next) ? next : prev;
-      });
+      if (nav.pending() !== null) return;
+      const next = wrapIndex(currentRef.current + 1, slideCount);
+      if (settledSlides.current.has(next)) nav.request(next);
     }, 6000);
     return () => clearInterval(timer);
-  }, [slideCount]);
+  }, [nav, slideCount]);
 
-  const nextSlide = () =>
-    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-  const prevSlide = () =>
-    setCurrentSlide((prev) =>
-      prev === 0 ? heroSlides.length - 1 : prev - 1
-    );
+  const nextSlide = () => nav.request(nav.base(currentRef.current) + 1);
+  const prevSlide = () => nav.request(nav.base(currentRef.current) - 1);
 
   return (
     <section
@@ -152,8 +172,12 @@ const Hero = () => {
                 priority={index === 0}
                 loading="eager"
                 fetchPriority={index === 0 ? "high" : "low"}
-                onLoad={() => settledSlides.current.add(index)}
-                onError={() => settledSlides.current.add(index)}
+                ref={(el) => {
+                  // Cached images can be complete before React attaches onLoad.
+                  if (el && el.complete && el.naturalWidth > 0) markSettled(index);
+                }}
+                onLoad={() => markSettled(index)}
+                onError={() => markSettled(index)}
                 className="w-full h-full object-cover opacity-55 contrast-110 saturate-[0.85]"
               />
             )}
@@ -270,7 +294,7 @@ const Hero = () => {
           {heroSlides.map((_, index) => (
             <button
               key={index}
-              onClick={() => setCurrentSlide(index)}
+              onClick={() => nav.request(index)}
               aria-label={`Go to slide ${index + 1}`}
               aria-current={index === currentSlide ? "true" : undefined}
               className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
