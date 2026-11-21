@@ -52,10 +52,51 @@ GitHub deployment records show every push to `main` produced a Vercel **Producti
 **Merging PR #12 into main should therefore be treated as a production deployment.** Not verifiable from here: Vercel project settings,
 manual-approval/"Instant Rollback" availability, attached domains.
 
-## Owner visual acceptance checklist (not yet approved)
+## Owner visual acceptance checklist (original M2 items; superseded in part by the M2-R04 acceptance below)
 Screenshots in `docs/m2-integration/screenshots/` (desktop = `-desktop`, mobile = `-mobile`):
 1. `home-hero-*`: hero readable; the two low-resolution hero photos are a known pre-existing limitation.
 2. `catalogue-top-*`, `catalogue-tractors|harvesters|implements-*`: 18 products, three groups, header/footer present.
 3. `product-detail-*`: product image detail acceptable.
 4. `gallery-*`, `news-*`, `nakuru-event-*`: images sharp, layout unchanged.
 5. `nav-desktop.png`, `nav-mobile.jpg` (menu open): "Catalogue" item present, other labels unchanged.
+
+## M2-R04 integration (final code state)
+Integrated in order: PR #14 (catalogue, merge 85b0ba1), then PR #15 (homepage, merge dedb01b). **Final integrated code commit: `dedb01b8d3e5eb9396e0d0a1b3d59bfe0c324bce`** (docs-only commits may follow it).
+Combined preview (Vercel build for dedb01b, success): https://jolu-machineries-website-ny0vxphze-jolu-group.vercel.app
+
+### Visual acceptance (kept separate from factual confirmation)
+- **Owner desktop visual acceptance: GRANTED** for the catalogue refinement (PR #14) and the homepage refinement (PR #15), after reviewing both live previews.
+- Mobile and tablet visual acceptance: **not yet given** by the owner (measured and screenshotted by Claude only).
+- **Commercial statistics: NOT factually confirmed.** Tractors Sold 500, Years Experience 5, Happy Customers 480 are owner-supplied figures. Visual acceptance of the layout is not confirmation that the numbers are true. Factual confirmation remains a production publication gate.
+
+### Regression results on dedb01b (Claude-run, offline/local builds)
+- `npm test`: 68/68 pass (59 + 6 catalogue + 3 hero controls).
+- Production build succeeds. TypeScript: 5 errors, all pre-existing in `ScheduleVisit.tsx`. ESLint: 7 errors / 7 warnings (unchanged baseline).
+- Originals: 0 diffs in `src/assets` and `public/lovable-uploads` against main (6244d87). `vercel.json` unchanged since 5880cf6 (R-01 routing and cache isolation configuration intact; not re-verified live in this step).
+- Generated images: 385 files, set hash `3b58fe06` identical to the pre-R04 tree.
+- Catalogue (412 / 820 / 1366 px): 18 cards, 18 images decoded, `object-fit: contain`, equal-height rows, links `/products/<slug>`, header and footer present, CLS 0, no non-200 image responses.
+- Homepage: counters read 500 / 5 / 480 at all 8 viewports; 0 overlaps with hero content except the floating-contact item below; no horizontal scroll caused by the hero; 0 page errors. Throttled-mobile CLS: 0.0008 (pre-R04 0.0004; both far below 0.1). Home transfer unchanged (1.12 MB total, 0.83 MB images).
+- Hero stress suite: 12 scenarios, 0 blank frames, 0 errors.
+- Mobile/tablet image transfer on /products is unchanged under throttled mobile; desktop catalogue image transfer is lower.
+
+### Evaluated known issues (reported, deliberately not fixed)
+1. **Tablet header navigation overflow (pre-existing, outside R04).** Between about 768 and 893 px wide the header nav is wider than the viewport (right edge 894 px). The "Request a Quote" button is pushed off-screen and the page scrolls horizontally by 74 px at 820 px (126 px at 768 px). It is gone by 900 px. Verdict: **moderate**: it hides the primary header call to action on portrait tablets; other contact routes remain available. Recommend a fix before or soon after launch (separate, authorized change).
+2. **Floating contact stack over hero controls (360x640 only).** The fixed WhatsApp/call buttons covered the "Next slide" arrow at one scroll position (about 500 px); dots and Previous stayed tappable, and the controls were unobstructed at 412 px and wider. Verdict: **minor / not materially obstructive**, transient while scrolling.
+
+### Outstanding technical debt
+Header nav overflow at 768-893 px; floating contact stack vs. controls at 360 px; 5 TS errors and 7 ESLint errors in existing files; `diskHarrow18` source is 224x224 (soft when enlarged); two low-resolution hero photos; Vercel project settings, domains and rollback features unverifiable from here.
+
+### Remaining publication and production gates
+1. Owner mobile/tablet visual acceptance.
+2. Factual confirmation of 500 / 5 / 480.
+3. Explicit owner authorization to merge PR #12 into `main` (this triggers a Production deployment, see R-05).
+4. Decision on the two evaluated issues above.
+5. Post-deploy live check of R-01 on the production domain (existing WebP 200 immutable; missing WebP 404 without immutable; SPA deep links).
+6. Resend/DNS and email cutover remain separate and untouched.
+
+### Production rollback checklist (existing production commit `6244d87c7610318b16c28cc15b24c0dd2efc4c3f`)
+1. Before merging, note the current Production deployment in the Vercel dashboard (it was built from 6244d87).
+2. If a problem appears after promotion, first choose Vercel "Instant Rollback" (or Promote) of that 6244d87 deployment; this needs no code change. Availability depends on project settings that Claude cannot verify.
+3. If a code rollback is needed: `git revert -m 1 <PR #12 merge commit>` on a branch, open a PR, merge (triggers a Production deploy), or redeploy 6244d87.
+4. After rollback verify: home loads, `/products` loads, one deep link, one `/_img/` WebP returns 200, and a missing `/_img/` file returns 404 without `immutable`.
+5. Note: generated images are produced at build time and are not in git; a rollback to 6244d87 restores the pre-M2 image set.
