@@ -28,9 +28,9 @@ const Hero = () => {
   // Count-up metrics fire once when the stats block scrolls into view.
   const { ref: statsRef, inView: statsInView } = useInView<HTMLDivElement>({ once: true });
   const heroStats = [
-    { target: 150, label: "Tractors Sold", icon: Tractor },
+    { target: 500, label: "Tractors Sold", icon: Tractor },
     { target: 5, label: "Years Experience", icon: Award },
-    { target: 100, label: "Happy Customers", icon: Users },
+    { target: 480, label: "Happy Customers", icon: Users },
   ];
 
   const heroSlides = [
@@ -230,7 +230,7 @@ const Hero = () => {
       />
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4">
+      <div className="relative z-10 container mx-auto px-4 pb-10 md:pb-12">
         <div className="max-w-4xl">
           <Reveal className="text-white mb-8">
             <h1 className="text-3xl sm:text-4xl md:text-7xl font-bold mb-4 leading-snug md:leading-tight">
@@ -299,39 +299,43 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Slide Indicators */}
-        <div className="absolute bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
-          {heroSlides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => nav.request(index)}
-              aria-label={`Go to slide ${index + 1}`}
-              aria-current={index === currentSlide ? "true" : undefined}
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                index === currentSlide
-                  ? "bg-primary-glow scale-125"
-                  : "bg-white/50 hover:bg-white/70"
-              }`}
-            />
-          ))}
+        {/* Carousel controls: in normal flow below the stats so they never overlap content */}
+        <div className="mt-8 flex items-center justify-center gap-3" role="group" aria-label="Slide controls">
+          <button
+            onClick={prevSlide}
+            aria-label="Previous slide"
+            className="bg-black/40 hover:bg-black/60 text-white p-2 rounded-full"
+          >
+            <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
+          </button>
+          <div className="flex items-center">
+            {heroSlides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => nav.request(index)}
+                aria-label={`Go to slide ${index + 1}`}
+                aria-current={index === currentSlide ? "true" : undefined}
+                className="group flex h-6 w-6 items-center justify-center"
+              >
+                <span
+                  className={`block w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    index === currentSlide
+                      ? "bg-primary-glow scale-125"
+                      : "bg-white/50 group-hover:bg-white/70"
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={nextSlide}
+            aria-label="Next slide"
+            className="bg-black/40 hover:bg-black/60 text-white p-2 rounded-full"
+          >
+            <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
+          </button>
         </div>
       </div>
-
-      {/* Arrow Buttons */}
-      <button
-        onClick={prevSlide}
-        aria-label="Previous slide"
-        className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-2 rounded-full z-20"
-      >
-        <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
-      </button>
-      <button
-        onClick={nextSlide}
-        aria-label="Next slide"
-        className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-2 rounded-full z-20"
-      >
-        <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
-      </button>
 
       {/* Floating contact stack (WhatsApp + Call + Find a Branch) */}
       <FloatingContact />
