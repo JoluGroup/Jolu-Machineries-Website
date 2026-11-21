@@ -76,6 +76,39 @@ test("rejects overlap with the cache directory and manifest placement", async ()
   await assert.rejects(() => generate({ ...o, manifestPath: path.join(root, "src/assets/m.json") }), /refusing/)
 })
 
+test("a '..x' directory name is not mistaken for a parent-relative path (prefix bug)", async () => {
+  const { root, o } = await project()
+  for (const bad of ["src/assets/..x", "public/lovable-uploads/..x"]) {
+    fs.mkdirSync(path.join(root, bad), { recursive: true })
+    const bait = path.join(root, bad, "bait-480.0123456789abcdef.webp"); fs.writeFileSync(bait, "bait")
+    await assert.rejects(() => generate({ ...o, outDir: path.join(root, bad) }), /refusing/, bad)
+    assert.ok(fs.existsSync(bait), "bait inside a source tree survives")
+  }
+})
+
+test("the cache directory may not be, contain, or sit inside the project root or a source tree", async () => {
+  const { root, o } = await project()
+  for (const bad of [root, path.dirname(root), path.join(root, "src/assets"), path.join(root, "src/assets/c"), path.join(root, "public/lovable-uploads/c"), path.join(root, "src")]) {
+    await assert.rejects(() => generate({ ...o, cacheDir: bad }), /refusing/, bad)
+  }
+  assert.deepEqual(fs.readdirSync(path.join(root, "src/assets")).sort(), ["pic.png"], "no cache files written into the source tree")
+})
+
+test("the manifest path cannot overwrite arbitrary files, symlinks, or non-JSON paths", async () => {
+  const { root, o } = await project()
+  const pkg = path.join(root, "package.json"); fs.writeFileSync(pkg, JSON.stringify({ name: "keep-me", scripts: {} }))
+  await assert.rejects(() => generate({ ...o, manifestPath: pkg }), /refusing/)
+  assert.equal(JSON.parse(fs.readFileSync(pkg, "utf8")).name, "keep-me")
+  const txt = path.join(root, "notes.txt"); fs.writeFileSync(txt, "keep")
+  await assert.rejects(() => generate({ ...o, manifestPath: txt }), /refusing/)
+  const link = path.join(root, "link.json"); fs.symlinkSync(pkg, link)
+  await assert.rejects(() => generate({ ...o, manifestPath: link }), /refusing/)
+  await assert.rejects(() => generate({ ...o, manifestPath: o.cacheDir }), /refusing/)
+  assert.equal(fs.readFileSync(txt, "utf8"), "keep")
+  // a previously generated manifest is fine to overwrite, and so is a new file
+  await generate(o); await generate(o)
+})
+
 test("an output directory outside the project (disposable temp dir) is allowed, and a missing one is created", async () => {
   const { o } = await project()
   const out = path.join(mk(), "does", "not", "exist")

@@ -114,7 +114,7 @@ function realResolve(p) {
 }
 const isInside = (child, parent) => {
   const rel = path.relative(parent, child)
-  return rel === "" || (!rel.startsWith("..") && !path.isAbsolute(rel))
+  return rel === "" || (rel !== ".." && !rel.startsWith(".." + path.sep) && !path.isAbsolute(rel))
 }
 
 /**
@@ -137,6 +137,21 @@ export function assertSafeOutputs({ root, outDir, cacheDir, manifestPath }) {
   }
   if (isInside(real.cache, real.out) || isInside(real.out, real.cache)) fail("it overlaps the generation cache")
   if (isInside(real.manifest, real.out)) fail("the manifest path is inside the output directory")
+  // The cache is written to and must never land in (or contain) the project root or a source tree.
+  if (real.cache === path.parse(real.cache).root || isInside(real.root, real.cache)) fail("the cache directory is the project root, a parent of it, or a filesystem root")
+  for (const src of sources) if (isInside(real.cache, src) || isInside(src, real.cache)) fail(`the cache directory overlaps the source image directory ${src}`)
+  // The manifest is overwritten on every run: it must be a .json file that is absent or already a generated manifest.
+  if (!/\.json$/i.test(real.manifest)) fail("the manifest path must end in .json")
+  if (isInside(real.manifest, real.cache) || isInside(real.cache, real.manifest)) fail("the manifest path overlaps the cache directory")
+  try {
+    if (fs.lstatSync(manifestPath).isSymbolicLink()) fail("the manifest path is a symlink")
+    const prev = JSON.parse(fs.readFileSync(manifestPath, "utf8"))
+    const looksGenerated = prev && typeof prev === "object" && !Array.isArray(prev) && Object.values(prev).every((v) => v && Array.isArray(v.variants))
+    if (!looksGenerated) fail("the manifest path exists and is not a previously generated image manifest")
+  } catch (e) {
+    if (e?.code !== "ENOENT" && !String(e?.message).startsWith("[images]")) fail("the manifest path exists and is not a readable generated manifest")
+    if (String(e?.message).startsWith("[images]")) throw e
+  }
 }
 
 /** Public file name derived from the encoded bytes. */
