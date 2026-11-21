@@ -1,3 +1,5 @@
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import ResponsiveImage from "@/components/ResponsiveImage";
 import { products, type Product } from "@/data/products";
 import { groupProducts, productPath } from "@/data/catalogue";
@@ -27,16 +29,22 @@ const ProductList = () => {
   );
 
   return (
-    <section className="p-8 space-y-12">
-      {groups.map((group) => (
-        <div key={group.category}>
-          <h2 className="text-2xl font-bold mb-4">{group.heading}</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {group.items.map(renderProductCard)}
-          </div>
-        </div>
-      ))}
-    </section>
+    <>
+      <Header />
+      <main>
+        <section className="p-8 space-y-12">
+          {groups.map((group) => (
+            <div key={group.category}>
+              <h2 className="text-2xl font-bold mb-4">{group.heading}</h2>
+              <div className="grid md:grid-cols-2 gap-6">
+                {group.items.map(renderProductCard)}
+              </div>
+            </div>
+          ))}
+        </section>
+      </main>
+      <Footer />
+    </>
   );
 };
 
