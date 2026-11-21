@@ -11,11 +11,34 @@
 - Also unverified: the Vercel project's Root Directory (dashboard). `client/vercel.json` and `client/package-lock.json` apply only if it is `client`.
 - Use `npm ci` / `npm install` in `client/`. Do not run `bun install` for this project.
 
-## Missing generated images (R-01)
-Static files take precedence over rewrites. Previously a missing `/_img/*` URL matched the `/(.*)` rewrite and returned
-`index.html` with 200 under the immutable `/_img/` header. The rewrite source is now `/((?!_img/).*)`, so missing `/_img/*`
-paths match no rewrite and return Vercel's 404, while every other path (SPA routes, `/products/<slug>`, unknown routes) still gets `index.html`.
-Matching was verified with `path-to-regexp@6`; behaviour on a live deployment is still to be confirmed (see D-03).
+## Missing generated images (R-01) and error-response caching (M2-R03)
+Live preview (owner-verified): an existing `/_img/*.webp` returned 200 `image/webp` with the immutable header (correct), and a missing
+one returned Vercel's native 404 (not SPA HTML, correct) **but with `Cache-Control: public, max-age=31536000, immutable`** (defect).
+Cause: a vercel.json `headers` rule runs before the filesystem phase and matches the request path only, so it also stamps 404s; `has`/`missing`
+cannot test file existence or response status. Narrowing the path alone cannot fix a missing *hashed* file (e.g. an open tab after a redeploy).
+Correction: `client/vercel.json` now uses `routes` only: `filesystem` phase -> SPA catch-all that excludes `/_img/`;
+`hit` phase -> immutable header on content-hashed `/_img/*.webp` names with `continue: true`. Rules after `hit` apply only to requests that
+resolved to an existing file. The `hit` phase semantics are not spelled out in Vercel's docs, so **the corrected preview must be verified**:
+`curl -I` an existing `/_img/<file>` (200, image/webp, immutable), a missing `/_img/<name>.<16hex>.webp` and `/_img/nope.webp` (404, no immutable,
+repeat twice for `x-vercel-cache`), plus `/`, `/products`, `/products/zoomlion-rn904`, `/gallery`, `/news`, an unknown route (index.html).
+The `hit`-phase rule was confirmed live by the owner (see R-01 status).
+
+### R-01 status: CLOSED (functional acceptance), evidence by source
+**Owner-verified on the live Vercel preview of PR #13 (commit 453d4d3), browser cache disabled:**
+| Check | Observed |
+|---|---|
+| Existing generated WebP | 200, `image/webp`, `cache-control: public, max-age=31536000, immutable`, `x-vercel-cache: MISS`, image renders |
+| Missing ordinary WebP | 404, `text/plain; charset=utf-8`, `x-vercel-error: NOT_FOUND`, `cache-control: public, max-age=0, must-revalidate`, no immutable |
+| Missing content-hashed WebP | 404, same headers as above, no immutable |
+| SPA routing (Test D) | passed, confirmed by the owner |
+
+**Claude-reported engineering checks (not independent live evidence):** 59/59 tests, production build, TypeScript (5 existing ScheduleVisit errors), ESLint (7 errors / 7 warnings),
+generated images byte-identical, originals unchanged, `dist` byte-identical to the previous candidate.
+
+**Offline automated verification:** `client/tests/vercel-routing.test.mjs` models the documented phases and the six invariants. It does not prove Vercel's behaviour; the owner evidence above does.
+
+**Not independently established:** CDN-level negative caching. Neither missing-image response exposed an `x-vercel-cache` header, so no HIT/MISS was observed or is claimed.
+The 404 responses carried `max-age=0, must-revalidate`, so browsers must revalidate them.
 
 ## Generator cleanup safety (R-03)
 `scripts/optimize-images.mjs` now refuses (before creating or deleting anything) an output directory that is a filesystem root,
