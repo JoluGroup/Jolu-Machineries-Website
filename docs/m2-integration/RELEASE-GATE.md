@@ -11,11 +11,17 @@
 - Also unverified: the Vercel project's Root Directory (dashboard). `client/vercel.json` and `client/package-lock.json` apply only if it is `client`.
 - Use `npm ci` / `npm install` in `client/`. Do not run `bun install` for this project.
 
-## Missing generated images (R-01)
-Static files take precedence over rewrites. Previously a missing `/_img/*` URL matched the `/(.*)` rewrite and returned
-`index.html` with 200 under the immutable `/_img/` header. The rewrite source is now `/((?!_img/).*)`, so missing `/_img/*`
-paths match no rewrite and return Vercel's 404, while every other path (SPA routes, `/products/<slug>`, unknown routes) still gets `index.html`.
-Matching was verified with `path-to-regexp@6`; behaviour on a live deployment is still to be confirmed (see D-03).
+## Missing generated images (R-01) and error-response caching (M2-R03)
+Live preview (owner-verified): an existing `/_img/*.webp` returned 200 `image/webp` with the immutable header (correct), and a missing
+one returned Vercel's native 404 (not SPA HTML, correct) **but with `Cache-Control: public, max-age=31536000, immutable`** (defect).
+Cause: a vercel.json `headers` rule runs before the filesystem phase and matches the request path only, so it also stamps 404s; `has`/`missing`
+cannot test file existence or response status. Narrowing the path alone cannot fix a missing *hashed* file (e.g. an open tab after a redeploy).
+Correction: `client/vercel.json` now uses `routes` only: `filesystem` phase -> SPA catch-all that excludes `/_img/`;
+`hit` phase -> immutable header on content-hashed `/_img/*.webp` names with `continue: true`. Rules after `hit` apply only to requests that
+resolved to an existing file. The `hit` phase semantics are not spelled out in Vercel's docs, so **the corrected preview must be verified**:
+`curl -I` an existing `/_img/<file>` (200, image/webp, immutable), a missing `/_img/<name>.<16hex>.webp` and `/_img/nope.webp` (404, no immutable,
+repeat twice for `x-vercel-cache`), plus `/`, `/products`, `/products/zoomlion-rn904`, `/gallery`, `/news`, an unknown route (index.html).
+If the `hit` rule does not behave, revert to the previous `headers` + `rewrites` config and accept/document the residual risk.
 
 ## Generator cleanup safety (R-03)
 `scripts/optimize-images.mjs` now refuses (before creating or deleting anything) an output directory that is a filesystem root,
