@@ -20,9 +20,12 @@ const tractor9 = "@/assets/tractor-9.png";
 
 
 
+export type ProductCategory = "tractors" | "harvesters" | "implements";
+
 export interface Product {
   id: string;
   slug: string;
+  category: ProductCategory;
   name: string;
   description: string;
   image: string;
@@ -41,6 +44,7 @@ export const products: Product[] = [
   {
     id: "1",
     slug: "zoomlion-rn904",
+    category: "tractors",
     name: "Zoomlion RN904/1104 Wheeled Tractor",
     description: "Heavy-duty tractor for large-scale farming.",
     image: tractor1,
@@ -81,6 +85,7 @@ export const products: Product[] = [
   {
     id: "2",
     slug: "zoomlion-zl120",
+    category: "harvesters",
     name: "Zoomlion ZL120 Harvester",
     description: "High-performance combine harvester engineered for efficient, large-scale harvesting of rice and grains with minimal loss and maximum throughput.",
     image: harvester1,
@@ -120,6 +125,7 @@ export const products: Product[] = [
   {
   id: "3",
   slug: "3-disk-plough",
+  category: "implements",
   name: "3-Disk Plough",
   description: "Heavy-duty plough with three discs, designed for primary tillage and effective soil turning for tractors within 70–90 HP range.",
   image: threeDiskPlough,
@@ -159,6 +165,7 @@ export const products: Product[] = [
   {
   id: "4",
   slug: "zoomlion-pl2304",
+  category: "tractors",
   name: "Zoomlion PL2304 Wheeled Tractor",
   description: "World's top concept, features comfortable driving and smart operation.",
   image: tractor2,
@@ -215,6 +222,7 @@ export const products: Product[] = [
 {
   id: "5",
   slug: "disk-harrow",
+  category: "implements",
   name: "Disk Harrow",
   description: "Heavy-duty harrow designed for efficient soil breaking and seedbed preparation.",
   image: diskHarrow18,
@@ -255,6 +263,7 @@ export const products: Product[] = [
 {
   id: "6",
   slug: "zoomlion-pg2004",
+  category: "tractors",
   name: "Zoomlion PG2004 Wheeled Tractor",
   description: "Comfortable, intelligent wheeled tractor with advanced hydraulic and engine systems.",
   image: tractor3,
@@ -306,6 +315,7 @@ export const products: Product[] = [
 {
   id: "7",
   slug: "zoomlion-rd504",
+  category: "tractors",
   name: "Zoomlion RD504 Wheeled Tractor",
   description: "Compact and agile tractor designed for small plots and paddy fields.",
   image: tractor4,
@@ -350,6 +360,7 @@ export const products: Product[] = [
 {
   id: "8",
   slug: "zl105-combine-harvester",
+  category: "harvesters",
   name: "Zoomlion ZL105 Combine Harvester",
   description: "105hp combine harvester with upgraded threshing and smart control for efficient, high-performance field operations.",
   image: harvester3,
@@ -390,6 +401,7 @@ export const products: Product[] = [
 {
   id: "9",
   slug: "zoomlion-rk504-704",
+  category: "tractors",
   name: "Zoomlion RK504/704 Wheeled Tractor",
   description: "Versatile tractor with powerful engine options, ideal for various field operations.",
   image: tractor5,
@@ -442,6 +454,7 @@ export const products: Product[] = [
 {
   id: "10",
   slug: "zoomlion-rc904-1104",
+  category: "tractors",
   name: "Zoomlion RC904/1104 Wheeled Tractor",
   description: "Heavy-duty tractor built for power and precision in large-scale operations.",
   image: tractor6,
@@ -494,6 +507,7 @@ export const products: Product[] = [
 {
   id: "11",
   slug: "zc123s-combine-harvester",
+  category: "harvesters",
   name: "Zoomlion ZC123S Combine Harvester",
   description: "120hp high-performance combine harvester with robust design, large capacity, and advanced steering system for efficient harvesting in diverse field conditions.",
   image: harvester4,
@@ -535,6 +549,7 @@ export const products: Product[] = [
 {
   id: "12",
   slug: "zoomlion-rs1304-1604",
+  category: "tractors",
   name: "Zoomlion RS1304/1604 Wheeled Tractor",
   description: "High-powered, smart farming tractor designed for precision, comfort, and performance.",
   image: tractor7,
@@ -588,6 +603,7 @@ export const products: Product[] = [
 {
   id: "13",
   slug: "zoomlion-rg1804-2004",
+  category: "tractors",
   name: "Zoomlion RG1804/2004 Wheeled Tractor",
   description: "Heavy-duty wheeled tractor engineered for strength, precision, and extended field operations.",
   image: tractor8,
@@ -643,6 +659,7 @@ export const products: Product[] = [
 {
   id: "14",
   slug: "zoomlion-te100-combine-harvester",
+  category: "harvesters",
   name: "Zoomlion TE100 Combine Harvester",
   description: "190hp high-performance combine harvester designed for multi-crop efficiency, operator comfort, and long-term durability in large-scale farming operations.",
   image: harvester5,
@@ -699,6 +716,7 @@ export const products: Product[] = [
 {
   id: "15",
   slug: "zoomlion-dv3504-wheeled-tractor",
+  category: "tractors",
   name: "Zoomlion DV3504 Wheeled Tractor",
   description: "Next-generation hybrid tractor designed for intelligent control, smooth operation, and powerful field performance.",
   image: tractor9,
@@ -754,6 +772,7 @@ export const products: Product[] = [
 {
   id: "16",
   slug: "tf150-combine-harvester",
+  category: "harvesters",
   name: "Zoomlion TF150 Combine Harvester",
   description: "300hp combine harvester with dual axial flow threshing and advanced cleaning system for large-scale multi-crop harvesting.",
   image: harvester2,
@@ -797,6 +816,7 @@ export const products: Product[] = [
  {
     id: "17",
     slug: "implements-set",
+    category: "implements",
   name: "2 Disk Plough",
   description: "Durable Primary Tillage Equipment",
   image: twodiskplough,
@@ -829,6 +849,7 @@ export const products: Product[] = [
 {
   id: "18",
   slug: "water-bowser",
+  category: "implements",
   name: "Water Bowser",
   description: "Durable water transport and supply implement designed for irrigation, livestock, and dust suppression needs on farms and worksites.",
   image: waterBowser,
