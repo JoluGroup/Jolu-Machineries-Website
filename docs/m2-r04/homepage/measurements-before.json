@@ -1,0 +1,138 @@
+{
+ "mobile-360x640": {
+  "stats": [
+   "150 | Tractors Sold",
+   "5 | Years Experience",
+   "100 | Happy Customers"
+  ],
+  "nDots": 5,
+  "nArrows": 2,
+  "overlaps": [
+   "dot~100Happy Customers",
+   "Previous slide~Quick WhatsApp Quote",
+   "Next slide~Quick WhatsApp Quote"
+  ],
+  "dotsInside": true,
+  "sectionH": 953,
+  "hscroll": false,
+  "pageErrors": 0
+ },
+ "mobile-412x823": {
+  "stats": [
+   "150 | Tractors Sold",
+   "5 | Years Experience",
+   "100 | Happy Customers"
+  ],
+  "nDots": 5,
+  "nArrows": 2,
+  "overlaps": [
+   "dot~100Happy Customers"
+  ],
+  "dotsInside": true,
+  "sectionH": 927,
+  "hscroll": false,
+  "pageErrors": 0
+ },
+ "mobile-390x844": {
+  "stats": [
+   "150 | Tractors Sold",
+   "5 | Years Experience",
+   "100 | Happy Customers"
+  ],
+  "nDots": 5,
+  "nArrows": 2,
+  "overlaps": [
+   "dot~100Happy Customers",
+   "Previous slide~Quick WhatsApp Quote",
+   "Next slide~Quick WhatsApp Quote"
+  ],
+  "dotsInside": true,
+  "sectionH": 953,
+  "hscroll": false,
+  "pageErrors": 0
+ },
+ "landscape-844x390": {
+  "stats": [
+   "150 | Tractors Sold",
+   "5 | Years Experience",
+   "100 | Happy Customers"
+  ],
+  "nDots": 5,
+  "nArrows": 2,
+  "overlaps": [
+   "dot~5Years Experience",
+   "Previous slide~Discover our comprehensi"
+  ],
+  "dotsInside": true,
+  "sectionH": 614,
+  "hscroll": false,
+  "pageErrors": 0
+ },
+ "tablet-820x1180": {
+  "stats": [
+   "150 | Tractors Sold",
+   "5 | Years Experience",
+   "100 | Happy Customers"
+  ],
+  "nDots": 5,
+  "nArrows": 2,
+  "overlaps": [
+   "dot~5Years Experience",
+   "Previous slide~Discover our comprehensi"
+  ],
+  "dotsInside": true,
+  "sectionH": 1180,
+  "hscroll": false,
+  "pageErrors": 0
+ },
+ "laptop-1024x768": {
+  "stats": [
+   "150 | Tractors Sold",
+   "5 | Years Experience",
+   "100 | Happy Customers"
+  ],
+  "nDots": 5,
+  "nArrows": 2,
+  "overlaps": [
+   "dot~5Years Experience",
+   "Previous slide~Discover our comprehensi"
+  ],
+  "dotsInside": true,
+  "sectionH": 768,
+  "hscroll": false,
+  "pageErrors": 0
+ },
+ "desktop-1366x900": {
+  "stats": [
+   "150 | Tractors Sold",
+   "5 | Years Experience",
+   "100 | Happy Customers"
+  ],
+  "nDots": 5,
+  "nArrows": 2,
+  "overlaps": [
+   "dot~100Happy Customers",
+   "Previous slide~Discover our comprehensi"
+  ],
+  "dotsInside": true,
+  "sectionH": 900,
+  "hscroll": false,
+  "pageErrors": 0
+ },
+ "wide-1920x1080": {
+  "stats": [
+   "150 | Tractors Sold",
+   "5 | Years Experience",
+   "100 | Happy Customers"
+  ],
+  "nDots": 5,
+  "nArrows": 2,
+  "overlaps": [
+   "dot~100Happy Customers"
+  ],
+  "dotsInside": true,
+  "sectionH": 1080,
+  "hscroll": false,
+  "pageErrors": 0
+ }
+}

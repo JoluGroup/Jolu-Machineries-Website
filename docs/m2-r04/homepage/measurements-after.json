@@ -1,0 +1,117 @@
+{
+ "mobile-360x640": {
+  "stats": [
+   "500 | Tractors Sold",
+   "5 | Years Experience",
+   "480 | Happy Customers"
+  ],
+  "nDots": 5,
+  "nArrows": 2,
+  "overlaps": [
+   "dot~Chat with us on WhatsApp",
+   "Next slide~Chat with us on WhatsApp"
+  ],
+  "dotsInside": true,
+  "sectionH": 1061,
+  "hscroll": false,
+  "pageErrors": 0
+ },
+ "mobile-412x823": {
+  "stats": [
+   "500 | Tractors Sold",
+   "5 | Years Experience",
+   "480 | Happy Customers"
+  ],
+  "nDots": 5,
+  "nArrows": 2,
+  "overlaps": [],
+  "dotsInside": true,
+  "sectionH": 1035,
+  "hscroll": false,
+  "pageErrors": 0
+ },
+ "mobile-390x844": {
+  "stats": [
+   "500 | Tractors Sold",
+   "5 | Years Experience",
+   "480 | Happy Customers"
+  ],
+  "nDots": 5,
+  "nArrows": 2,
+  "overlaps": [],
+  "dotsInside": true,
+  "sectionH": 1061,
+  "hscroll": false,
+  "pageErrors": 0
+ },
+ "landscape-844x390": {
+  "stats": [
+   "500 | Tractors Sold",
+   "5 | Years Experience",
+   "480 | Happy Customers"
+  ],
+  "nDots": 5,
+  "nArrows": 2,
+  "overlaps": [],
+  "dotsInside": true,
+  "sectionH": 734,
+  "hscroll": false,
+  "pageErrors": 0
+ },
+ "tablet-820x1180": {
+  "stats": [
+   "500 | Tractors Sold",
+   "5 | Years Experience",
+   "480 | Happy Customers"
+  ],
+  "nDots": 5,
+  "nArrows": 2,
+  "overlaps": [],
+  "dotsInside": true,
+  "sectionH": 1180,
+  "hscroll": false,
+  "pageErrors": 0
+ },
+ "laptop-1024x768": {
+  "stats": [
+   "500 | Tractors Sold",
+   "5 | Years Experience",
+   "480 | Happy Customers"
+  ],
+  "nDots": 5,
+  "nArrows": 2,
+  "overlaps": [],
+  "dotsInside": true,
+  "sectionH": 768,
+  "hscroll": false,
+  "pageErrors": 0
+ },
+ "desktop-1366x900": {
+  "stats": [
+   "500 | Tractors Sold",
+   "5 | Years Experience",
+   "480 | Happy Customers"
+  ],
+  "nDots": 5,
+  "nArrows": 2,
+  "overlaps": [],
+  "dotsInside": true,
+  "sectionH": 900,
+  "hscroll": false,
+  "pageErrors": 0
+ },
+ "wide-1920x1080": {
+  "stats": [
+   "500 | Tractors Sold",
+   "5 | Years Experience",
+   "480 | Happy Customers"
+  ],
+  "nDots": 5,
+  "nArrows": 2,
+  "overlaps": [],
+  "dotsInside": true,
+  "sectionH": 1080,
+  "hscroll": false,
+  "pageErrors": 0
+ }
+}
