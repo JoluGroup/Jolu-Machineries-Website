@@ -3,9 +3,12 @@
 ## Package manager authority (R-02)
 - npm is authoritative: README says `npm i`; `client/package-lock.json` (v3) pins `sharp@0.35.5` exactly and is
   consistent with `client/package.json`; a clean `npm ci` from only those two files installs it.
-- On Vercel, lockfile detection checks `package-lock.json` before `bun.lockb` (Vercel build-utils priority: yarn > pnpm > npm > bun),
-  so `client/bun.lockb` (stale, no sharp, untouched since before M2) is not used while `package-lock.json` exists.
-  Not deleted: lockfile removal is out of scope. Confirm in the preview/production install log ("Detected package-lock.json"/`npm install`).
+- Which lockfile Vercel selects when both exist is **not stated in Vercel's documentation**. A 2023 build-utils commit
+  (vercel/vercel 45b73c7) documents the priority yarn > pnpm > npm > bun, which would make npm win, but that is unconfirmed for
+  current Vercel versions. `client/bun.lockb` (stale, no sharp) was left untouched (lockfile removal is out of scope).
+  **Confirm in the preview/production install log** (expect "Detected `package-lock.json`" / `npm install`). If the log shows
+  bun, the options are to remove `client/bun.lockb` or pin an install command, both owner decisions.
+- Also unverified: the Vercel project's Root Directory (dashboard). `client/vercel.json` and `client/package-lock.json` apply only if it is `client`.
 - Use `npm ci` / `npm install` in `client/`. Do not run `bun install` for this project.
 
 ## Missing generated images (R-01)
