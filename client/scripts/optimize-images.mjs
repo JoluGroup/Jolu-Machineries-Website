@@ -94,6 +94,51 @@ async function isValidWebp(file, expectedWidth) {
   }
 }
 
+/** Names this generator produces: <slug>-<width>.<16 hex>.webp. Only these are ever pruned. */
+export const GENERATED_NAME = new RegExp(`-\\d+\\.[0-9a-f]{${CONTENT_HASH_LENGTH}}\\.webp$`)
+
+/** Resolve a path through symlinks even if the leaf (and some parents) do not exist yet. */
+function realResolve(p) {
+  let cur = path.resolve(p)
+  const rest = []
+  for (;;) {
+    try {
+      return path.join(fs.realpathSync(cur), ...rest.reverse())
+    } catch {
+      const parent = path.dirname(cur)
+      if (parent === cur) return path.resolve(p)
+      rest.push(path.basename(cur))
+      cur = parent
+    }
+  }
+}
+const isInside = (child, parent) => {
+  const rel = path.relative(parent, child)
+  return rel === "" || (!rel.startsWith("..") && !path.isAbsolute(rel))
+}
+
+/**
+ * The output directory is cleaned of stale generated files, so it must be a directory that
+ * only holds generated output: never a filesystem root, the project root (or any parent of it),
+ * a source-image tree (or anything containing or inside one), or the cache directory.
+ * Throws before anything is created or deleted.
+ */
+export function assertSafeOutputs({ root, outDir, cacheDir, manifestPath }) {
+  const real = { root: realResolve(root), out: realResolve(outDir), cache: realResolve(cacheDir), manifest: realResolve(manifestPath) }
+  const sources = SOURCE_TREES.map((t) => realResolve(path.join(root, t.dir)))
+  const fail = (why) => {
+    throw new Error(`[images] refusing unsafe output directory ${outDir}: ${why}`)
+  }
+  if (real.out === path.parse(real.out).root) fail("it is a filesystem root")
+  if (isInside(real.root, real.out)) fail("it is the project root or a parent of it")
+  for (const src of sources) {
+    if (isInside(real.out, src) || isInside(src, real.out)) fail(`it overlaps the source image directory ${src}`)
+    if (isInside(real.manifest, src)) fail("the manifest path is inside a source image directory")
+  }
+  if (isInside(real.cache, real.out) || isInside(real.out, real.cache)) fail("it overlaps the generation cache")
+  if (isInside(real.manifest, real.out)) fail("the manifest path is inside the output directory")
+}
+
 /** Public file name derived from the encoded bytes. */
 export function contentName(slug, width, encodedBytes) {
   return `${slug}-${width}.${sha256(encodedBytes).slice(0, CONTENT_HASH_LENGTH)}.webp`
@@ -121,6 +166,7 @@ export async function generate({
   cacheDir = process.env.IMG_CACHE_DIR ? path.resolve(process.env.IMG_CACHE_DIR) : path.join(root, "node_modules/.cache/jolu-images"),
   quiet = false,
 } = {}) {
+  assertSafeOutputs({ root, outDir, cacheDir, manifestPath })
   fs.mkdirSync(outDir, { recursive: true })
   fs.mkdirSync(cacheDir, { recursive: true })
   const versions = encoderVersions()
@@ -201,7 +247,11 @@ export async function generate({
 
   // Prune stale generated files (only inside the generated directory) on full runs.
   if (!only) {
-    for (const f of fs.readdirSync(outDir)) if (f.endsWith(".webp") && !keep.has(f)) fs.rmSync(path.join(outDir, f))
+    for (const f of fs.readdirSync(outDir)) {
+      if (keep.has(f) || !GENERATED_NAME.test(f)) continue // unrelated files are never touched
+      const full = path.join(outDir, f)
+      if (fs.lstatSync(full).isFile()) fs.rmSync(full) // never follow or remove symlinks/directories
+    }
   }
 
   const sorted = Object.fromEntries(Object.keys(manifest).sort().map((k) => [k, manifest[k]]))
