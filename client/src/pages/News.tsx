@@ -189,7 +189,7 @@ useEffect(() => {
 
                   return (
                     <div key={speaker.name} className="bg-zinc-50 dark:bg-zinc-800 p-4 rounded-lg shadow-sm">
-                      <ResponsiveImage sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, calc(100vw - 2rem)"
+                      <ResponsiveImage sizes="(min-width: 1024px) 276px, (min-width: 768px) calc(50vw - 236px), calc(100vw - 4rem)"
                         src={speaker.image}
                         alt={speaker.name}
                         className="w-full h-auto object-contain md:h-72 md:object-cover lg:h-80 rounded-md mb-2"
@@ -231,7 +231,7 @@ useEffect(() => {
       <Dialog>
         <DialogTrigger asChild>
           <div className="relative cursor-pointer group">
-            <ResponsiveImage sizes="(min-width: 768px) 33vw, calc(100vw - 2rem)"
+            <ResponsiveImage sizes="(min-width: 1024px) 276px, (min-width: 768px) calc(50vw - 236px), calc(100vw - 4rem)"
               src={client.image}
               alt={client.name}
               className="w-full h-auto object-contain md:h-64 md:object-cover rounded-md"

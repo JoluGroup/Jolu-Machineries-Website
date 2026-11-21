@@ -10,7 +10,8 @@ import { fileURLToPath, pathToFileURL } from "node:url"
 import { build } from "esbuild"
 import React from "react"
 import { renderToStaticMarkup } from "react-dom/server"
-import { EXCLUDE, MAX_WIDTH, SOURCE_TREES, STANDARD_WIDTHS, generate, planWidths } from "../scripts/optimize-images.mjs"
+import sharp from "sharp"
+import { CONTENT_HASH_LENGTH, ENCODER_VERSION, EXCLUDE, MAX_WIDTH, SOURCE_TREES, STANDARD_WIDTHS, contentName, generate, generationKey, planWidths, sha256 } from "../scripts/optimize-images.mjs"
 import { buildSrcSet, normalizeImageKey, pickDefaultVariant, resolveImage } from "../src/lib/image-utils.ts"
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
@@ -80,7 +81,7 @@ test("every variant file exists, is a WebP, and is not an upscale", () => {
       const head = fs.readFileSync(file).subarray(0, 12)
       assert.equal(head.subarray(0, 4).toString("ascii"), "RIFF", `${v.file} is RIFF`)
       assert.equal(head.subarray(8, 12).toString("ascii"), "WEBP", `${v.file} is WebP`)
-      assert.ok(/-\d+\.webp$/.test(v.file) && /\.[0-9a-f]{10}-/.test(v.file), `${v.file} is content-hashed`)
+      assert.match(v.file, new RegExp(`-\\d+\\.[0-9a-f]{${CONTENT_HASH_LENGTH}}\\.webp$`), `${v.file} is content-addressed`)
     }
     assert.equal(entry.variants.at(-1).w, Math.min(entry.w, MAX_WIDTH))
   }
@@ -100,7 +101,7 @@ test("the largest derivative is far smaller than the original for big photograph
 test("generation never modifies, moves or deletes original images", async () => {
   const before = new Map(sourceFiles().map((s) => [s.file, sha(fs.readFileSync(s.file))]))
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "img-orig-"))
-  await generate({ outDir: path.join(tmp, "out"), manifestPath: path.join(tmp, "m.json"), only: /gallery\/ceo\.jpg|assets\/tractor-1\.png/, quiet: true })
+  await generate({ outDir: path.join(tmp, "out"), manifestPath: path.join(tmp, "m.json"), cacheDir: path.join(tmp, "cache"), only: /gallery\/ceo\.jpg|assets\/tractor-1\.png/, quiet: true })
   const after = new Map(sourceFiles().map((s) => [s.file, sha(fs.readFileSync(s.file))]))
   assert.deepEqual([...after.keys()].sort(), [...before.keys()].sort(), "same set of originals")
   for (const [file, hash] of before) assert.equal(after.get(file), hash, `${file} unchanged`)
@@ -165,8 +166,8 @@ test("generation is reproducible: same inputs give identical manifests and ident
   const only = /gallery\/ceo\.jpg|assets\/tractor-1\.png|assets\/hero\/tractor3\.jpg/
   const a = fs.mkdtempSync(path.join(os.tmpdir(), "img-a-"))
   const b = fs.mkdtempSync(path.join(os.tmpdir(), "img-b-"))
-  const ma = await generate({ outDir: path.join(a, "o"), manifestPath: path.join(a, "m.json"), only, quiet: true })
-  const mb = await generate({ outDir: path.join(b, "o"), manifestPath: path.join(b, "m.json"), only, quiet: true })
+  const ma = await generate({ outDir: path.join(a, "o"), manifestPath: path.join(a, "m.json"), cacheDir: path.join(a, "c"), only, quiet: true })
+  const mb = await generate({ outDir: path.join(b, "o"), manifestPath: path.join(b, "m.json"), cacheDir: path.join(b, "c"), only, quiet: true })
   assert.ok(Object.keys(ma).length === 3)
   assert.deepEqual(ma, mb)
   assert.equal(fs.readFileSync(path.join(a, "m.json"), "utf8"), fs.readFileSync(path.join(b, "m.json"), "utf8"))
@@ -177,6 +178,117 @@ test("generation is reproducible: same inputs give identical manifests and ident
   for (const [key, entry] of Object.entries(ma)) assert.deepEqual(entry, manifest[key], key)
   fs.rmSync(a, { recursive: true, force: true })
   fs.rmSync(b, { recursive: true, force: true })
+})
+
+// ---------------------------------------------------------------- D-01 content addressing
+
+test("D-01: every public file name embeds the hash of the file's ACTUAL bytes", () => {
+  for (const [key, entry] of Object.entries(manifest)) {
+    for (const v of entry.variants) {
+      const bytes = fs.readFileSync(path.join(ROOT, "public", v.file))
+      const m = v.file.match(new RegExp(`\\.([0-9a-f]{${CONTENT_HASH_LENGTH}})\\.webp$`))
+      assert.ok(m, `${key}: ${v.file} has a content hash`)
+      assert.equal(m[1], sha256(bytes).slice(0, CONTENT_HASH_LENGTH), `${v.file}: name hash must match file bytes`)
+      assert.equal(bytes.length, v.bytes, `${v.file}: manifest bytes match file`)
+    }
+  }
+})
+
+test("D-01: the generation-cache key reacts to every input that can change encoded bytes", () => {
+  const base = { sourceBytes: Buffer.from("source"), width: 800, copyThrough: false, hasAlpha: false, versions: { sharp: "0.35.5", vips: "8.17.0" } }
+  const k = generationKey(base)
+  assert.equal(generationKey({ ...base }), k, "stable for identical input")
+  assert.notEqual(generationKey({ ...base, sourceBytes: Buffer.from("source2") }), k, "source bytes")
+  assert.notEqual(generationKey({ ...base, width: 1200 }), k, "width")
+  assert.notEqual(generationKey({ ...base, hasAlpha: true }), k, "encoder options (alpha)")
+  assert.notEqual(generationKey({ ...base, copyThrough: true }), k, "copy-through")
+  assert.notEqual(generationKey({ ...base, versions: { ...base.versions, sharp: "0.36.0" } }), k, "sharp version")
+  assert.notEqual(generationKey({ ...base, versions: { ...base.versions, vips: "8.18.0" } }), k, "libvips version")
+  assert.ok(typeof ENCODER_VERSION === "string" && ENCODER_VERSION.length > 0)
+})
+
+test("D-01: a URL can never serve different bytes (changed source or tampered cache => new URL)", async () => {
+  const only = /gallery\/ceo\.jpg/
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "img-cas-"))
+  const run = (name) => generate({ outDir: path.join(tmp, name, "o"), manifestPath: path.join(tmp, name, "m.json"), cacheDir: path.join(tmp, "cache"), only, quiet: true })
+  const first = await run("first")
+  const files = (m) => Object.values(m)[0].variants.map((v) => v.file)
+
+  // 1. Second run reuses the cache and yields the same names.
+  const second = await run("second")
+  assert.deepEqual(files(second), files(first))
+
+  // 2. Corrupt a cache entry: the result must still be a valid WebP, and any change in bytes changes the name.
+  const cacheFiles = fs.readdirSync(path.join(tmp, "cache"))
+  assert.ok(cacheFiles.length >= 2)
+  fs.writeFileSync(path.join(tmp, "cache", cacheFiles[0]), "not a webp")
+  const third = await run("third")
+  assert.deepEqual(files(third), files(first), "corrupt cache entry is detected and re-encoded, not shipped")
+
+  // 3. Replace a cache entry with a DIFFERENT valid webp of the same width: bytes differ => name must differ.
+  const victim = Object.values(first)[0].variants[0]
+  const other = await sharp({ create: { width: victim.w, height: victim.h, channels: 3, background: "#123456" } }).webp().toBuffer()
+  const hit = cacheFiles.find((f) => fs.statSync(path.join(tmp, "cache", f)).size === victim.bytes) ?? cacheFiles[1]
+  fs.writeFileSync(path.join(tmp, "cache", hit), other)
+  const fourth = await run("fourth")
+  const changed = files(fourth).filter((f, i) => f !== files(first)[i])
+  for (const f of files(fourth)) {
+    const bytes = fs.readFileSync(path.join(tmp, "fourth", "o", path.basename(f)))
+    assert.equal(path.basename(f).split(".").at(-2), sha256(bytes).slice(0, CONTENT_HASH_LENGTH), "name always matches bytes")
+  }
+  assert.ok(changed.length <= 1)
+  assert.equal(contentName("x", 1, other).split(".").at(-2), sha256(other).slice(0, CONTENT_HASH_LENGTH))
+  fs.rmSync(tmp, { recursive: true, force: true })
+})
+
+test("D-01: a warm cache encodes nothing and is much faster than a cold run", async () => {
+  const only = /gallery\/ceo\.jpg/
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "img-warm-"))
+  const opts = { outDir: path.join(tmp, "o"), manifestPath: path.join(tmp, "m.json"), cacheDir: path.join(tmp, "c"), only, quiet: true }
+  const logs = []
+  const orig = console.log
+  console.log = (...a) => logs.push(a.join(" "))
+  try {
+    await generate({ ...opts, quiet: false })
+    await generate({ ...opts, quiet: false })
+  } finally {
+    console.log = orig
+  }
+  assert.match(logs[0], /\(\d+ encoded, 0 from cache/)
+  assert.match(logs[1], /\(0 encoded, \d+ from cache, 0 files written/)
+  fs.rmSync(tmp, { recursive: true, force: true })
+})
+
+// ---------------------------------------------------------------- F-04 manifest dimensions
+
+test("F-04: manifest variant dimensions equal the real metadata of each generated file", async () => {
+  const mismatches = []
+  for (const [key, entry] of Object.entries(manifest)) {
+    for (const v of entry.variants) {
+      const meta = await sharp(path.join(ROOT, "public", v.file)).metadata()
+      if (meta.format !== "webp" || meta.width !== v.w || meta.height !== v.h) mismatches.push(`${key} ${v.file}: manifest ${v.w}x${v.h}, file ${meta.width}x${meta.height}`)
+    }
+  }
+  assert.deepEqual(mismatches, [])
+})
+
+test("F-04: variant aspect ratio matches the source within rounding", () => {
+  for (const [key, entry] of Object.entries(manifest)) {
+    for (const v of entry.variants) {
+      const expectedH = (entry.h * v.w) / entry.w
+      assert.ok(Math.abs(v.h - expectedH) <= 1, `${key}@${v.w}: height ${v.h} vs ${expectedH.toFixed(2)}`)
+    }
+  }
+})
+
+// ---------------------------------------------------------------- F-03 news speaker sizing
+
+test("F-03: news speaker and client cards declare their real rendered width, not a viewport fraction", () => {
+  const src = fs.readFileSync(path.join(ROOT, "src/pages/News.tsx"), "utf8")
+  const sizes = [...src.matchAll(/sizes="([^"]+)"/g)].map((m) => m[1])
+  const card = "(min-width: 1024px) 276px, (min-width: 768px) calc(50vw - 236px), calc(100vw - 4rem)"
+  assert.equal(sizes.filter((s) => s === card).length, 2, "speaker + client cards")
+  assert.ok(!sizes.some((s) => /33vw/.test(s) && /768px/.test(s) && /50vw, calc/.test(s)), "old speaker sizes are gone")
 })
 
 // ---------------------------------------------------------------- rendered markup
@@ -232,7 +344,7 @@ test("<ResponsiveImage> renders responsive, layout-stable and correctly prioriti
     assert.doesNotMatch(fallback, /width=/)
 
     const asset = renderToStaticMarkup(React.createElement(Component, { src: "@/assets/hero/tractor1.jpg", alt: "hero", priority: true }))
-    assert.match(asset, /srcSet="[^"]*_img\/assets-hero-tractor1\./)
+    assert.match(asset, /srcSet="[^"]*_img\/assets-hero-tractor1-/)
   } finally {
     cleanup()
   }
