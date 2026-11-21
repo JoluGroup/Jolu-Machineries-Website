@@ -1,0 +1,278 @@
+{
+ "home": {
+  "el": "IMG http://127.0.0.1:40527/assets/tractor1-DE1PYFSC.jpg size=285928",
+  "lcp": 9276,
+  "cls": 0.0091,
+  "initialImgKB": 0,
+  "initialTotalKB": 274,
+  "fullImgKB": 2759,
+  "fullTotalKB": 3033,
+  "fullImgCount": 12,
+  "settleSec": 20,
+  "runs": [
+   {
+    "el": "IMG http://127.0.0.1:40527/assets/tractor1-DE1PYFSC.jpg size=285928",
+    "lcp": 9272,
+    "cls": 0.0092,
+    "initialImgKB": 0,
+    "initialTotalKB": 274,
+    "fullImgKB": 2759,
+    "fullTotalKB": 3033,
+    "fullImgCount": 12,
+    "settleSec": 20
+   },
+   {
+    "el": "IMG http://127.0.0.1:40527/assets/tractor1-DE1PYFSC.jpg size=285928",
+    "lcp": 9276,
+    "cls": 0.0089,
+    "initialImgKB": 0,
+    "initialTotalKB": 274,
+    "fullImgKB": 2759,
+    "fullTotalKB": 3033,
+    "fullImgCount": 12,
+    "settleSec": 20
+   },
+   {
+    "el": "IMG http://127.0.0.1:40527/assets/tractor1-DE1PYFSC.jpg size=285928",
+    "lcp": 9308,
+    "cls": 0.0091,
+    "initialImgKB": 0,
+    "initialTotalKB": 274,
+    "fullImgKB": 2759,
+    "fullTotalKB": 3033,
+    "fullImgCount": 12,
+    "settleSec": 20
+   }
+  ]
+ },
+ "gallery": {
+  "el": "H1  size=5632",
+  "lcp": 1880,
+  "cls": 0.002,
+  "initialImgKB": 0,
+  "initialTotalKB": 254,
+  "fullImgKB": 11719,
+  "fullTotalKB": 11973,
+  "fullImgCount": 13,
+  "settleSec": 124,
+  "runs": [
+   {
+    "el": "H1  size=5632",
+    "lcp": 1832,
+    "cls": 0.002,
+    "initialImgKB": 0,
+    "initialTotalKB": 254,
+    "fullImgKB": 11719,
+    "fullTotalKB": 11973,
+    "fullImgCount": 13,
+    "settleSec": 124
+   },
+   {
+    "el": "H1  size=5632",
+    "lcp": 1880,
+    "cls": 0.002,
+    "initialImgKB": 0,
+    "initialTotalKB": 254,
+    "fullImgKB": 11719,
+    "fullTotalKB": 11973,
+    "fullImgCount": 13,
+    "settleSec": 124
+   },
+   {
+    "el": "H1  size=5632",
+    "lcp": 1920,
+    "cls": 0.002,
+    "initialImgKB": 0,
+    "initialTotalKB": 254,
+    "fullImgKB": 11719,
+    "fullTotalKB": 11973,
+    "fullImgCount": 13,
+    "settleSec": 124
+   }
+  ]
+ },
+ "news": {
+  "el": "P  size=68607",
+  "lcp": 1564,
+  "cls": 0.0993,
+  "initialImgKB": 0,
+  "initialTotalKB": 221,
+  "fullImgKB": 135,
+  "fullTotalKB": 356,
+  "fullImgCount": 2,
+  "settleSec": 124,
+  "runs": [
+   {
+    "el": "P  size=68607",
+    "lcp": 1560,
+    "cls": 0.0993,
+    "initialImgKB": 0,
+    "initialTotalKB": 221,
+    "fullImgKB": 135,
+    "fullTotalKB": 356,
+    "fullImgCount": 2,
+    "settleSec": 124
+   },
+   {
+    "el": "P  size=68607",
+    "lcp": 1564,
+    "cls": 0.0993,
+    "initialImgKB": 0,
+    "initialTotalKB": 221,
+    "fullImgKB": 135,
+    "fullTotalKB": 356,
+    "fullImgCount": 2,
+    "settleSec": 124
+   },
+   {
+    "el": "P  size=68607",
+    "lcp": 1644,
+    "cls": 0.0973,
+    "initialImgKB": 0,
+    "initialTotalKB": 221,
+    "fullImgKB": 135,
+    "fullTotalKB": 356,
+    "fullImgCount": 2,
+    "settleSec": 124
+   }
+  ]
+ },
+ "products": {
+  "el": "H2  size=5887",
+  "lcp": 1300,
+  "cls": 0,
+  "initialImgKB": 0,
+  "initialTotalKB": 202,
+  "fullImgKB": 0,
+  "fullTotalKB": 202,
+  "fullImgCount": 0,
+  "settleSec": 6,
+  "runs": [
+   {
+    "el": "H2  size=5887",
+    "lcp": 1300,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 202,
+    "fullImgKB": 0,
+    "fullTotalKB": 202,
+    "fullImgCount": 0,
+    "settleSec": 6
+   },
+   {
+    "el": "H2  size=5887",
+    "lcp": 1272,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 202,
+    "fullImgKB": 0,
+    "fullTotalKB": 202,
+    "fullImgCount": 0,
+    "settleSec": 6
+   },
+   {
+    "el": "H2  size=5887",
+    "lcp": 1340,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 202,
+    "fullImgKB": 0,
+    "fullTotalKB": 202,
+    "fullImgCount": 0,
+    "settleSec": 6
+   }
+  ]
+ },
+ "product_detail": {
+  "el": "IMG http://127.0.0.1:40527/assets/tractor-1-B1vlPtWH.png size=85880",
+  "lcp": 4216,
+  "cls": 0.1916,
+  "initialImgKB": 73,
+  "initialTotalKB": 299,
+  "fullImgKB": 508,
+  "fullTotalKB": 734,
+  "fullImgCount": 2,
+  "settleSec": 9,
+  "runs": [
+   {
+    "el": "IMG http://127.0.0.1:40527/assets/tractor-1-B1vlPtWH.png size=85880",
+    "lcp": 4248,
+    "cls": 0.1896,
+    "initialImgKB": 73,
+    "initialTotalKB": 299,
+    "fullImgKB": 508,
+    "fullTotalKB": 734,
+    "fullImgCount": 2,
+    "settleSec": 9
+   },
+   {
+    "el": "IMG http://127.0.0.1:40527/assets/tractor-1-B1vlPtWH.png size=85880",
+    "lcp": 4200,
+    "cls": 0.1916,
+    "initialImgKB": 73,
+    "initialTotalKB": 299,
+    "fullImgKB": 508,
+    "fullTotalKB": 734,
+    "fullImgCount": 2,
+    "settleSec": 8
+   },
+   {
+    "el": "IMG http://127.0.0.1:40527/assets/tractor-1-B1vlPtWH.png size=85880",
+    "lcp": 4216,
+    "cls": 0.1916,
+    "initialImgKB": 73,
+    "initialTotalKB": 299,
+    "fullImgKB": 508,
+    "fullTotalKB": 734,
+    "fullImgCount": 2,
+    "settleSec": 9
+   }
+  ]
+ },
+ "event_nakuru": {
+  "el": "IMG ttp://127.0.0.1:40527/lovable-uploads/nakuru-launch/hero.jpg size=285928",
+  "lcp": 69424,
+  "cls": 0,
+  "initialImgKB": 0,
+  "initialTotalKB": 219,
+  "fullImgKB": 14974,
+  "fullTotalKB": 15193,
+  "fullImgCount": 9,
+  "settleSec": 124,
+  "runs": [
+   {
+    "el": "IMG ttp://127.0.0.1:40527/lovable-uploads/nakuru-launch/hero.jpg size=285928",
+    "lcp": 69424,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 219,
+    "fullImgKB": 14974,
+    "fullTotalKB": 15193,
+    "fullImgCount": 9,
+    "settleSec": 124
+   },
+   {
+    "el": "IMG ttp://127.0.0.1:40527/lovable-uploads/nakuru-launch/hero.jpg size=285928",
+    "lcp": 69364,
+    "cls": 0.002,
+    "initialImgKB": 0,
+    "initialTotalKB": 219,
+    "fullImgKB": 14974,
+    "fullTotalKB": 15193,
+    "fullImgCount": 9,
+    "settleSec": 124
+   },
+   {
+    "el": "IMG ttp://127.0.0.1:40527/lovable-uploads/nakuru-launch/hero.jpg size=285928",
+    "lcp": 69468,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 219,
+    "fullImgKB": 14974,
+    "fullTotalKB": 15193,
+    "fullImgCount": 9,
+    "settleSec": 124
+   }
+  ]
+ }
+}

@@ -1,0 +1,254 @@
+{
+ "home": {
+  "lcp": 3756,
+  "cls": 0.0005,
+  "initialImgKB": 73,
+  "initialTotalKB": 359,
+  "fullImgKB": 833,
+  "fullTotalKB": 1119,
+  "fullImgCount": 12,
+  "settleSec": 21,
+  "runs": [
+   {
+    "lcp": 3756,
+    "cls": 0.0004,
+    "initialImgKB": 73,
+    "initialTotalKB": 359,
+    "fullImgKB": 833,
+    "fullTotalKB": 1119,
+    "fullImgCount": 12,
+    "settleSec": 21
+   },
+   {
+    "lcp": 3604,
+    "cls": 0.0005,
+    "initialImgKB": 73,
+    "initialTotalKB": 359,
+    "fullImgKB": 833,
+    "fullTotalKB": 1119,
+    "fullImgCount": 12,
+    "settleSec": 21
+   },
+   {
+    "lcp": 3800,
+    "cls": 0.0005,
+    "initialImgKB": 73,
+    "initialTotalKB": 359,
+    "fullImgKB": 833,
+    "fullTotalKB": 1119,
+    "fullImgCount": 12,
+    "settleSec": 21
+   }
+  ]
+ },
+ "gallery": {
+  "lcp": 2036,
+  "cls": 0,
+  "initialImgKB": 0,
+  "initialTotalKB": 267,
+  "fullImgKB": 2589,
+  "fullTotalKB": 2856,
+  "fullImgCount": 16,
+  "settleSec": 18,
+  "runs": [
+   {
+    "lcp": 2092,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 267,
+    "fullImgKB": 2589,
+    "fullTotalKB": 2856,
+    "fullImgCount": 16,
+    "settleSec": 18
+   },
+   {
+    "lcp": 2032,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 267,
+    "fullImgKB": 2589,
+    "fullTotalKB": 2856,
+    "fullImgCount": 16,
+    "settleSec": 18
+   },
+   {
+    "lcp": 2036,
+    "cls": 0.002,
+    "initialImgKB": 0,
+    "initialTotalKB": 267,
+    "fullImgKB": 2589,
+    "fullTotalKB": 2856,
+    "fullImgCount": 16,
+    "settleSec": 18
+   }
+  ]
+ },
+ "news": {
+  "lcp": 1756,
+  "cls": 0,
+  "initialImgKB": 60,
+  "initialTotalKB": 293,
+  "fullImgKB": 1837,
+  "fullTotalKB": 2070,
+  "fullImgCount": 20,
+  "settleSec": 16,
+  "runs": [
+   {
+    "lcp": 1724,
+    "cls": 0.002,
+    "initialImgKB": 60,
+    "initialTotalKB": 293,
+    "fullImgKB": 1812,
+    "fullTotalKB": 2045,
+    "fullImgCount": 19,
+    "settleSec": 16
+   },
+   {
+    "lcp": 1756,
+    "cls": 0,
+    "initialImgKB": 66,
+    "initialTotalKB": 299,
+    "fullImgKB": 1837,
+    "fullTotalKB": 2070,
+    "fullImgCount": 20,
+    "settleSec": 16
+   },
+   {
+    "lcp": 1868,
+    "cls": 0,
+    "initialImgKB": 60,
+    "initialTotalKB": 293,
+    "fullImgKB": 1837,
+    "fullTotalKB": 2070,
+    "fullImgCount": 20,
+    "settleSec": 16
+   }
+  ]
+ },
+ "products": {
+  "lcp": 1392,
+  "cls": 0,
+  "initialImgKB": 0,
+  "initialTotalKB": 213,
+  "fullImgKB": 0,
+  "fullTotalKB": 213,
+  "fullImgCount": 0,
+  "settleSec": 5,
+  "runs": [
+   {
+    "lcp": 1392,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 213,
+    "fullImgKB": 0,
+    "fullTotalKB": 213,
+    "fullImgCount": 0,
+    "settleSec": 5
+   },
+   {
+    "lcp": 1380,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 213,
+    "fullImgKB": 0,
+    "fullTotalKB": 213,
+    "fullImgCount": 0,
+    "settleSec": 5
+   },
+   {
+    "lcp": 1424,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 213,
+    "fullImgKB": 0,
+    "fullTotalKB": 213,
+    "fullImgCount": 0,
+    "settleSec": 5
+   }
+  ]
+ },
+ "product_detail": {
+  "lcp": 2452,
+  "cls": 0.002,
+  "initialImgKB": 129,
+  "initialTotalKB": 367,
+  "fullImgKB": 129,
+  "fullTotalKB": 367,
+  "fullImgCount": 2,
+  "settleSec": 8,
+  "runs": [
+   {
+    "lcp": 2452,
+    "cls": 0,
+    "initialImgKB": 129,
+    "initialTotalKB": 367,
+    "fullImgKB": 129,
+    "fullTotalKB": 367,
+    "fullImgCount": 2,
+    "settleSec": 8
+   },
+   {
+    "lcp": 2456,
+    "cls": 0.002,
+    "initialImgKB": 129,
+    "initialTotalKB": 367,
+    "fullImgKB": 129,
+    "fullTotalKB": 367,
+    "fullImgCount": 2,
+    "settleSec": 8
+   },
+   {
+    "lcp": 2448,
+    "cls": 0.002,
+    "initialImgKB": 129,
+    "initialTotalKB": 367,
+    "fullImgKB": 129,
+    "fullTotalKB": 367,
+    "fullImgCount": 2,
+    "settleSec": 8
+   }
+  ]
+ },
+ "event_nakuru": {
+  "lcp": 1720,
+  "cls": 0,
+  "initialImgKB": 0,
+  "initialTotalKB": 232,
+  "fullImgKB": 1692,
+  "fullTotalKB": 1923,
+  "fullImgCount": 14,
+  "settleSec": 15,
+  "runs": [
+   {
+    "lcp": 1624,
+    "cls": 0.002,
+    "initialImgKB": 0,
+    "initialTotalKB": 232,
+    "fullImgKB": 1692,
+    "fullTotalKB": 1923,
+    "fullImgCount": 14,
+    "settleSec": 15
+   },
+   {
+    "lcp": 1720,
+    "cls": 0,
+    "initialImgKB": 73,
+    "initialTotalKB": 304,
+    "fullImgKB": 1692,
+    "fullTotalKB": 1923,
+    "fullImgCount": 14,
+    "settleSec": 15
+   },
+   {
+    "lcp": 1852,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 232,
+    "fullImgKB": 1692,
+    "fullTotalKB": 1923,
+    "fullImgCount": 14,
+    "settleSec": 15
+   }
+  ]
+ }
+}

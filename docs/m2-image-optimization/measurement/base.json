@@ -1,0 +1,254 @@
+{
+ "home": {
+  "lcp": 2524,
+  "cls": 0.0005,
+  "initialImgKB": 0,
+  "initialTotalKB": 274,
+  "fullImgKB": 2759,
+  "fullTotalKB": 3033,
+  "fullImgCount": 12,
+  "settleSec": 21,
+  "runs": [
+   {
+    "lcp": 2648,
+    "cls": 0.0006,
+    "initialImgKB": 0,
+    "initialTotalKB": 274,
+    "fullImgKB": 2759,
+    "fullTotalKB": 3033,
+    "fullImgCount": 12,
+    "settleSec": 21
+   },
+   {
+    "lcp": 2424,
+    "cls": 0.0004,
+    "initialImgKB": 0,
+    "initialTotalKB": 274,
+    "fullImgKB": 2759,
+    "fullTotalKB": 3033,
+    "fullImgCount": 12,
+    "settleSec": 21
+   },
+   {
+    "lcp": 2524,
+    "cls": 0.0005,
+    "initialImgKB": 0,
+    "initialTotalKB": 274,
+    "fullImgKB": 2759,
+    "fullTotalKB": 3033,
+    "fullImgCount": 12,
+    "settleSec": 21
+   }
+  ]
+ },
+ "gallery": {
+  "lcp": 2156,
+  "cls": 0,
+  "initialImgKB": 0,
+  "initialTotalKB": 254,
+  "fullImgKB": 28803,
+  "fullTotalKB": 29057,
+  "fullImgCount": 16,
+  "settleSec": 146,
+  "runs": [
+   {
+    "lcp": 2156,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 254,
+    "fullImgKB": 28803,
+    "fullTotalKB": 29057,
+    "fullImgCount": 16,
+    "settleSec": 146
+   },
+   {
+    "lcp": 1972,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 254,
+    "fullImgKB": 28803,
+    "fullTotalKB": 29057,
+    "fullImgCount": 16,
+    "settleSec": 146
+   },
+   {
+    "lcp": 2224,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 254,
+    "fullImgKB": 28803,
+    "fullTotalKB": 29057,
+    "fullImgCount": 16,
+    "settleSec": 146
+   }
+  ]
+ },
+ "news": {
+  "lcp": 1696,
+  "cls": 0.0973,
+  "initialImgKB": 0,
+  "initialTotalKB": 221,
+  "fullImgKB": 65476,
+  "fullTotalKB": 65697,
+  "fullImgCount": 14,
+  "settleSec": 433,
+  "runs": [
+   {
+    "lcp": 1696,
+    "cls": 0.0973,
+    "initialImgKB": 0,
+    "initialTotalKB": 221,
+    "fullImgKB": 65476,
+    "fullTotalKB": 65697,
+    "fullImgCount": 14,
+    "settleSec": 433
+   },
+   {
+    "lcp": 1696,
+    "cls": 0.0973,
+    "initialImgKB": 0,
+    "initialTotalKB": 221,
+    "fullImgKB": 65476,
+    "fullTotalKB": 65697,
+    "fullImgCount": 14,
+    "settleSec": 433
+   },
+   {
+    "lcp": 1632,
+    "cls": 0.0973,
+    "initialImgKB": 0,
+    "initialTotalKB": 221,
+    "fullImgKB": 65476,
+    "fullTotalKB": 65697,
+    "fullImgCount": 14,
+    "settleSec": 433
+   }
+  ]
+ },
+ "products": {
+  "lcp": 1312,
+  "cls": 0,
+  "initialImgKB": 0,
+  "initialTotalKB": 202,
+  "fullImgKB": 0,
+  "fullTotalKB": 202,
+  "fullImgCount": 0,
+  "settleSec": 5,
+  "runs": [
+   {
+    "lcp": 1312,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 202,
+    "fullImgKB": 0,
+    "fullTotalKB": 202,
+    "fullImgCount": 0,
+    "settleSec": 5
+   },
+   {
+    "lcp": 1296,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 202,
+    "fullImgKB": 0,
+    "fullTotalKB": 202,
+    "fullImgCount": 0,
+    "settleSec": 5
+   },
+   {
+    "lcp": 1340,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 202,
+    "fullImgKB": 0,
+    "fullTotalKB": 202,
+    "fullImgCount": 0,
+    "settleSec": 5
+   }
+  ]
+ },
+ "product_detail": {
+  "lcp": 1744,
+  "cls": 0.1916,
+  "initialImgKB": 73,
+  "initialTotalKB": 299,
+  "fullImgKB": 508,
+  "fullTotalKB": 734,
+  "fullImgCount": 2,
+  "settleSec": 8,
+  "runs": [
+   {
+    "lcp": 1744,
+    "cls": 0.1916,
+    "initialImgKB": 73,
+    "initialTotalKB": 299,
+    "fullImgKB": 508,
+    "fullTotalKB": 734,
+    "fullImgCount": 2,
+    "settleSec": 8
+   },
+   {
+    "lcp": 1768,
+    "cls": 0.1916,
+    "initialImgKB": 73,
+    "initialTotalKB": 299,
+    "fullImgKB": 508,
+    "fullTotalKB": 734,
+    "fullImgCount": 2,
+    "settleSec": 8
+   },
+   {
+    "lcp": 1664,
+    "cls": 0.1916,
+    "initialImgKB": 73,
+    "initialTotalKB": 299,
+    "fullImgKB": 508,
+    "fullTotalKB": 734,
+    "fullImgCount": 2,
+    "settleSec": 8
+   }
+  ]
+ },
+ "event_nakuru": {
+  "lcp": 1616,
+  "cls": 0,
+  "initialImgKB": 0,
+  "initialTotalKB": 219,
+  "fullImgKB": 28287,
+  "fullTotalKB": 28506,
+  "fullImgCount": 14,
+  "settleSec": 143,
+  "runs": [
+   {
+    "lcp": 1536,
+    "cls": 0.002,
+    "initialImgKB": 0,
+    "initialTotalKB": 219,
+    "fullImgKB": 28287,
+    "fullTotalKB": 28506,
+    "fullImgCount": 14,
+    "settleSec": 143
+   },
+   {
+    "lcp": 1616,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 219,
+    "fullImgKB": 28287,
+    "fullTotalKB": 28506,
+    "fullImgCount": 14,
+    "settleSec": 143
+   },
+   {
+    "lcp": 1640,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 219,
+    "fullImgKB": 28287,
+    "fullTotalKB": 28506,
+    "fullImgCount": 14,
+    "settleSec": 143
+   }
+  ]
+ }
+}

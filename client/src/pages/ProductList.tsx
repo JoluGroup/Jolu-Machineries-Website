@@ -1,3 +1,4 @@
+import ResponsiveImage from "@/components/ResponsiveImage";
 import { products } from "@/data/products";
 import { Link } from "react-router-dom";
 
@@ -8,7 +9,7 @@ const ProductList = () => {
 
   const renderProductCard = (product: any) => (
     <div key={product.id} className="border rounded-lg p-4 shadow-md">
-      <img
+      <ResponsiveImage sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
         src={product.image}
         alt={product.name}
         className="mb-2 w-full h-48 object-cover rounded"

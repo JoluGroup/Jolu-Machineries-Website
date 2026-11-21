@@ -1,3 +1,4 @@
+import ResponsiveImage from "@/components/ResponsiveImage";
 import React, { useState, useEffect } from "react";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -91,7 +92,7 @@ const TeamCard = ({ member, setSelectedMember }) => (
     className="cursor-pointer bg-white dark:bg-zinc-800 rounded-xl shadow-md overflow-hidden w-full max-w-xs"
   >
     <div className="w-full h-36 sm:h-40 bg-gray-100 dark:bg-zinc-900 flex items-center justify-center overflow-hidden">
-      <img
+      <ResponsiveImage sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
         src={member.image}
         alt={member.name}
         className="w-full h-full object-contain p-2"
@@ -202,7 +203,7 @@ const Team = () => {
 
               <div className="flex flex-col md:flex-row gap-4 sm:gap-6 items-center">
                 <div className="w-full md:w-[40%] h-48 sm:h-60 bg-gray-100 dark:bg-zinc-700 rounded-lg overflow-hidden flex items-center justify-center">
-                  <img
+                  <ResponsiveImage sizes="(min-width: 768px) 400px, 90vw"
                     src={selectedMember.image}
                     alt={selectedMember.name}
                     className="w-full h-full object-contain"

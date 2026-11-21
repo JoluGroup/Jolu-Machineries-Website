@@ -1,0 +1,404 @@
+{
+ "routes": {
+  "/": {
+   "errs": [],
+   "failed": [
+    "c8842f0!2sP357%2B5JP%2C%20Nakuru!5e0!3m2!1sen!2ske!4v1774359316918!5m2!1sen!2ske",
+    "4d5!2sKFA%20Building%2C%20Nakuru!5e0!3m2!1sen!2ske!4v1723810622341!5m2!1sen!2ske",
+    "91!2sQUICKFILL%20RONGO%20STATION!5e0!3m2!1sen!2ske!4v1774360053586!5m2!1sen!2ske"
+   ],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 13,
+   "bad": [],
+   "pending": 0,
+   "h1": "Trusted Agricultural Partner",
+   "noImgDims": 13
+  },
+  "/quote": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 2,
+   "bad": [],
+   "pending": 0,
+   "h1": "Request a Quote",
+   "noImgDims": 2
+  },
+  "/schedule": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 2,
+   "bad": [],
+   "pending": 0,
+   "h1": "",
+   "noImgDims": 2
+  },
+  "/products": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 0,
+   "bad": [],
+   "pending": 0,
+   "h1": "",
+   "noImgDims": 0
+  },
+  "/products/3-disk-plough": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "3-Disk Plough",
+   "noImgDims": 3
+  },
+  "/products/disk-harrow": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "Disk Harrow",
+   "noImgDims": 3
+  },
+  "/products/implements-set": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "2 Disk Plough",
+   "noImgDims": 3
+  },
+  "/products/tf150-combine-harvester": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "Zoomlion TF150 Combine Harvester",
+   "noImgDims": 3
+  },
+  "/products/water-bowser": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "Water Bowser",
+   "noImgDims": 3
+  },
+  "/products/zc123s-combine-harvester": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "Zoomlion ZC123S Combine Harvester",
+   "noImgDims": 3
+  },
+  "/products/zl105-combine-harvester": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "Zoomlion ZL105 Combine Harvester",
+   "noImgDims": 3
+  },
+  "/products/zoomlion-dv3504-wheeled-tractor": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "Zoomlion DV3504 Wheeled Tractor",
+   "noImgDims": 3
+  },
+  "/products/zoomlion-pg2004": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "Zoomlion PG2004 Wheeled Tractor",
+   "noImgDims": 3
+  },
+  "/products/zoomlion-pl2304": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "Zoomlion PL2304 Wheeled Tractor",
+   "noImgDims": 3
+  },
+  "/products/zoomlion-rc904-1104": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "Zoomlion RC904/1104 Wheeled Tractor",
+   "noImgDims": 3
+  },
+  "/products/zoomlion-rd504": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "Zoomlion RD504 Wheeled Tractor",
+   "noImgDims": 3
+  },
+  "/products/zoomlion-rg1804-2004": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "Zoomlion RG1804/2004 Wheeled Tractor",
+   "noImgDims": 3
+  },
+  "/products/zoomlion-rk504-704": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "Zoomlion RK504/704 Wheeled Tractor",
+   "noImgDims": 3
+  },
+  "/products/zoomlion-rn904": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "Zoomlion RN904/1104 Wheeled Tractor",
+   "noImgDims": 3
+  },
+  "/products/zoomlion-rs1304-1604": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "Zoomlion RS1304/1604 Wheeled Tractor",
+   "noImgDims": 3
+  },
+  "/products/zoomlion-te100-combine-harvester": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "Zoomlion TE100 Combine Harvester",
+   "noImgDims": 3
+  },
+  "/products/zoomlion-zl120": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 3,
+   "bad": [],
+   "pending": 0,
+   "h1": "Zoomlion ZL120 Harvester",
+   "noImgDims": 3
+  },
+  "/spare-parts": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 2,
+   "bad": [],
+   "pending": 0,
+   "h1": "",
+   "noImgDims": 2
+  },
+  "/used-tractors": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 12,
+   "bad": [],
+   "pending": 0,
+   "h1": "RK754-A Slightly Used Tractor with Ploug",
+   "noImgDims": 12
+  },
+  "/team": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 11,
+   "bad": [],
+   "pending": 0,
+   "h1": "Meet Our Team",
+   "noImgDims": 11
+  },
+  "/careers": {
+   "errs": [],
+   "failed": [],
+   "title": "Careers at Jolu Group of Companies — Join Our Team",
+   "imgs": 7,
+   "bad": [],
+   "pending": 0,
+   "h1": "Build Your Future with Jolu",
+   "noImgDims": 7
+  },
+  "/gallery": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 17,
+   "bad": [],
+   "pending": 0,
+   "h1": "Gallery",
+   "noImgDims": 17
+  },
+  "/news": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu Group of Companies Launch — Aug. 23, 2025",
+   "imgs": 35,
+   "bad": [],
+   "pending": 0,
+   "h1": "Jolu Group of Companies Official Launch",
+   "noImgDims": 35
+  },
+  "/ktn-interview": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 10,
+   "bad": [],
+   "pending": 0,
+   "h1": "KTN Interview",
+   "noImgDims": 10
+  },
+  "/mud4fun": {
+   "errs": [],
+   "failed": [],
+   "title": "Mud4Fun 4x4 Challenge Highlights — Dec 2025",
+   "imgs": 7,
+   "bad": [],
+   "pending": 0,
+   "h1": "Mud4Fun 4x4 Challenge",
+   "noImgDims": 7
+  },
+  "/showroom-launch": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu Group Nakuru Regional Offices & Showroom Gran",
+   "imgs": 18,
+   "bad": [],
+   "pending": 0,
+   "h1": "Jolu Group Nakuru Regional Offices & Sho",
+   "noImgDims": 18
+  },
+  "/does-not-exist-404": {
+   "errs": [
+    "404 Error: User attempted to access non-existent route: /does-not-exist-404"
+   ],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 0,
+   "bad": [],
+   "pending": 0,
+   "h1": "404",
+   "noImgDims": 0
+  },
+  "/products/not-a-real-product": {
+   "errs": [],
+   "failed": [],
+   "title": "Jolu - Premium Agricultural Equipment | Zoomlion T",
+   "imgs": 0,
+   "bad": [],
+   "pending": 0,
+   "h1": "",
+   "noImgDims": 0
+  }
+ },
+ "hero": {
+  "requestsFirst3s": [
+   "127.0.0.1:33497/lovable-uploads/jolu-machinery-logo.jpg",
+   "http://127.0.0.1:33497/assets/tractor1-DE1PYFSC.jpg",
+   "http://127.0.0.1:33497/assets/tractor2-BQDozcad.png",
+   "http://127.0.0.1:33497/assets/hero-tractor-xxoXMXse.jpg",
+   "http://127.0.0.1:33497/assets/hero-field-BI3rgurc.jpg",
+   "http://127.0.0.1:33497/assets/tractor3-DOd6rkqr.jpg",
+   "http://127.0.0.1:33497/assets/tractor-6-C9WgG7WK.png",
+   "http://127.0.0.1:33497/assets/harvester-1-wRlvAEjd.png",
+   "://127.0.0.1:33497/assets/threeDiskPlough-p46ArHHM.webp",
+   "http://127.0.0.1:33497/assets/tractor-5-CmzPsQ7s.png",
+   "ttp://127.0.0.1:33497/assets/diskHarrow18-B5Ec13D9.jpeg",
+   "http://127.0.0.1:33497/assets/tractor-7-Bj2ZWvik.png"
+  ],
+  "totalImgReqs": 12,
+  "samples": [
+   {
+    "tr": "translateX(0%)",
+    "nImgs": 5,
+    "allDone": true
+   },
+   {
+    "tr": "translateX(0%)",
+    "nImgs": 5,
+    "allDone": true
+   },
+   {
+    "tr": "translateX(-100%)",
+    "nImgs": 5,
+    "allDone": true
+   },
+   {
+    "tr": "translateX(-100%)",
+    "nImgs": 5,
+    "allDone": true
+   },
+   {
+    "tr": "translateX(-200%)",
+    "nImgs": 5,
+    "allDone": true
+   },
+   {
+    "tr": "translateX(-200%)",
+    "nImgs": 5,
+    "allDone": true
+   },
+   {
+    "tr": "translateX(-300%)",
+    "nImgs": 5,
+    "allDone": true
+   },
+   {
+    "tr": "translateX(-300%)",
+    "nImgs": 5,
+    "allDone": true
+   },
+   {
+    "tr": "translateX(-400%)",
+    "nImgs": 5,
+    "allDone": true
+   }
+  ]
+ }
+}

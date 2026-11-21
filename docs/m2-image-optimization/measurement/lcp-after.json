@@ -1,0 +1,278 @@
+{
+ "home": {
+  "el": "IMG 7.0.0.1:45771/_img/assets-hero-tractor1.35de1d4930-1200.webp size=285928",
+  "lcp": 3756,
+  "cls": 0.0006,
+  "initialImgKB": 73,
+  "initialTotalKB": 359,
+  "fullImgKB": 479,
+  "fullTotalKB": 765,
+  "fullImgCount": 6,
+  "settleSec": 13,
+  "runs": [
+   {
+    "el": "IMG 7.0.0.1:45771/_img/assets-hero-tractor1.35de1d4930-1200.webp size=285928",
+    "lcp": 3756,
+    "cls": 0.0006,
+    "initialImgKB": 73,
+    "initialTotalKB": 359,
+    "fullImgKB": 479,
+    "fullTotalKB": 765,
+    "fullImgCount": 6,
+    "settleSec": 13
+   },
+   {
+    "el": "IMG 7.0.0.1:45771/_img/assets-hero-tractor1.35de1d4930-1200.webp size=285928",
+    "lcp": 3820,
+    "cls": 0.0004,
+    "initialImgKB": 73,
+    "initialTotalKB": 359,
+    "fullImgKB": 479,
+    "fullTotalKB": 765,
+    "fullImgCount": 6,
+    "settleSec": 13
+   },
+   {
+    "el": "IMG 7.0.0.1:45771/_img/assets-hero-tractor1.35de1d4930-1200.webp size=285928",
+    "lcp": 3744,
+    "cls": 0.0007,
+    "initialImgKB": 73,
+    "initialTotalKB": 359,
+    "fullImgKB": 479,
+    "fullTotalKB": 765,
+    "fullImgCount": 6,
+    "settleSec": 13
+   }
+  ]
+ },
+ "gallery": {
+  "el": "IMG 1:45771/_img/uploads-gallery-jolu-group.5823b9d1bc-1200.webp size=108864",
+  "lcp": 6180,
+  "cls": 0,
+  "initialImgKB": 0,
+  "initialTotalKB": 267,
+  "fullImgKB": 998,
+  "fullTotalKB": 1265,
+  "fullImgCount": 7,
+  "settleSec": 11,
+  "runs": [
+   {
+    "el": "IMG 1:45771/_img/uploads-gallery-jolu-group.5823b9d1bc-1200.webp size=108864",
+    "lcp": 6256,
+    "cls": 0.002,
+    "initialImgKB": 0,
+    "initialTotalKB": 267,
+    "fullImgKB": 998,
+    "fullTotalKB": 1265,
+    "fullImgCount": 7,
+    "settleSec": 11
+   },
+   {
+    "el": "IMG 1:45771/_img/uploads-gallery-jolu-group.5823b9d1bc-1200.webp size=108864",
+    "lcp": 6180,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 267,
+    "fullImgKB": 998,
+    "fullTotalKB": 1265,
+    "fullImgCount": 7,
+    "settleSec": 11
+   },
+   {
+    "el": "IMG 1:45771/_img/uploads-gallery-jolu-group.5823b9d1bc-1200.webp size=108864",
+    "lcp": 6176,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 267,
+    "fullImgKB": 998,
+    "fullTotalKB": 1265,
+    "fullImgCount": 7,
+    "settleSec": 11
+   }
+  ]
+ },
+ "news": {
+  "el": "IMG .1:45771/_img/uploads-event-launch-hero.a23598a6dd-1200.webp size=96140",
+  "lcp": 5128,
+  "cls": 0.002,
+  "initialImgKB": 60,
+  "initialTotalKB": 293,
+  "fullImgKB": 776,
+  "fullTotalKB": 1009,
+  "fullImgCount": 12,
+  "settleSec": 10,
+  "runs": [
+   {
+    "el": "IMG .1:45771/_img/uploads-event-launch-hero.a23598a6dd-1200.webp size=96140",
+    "lcp": 5128,
+    "cls": 0,
+    "initialImgKB": 60,
+    "initialTotalKB": 293,
+    "fullImgKB": 776,
+    "fullTotalKB": 1009,
+    "fullImgCount": 12,
+    "settleSec": 10
+   },
+   {
+    "el": "IMG .1:45771/_img/uploads-event-launch-hero.a23598a6dd-1200.webp size=96140",
+    "lcp": 4460,
+    "cls": 0.002,
+    "initialImgKB": 155,
+    "initialTotalKB": 388,
+    "fullImgKB": 569,
+    "fullTotalKB": 802,
+    "fullImgCount": 6,
+    "settleSec": 9
+   },
+   {
+    "el": "IMG .1:45771/_img/uploads-event-launch-hero.a23598a6dd-1200.webp size=96140",
+    "lcp": 5132,
+    "cls": 0.002,
+    "initialImgKB": 60,
+    "initialTotalKB": 293,
+    "fullImgKB": 776,
+    "fullTotalKB": 1009,
+    "fullImgCount": 12,
+    "settleSec": 10
+   }
+  ]
+ },
+ "products": {
+  "el": "H2  size=5887",
+  "lcp": 1392,
+  "cls": 0,
+  "initialImgKB": 0,
+  "initialTotalKB": 213,
+  "fullImgKB": 0,
+  "fullTotalKB": 213,
+  "fullImgCount": 0,
+  "settleSec": 6,
+  "runs": [
+   {
+    "el": "H2  size=5887",
+    "lcp": 1392,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 213,
+    "fullImgKB": 0,
+    "fullTotalKB": 213,
+    "fullImgCount": 0,
+    "settleSec": 6
+   },
+   {
+    "el": "H2  size=5887",
+    "lcp": 1400,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 213,
+    "fullImgKB": 0,
+    "fullTotalKB": 213,
+    "fullImgCount": 0,
+    "settleSec": 6
+   },
+   {
+    "el": "H2  size=5887",
+    "lcp": 1384,
+    "cls": 0,
+    "initialImgKB": 0,
+    "initialTotalKB": 213,
+    "fullImgKB": 0,
+    "fullTotalKB": 213,
+    "fullImgCount": 0,
+    "settleSec": 6
+   }
+  ]
+ },
+ "product_detail": {
+  "el": "IMG ://127.0.0.1:45771/_img/assets-tractor-1.cd6fbcc1b7-990.webp size=85880",
+  "lcp": 2384,
+  "cls": 0.002,
+  "initialImgKB": 129,
+  "initialTotalKB": 367,
+  "fullImgKB": 129,
+  "fullTotalKB": 367,
+  "fullImgCount": 2,
+  "settleSec": 6,
+  "runs": [
+   {
+    "el": "IMG ://127.0.0.1:45771/_img/assets-tractor-1.cd6fbcc1b7-990.webp size=85880",
+    "lcp": 2392,
+    "cls": 0.002,
+    "initialImgKB": 129,
+    "initialTotalKB": 367,
+    "fullImgKB": 129,
+    "fullTotalKB": 367,
+    "fullImgCount": 2,
+    "settleSec": 7
+   },
+   {
+    "el": "IMG ://127.0.0.1:45771/_img/assets-tractor-1.cd6fbcc1b7-990.webp size=85880",
+    "lcp": 2384,
+    "cls": 0.002,
+    "initialImgKB": 129,
+    "initialTotalKB": 367,
+    "fullImgKB": 129,
+    "fullTotalKB": 367,
+    "fullImgCount": 2,
+    "settleSec": 6
+   },
+   {
+    "el": "IMG ://127.0.0.1:45771/_img/assets-tractor-1.cd6fbcc1b7-990.webp size=85880",
+    "lcp": 2348,
+    "cls": 0.002,
+    "initialImgKB": 129,
+    "initialTotalKB": 367,
+    "fullImgKB": 129,
+    "fullTotalKB": 367,
+    "fullImgCount": 2,
+    "settleSec": 6
+   }
+  ]
+ },
+ "event_nakuru": {
+  "el": "IMG 1:45771/_img/uploads-nakuru-launch-hero.b74f27b4b7-1200.webp size=285928",
+  "lcp": 4048,
+  "cls": 0,
+  "initialImgKB": 73,
+  "initialTotalKB": 304,
+  "fullImgKB": 577,
+  "fullTotalKB": 808,
+  "fullImgCount": 5,
+  "settleSec": 9,
+  "runs": [
+   {
+    "el": "IMG 1:45771/_img/uploads-nakuru-launch-hero.b74f27b4b7-1200.webp size=285928",
+    "lcp": 4048,
+    "cls": 0.002,
+    "initialImgKB": 73,
+    "initialTotalKB": 304,
+    "fullImgKB": 577,
+    "fullTotalKB": 808,
+    "fullImgCount": 5,
+    "settleSec": 9
+   },
+   {
+    "el": "IMG 1:45771/_img/uploads-nakuru-launch-hero.b74f27b4b7-1200.webp size=285928",
+    "lcp": 4064,
+    "cls": 0,
+    "initialImgKB": 73,
+    "initialTotalKB": 304,
+    "fullImgKB": 577,
+    "fullTotalKB": 808,
+    "fullImgCount": 5,
+    "settleSec": 9
+   },
+   {
+    "el": "IMG 1:45771/_img/uploads-nakuru-launch-hero.b74f27b4b7-1200.webp size=285928",
+    "lcp": 4044,
+    "cls": 0,
+    "initialImgKB": 73,
+    "initialTotalKB": 304,
+    "fullImgKB": 577,
+    "fullTotalKB": 808,
+    "fullImgCount": 5,
+    "settleSec": 9
+   }
+  ]
+ }
+}
