@@ -137,6 +137,16 @@ const Hero = () => {
     [nav],
   );
 
+  // A failed image is never "ready": it must not become the displayed slide.
+  // If it is the pending target, abandon the request so the current slide stays.
+  const markFailed = useCallback(
+    (index: number) => {
+      settledSlides.current.delete(index);
+      if (nav.pending() === index) nav.cancel();
+    },
+    [nav],
+  );
+
   // Auto-slide: skipped while the next image is not ready or a manual request is pending.
   useEffect(() => {
     const timer = setInterval(() => {
@@ -177,7 +187,7 @@ const Hero = () => {
                   if (el && el.complete && el.naturalWidth > 0) markSettled(index);
                 }}
                 onLoad={() => markSettled(index)}
-                onError={() => markSettled(index)}
+                onError={() => markFailed(index)}
                 className="w-full h-full object-cover opacity-55 contrast-110 saturate-[0.85]"
               />
             )}
