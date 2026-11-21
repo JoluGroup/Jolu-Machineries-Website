@@ -21,7 +21,24 @@ Correction: `client/vercel.json` now uses `routes` only: `filesystem` phase -> S
 resolved to an existing file. The `hit` phase semantics are not spelled out in Vercel's docs, so **the corrected preview must be verified**:
 `curl -I` an existing `/_img/<file>` (200, image/webp, immutable), a missing `/_img/<name>.<16hex>.webp` and `/_img/nope.webp` (404, no immutable,
 repeat twice for `x-vercel-cache`), plus `/`, `/products`, `/products/zoomlion-rn904`, `/gallery`, `/news`, an unknown route (index.html).
-If the `hit` rule does not behave, revert to the previous `headers` + `rewrites` config and accept/document the residual risk.
+The `hit`-phase rule was confirmed live by the owner (see R-01 status).
+
+### R-01 status: CLOSED (functional acceptance), evidence by source
+**Owner-verified on the live Vercel preview of PR #13 (commit 453d4d3), browser cache disabled:**
+| Check | Observed |
+|---|---|
+| Existing generated WebP | 200, `image/webp`, `cache-control: public, max-age=31536000, immutable`, `x-vercel-cache: MISS`, image renders |
+| Missing ordinary WebP | 404, `text/plain; charset=utf-8`, `x-vercel-error: NOT_FOUND`, `cache-control: public, max-age=0, must-revalidate`, no immutable |
+| Missing content-hashed WebP | 404, same headers as above, no immutable |
+| SPA routing (Test D) | passed, confirmed by the owner |
+
+**Claude-reported engineering checks (not independent live evidence):** 59/59 tests, production build, TypeScript (5 existing ScheduleVisit errors), ESLint (7 errors / 7 warnings),
+generated images byte-identical, originals unchanged, `dist` byte-identical to the previous candidate.
+
+**Offline automated verification:** `client/tests/vercel-routing.test.mjs` models the documented phases and the six invariants. It does not prove Vercel's behaviour; the owner evidence above does.
+
+**Not independently established:** CDN-level negative caching. Neither missing-image response exposed an `x-vercel-cache` header, so no HIT/MISS was observed or is claimed.
+The 404 responses carried `max-age=0, must-revalidate`, so browsers must revalidate them.
 
 ## Generator cleanup safety (R-03)
 `scripts/optimize-images.mjs` now refuses (before creating or deleting anything) an output directory that is a filesystem root,
