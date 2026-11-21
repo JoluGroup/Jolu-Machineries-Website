@@ -20,9 +20,9 @@ async function bundle(entry, name) {
   await build({
     entryPoints: [path.join(ROOT, entry)], outfile, bundle: true, format: "esm", platform: "node", jsx: "automatic",
     external: ["react", "react-dom", "react-dom/server", "react-router-dom", "react/jsx-runtime"],
-    alias: { "@": path.join(ROOT, "src") },
+    alias: { "@": path.join(ROOT, "src") }, mainFields: ["module", "main"], conditions: ["module", "import"],
     loader: { ".png": "dataurl", ".jpg": "dataurl", ".jpeg": "dataurl", ".webp": "dataurl", ".svg": "dataurl", ".json": "json" },
-    define: { "import.meta.env.BASE_URL": '"/"', "import.meta.env.DEV": "false" }, logLevel: "silent",
+    define: { "import.meta.env.BASE_URL": '"/"', "import.meta.env.DEV": "false", "import.meta.env.VITE_API_BASE": '""' }, logLevel: "silent",
   })
   return import(pathToFileURL(outfile).href + "?t=" + Date.now())
 }
@@ -78,6 +78,10 @@ test("<ProductList> renders all 18 products with correct links and no undefined 
   const html = renderToStaticMarkup(React.createElement(MemoryRouter, null, React.createElement(mod.default)))
   for (const p of products) assert.ok(html.includes(`href="/products/${p.slug}"`), `missing link for ${p.slug}`)
   assert.equal((html.match(/View Details/g) || []).length, 18)
+  assert.equal((html.match(/<header/g) || []).length, 1, "exactly one site header")
+  assert.equal((html.match(/<footer/g) || []).length, 1, "exactly one site footer")
+  assert.equal((html.match(/@\/assets\//g) || []).length, 0, "no raw image keys leaked into the DOM")
+  assert.equal((html.match(/<img[^>]*\ssrcset=/gi) || []).length >= 18, true, "all product images are ResponsiveImage (srcset)")
   assert.equal((html.match(/href="\/product\//g) || []).length, 0)
   for (const g of CATALOGUE_GROUPS) assert.ok(html.includes(g.heading), g.heading)
   const text = html.replace(/<[^>]*>/g, " ")
