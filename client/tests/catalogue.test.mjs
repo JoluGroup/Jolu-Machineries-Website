@@ -93,3 +93,77 @@ test("header and footer link to the /products catalogue", () => {
   assert.match(read("src/components/Header.tsx"), /href:\s*"\/products"/)
   assert.match(read("src/components/Footer.tsx"), /to="\/products"/)
 })
+
+// ---- /products card presentation regression (M2-R04: product images must not be cropped) ----
+async function renderProductList() {
+  const mod = await bundle("src/pages/ProductList.tsx", "catalogue-list-visuals")
+  return renderToStaticMarkup(React.createElement(MemoryRouter, null, React.createElement(mod.default)))
+}
+
+test("/products renders exactly 18 product cards (9 tractors, 5 harvesters, 4 implements)", async () => {
+  const html = await renderProductList()
+  const cards = html.match(/<article\b[\s\S]*?<\/article>/g) || []
+  assert.equal(cards.length, 18)
+  const perGroup = groupProducts(products).map((g) => g.items.length)
+  assert.deepEqual(perGroup, [9, 5, 4])
+  // each product appears exactly once, in a card, with its slug link and its name
+  for (const p of products) {
+    const owning = cards.filter((c) => c.includes(`href="/products/${p.slug}"`))
+    assert.equal(owning.length, 1, `${p.slug} must be in exactly one card`)
+    assert.ok(owning[0].includes(p.name.replace(/&/g, "&amp;")), `${p.slug}: name rendered in its card`)
+  }
+})
+
+test("/products product images are never cropped: object-contain, not object-cover", async () => {
+  const html = await renderProductList()
+  const imgs = html.match(/<img\b[^>]*>/g) || []
+  const productImgs = imgs.filter((i) => /\ssrcset=/i.test(i))
+  assert.equal(productImgs.length, 18)
+  for (const i of productImgs) {
+    assert.match(i, /class="[^"]*\bobject-contain\b/, "product image uses object-contain")
+    assert.ok(!/\bobject-(cover|fill)\b/.test(i), "no object-cover/object-fill on product images")
+  }
+  assert.ok(!/object-cover/.test(read("src/pages/ProductList.tsx")), "ProductList source has no object-cover")
+})
+
+test("/products images keep ResponsiveImage behaviour: srcset, sizes, intrinsic size, lazy loading", async () => {
+  const html = await renderProductList()
+  const productImgs = (html.match(/<img\b[^>]*>/g) || []).filter((i) => /\ssrcset=/i.test(i))
+  assert.equal(productImgs.length, 18)
+  for (const i of productImgs) {
+    assert.match(i, /\swidth="\d+"/)
+    assert.match(i, /\sheight="\d+"/)
+    assert.match(i, /\sloading="lazy"/)
+    assert.match(i, /\ssizes="[^"]+"/)
+    assert.match(i, /\salt="[^"]+"/, "non-empty alt text")
+  }
+})
+
+test("/products image area has a fixed aspect-ratio stage so cards stay aligned", async () => {
+  const html = await renderProductList()
+  const stages = html.match(/<div class="[^"]*\baspect-\[[^\]]+\][^"]*"/g) || []
+  assert.equal(stages.length, 18, "one aspect-ratio image stage per card")
+  assert.equal(new Set(stages.map((s) => s.match(/aspect-\[[^\]]+\]/)[0])).size, 1, "same ratio for every card")
+  assert.ok(/\bh-full\b/.test(html.match(/<article\b[^>]*>/)[0]), "cards fill their grid row height")
+})
+
+test("/products sizes attribute matches the grid (1 col, 2 cols from md, 3 cols from xl)", async () => {
+  const html = await renderProductList()
+  const src = read("src/pages/ProductList.tsx")
+  assert.match(src, /md:grid-cols-2/)
+  assert.match(src, /xl:grid-cols-3/)
+  const sizes = new Set((html.match(/<img\b[^>]*\ssizes="([^"]+)"/g) || []).map((i) => i.match(/sizes="([^"]+)"/)[1]))
+  assert.equal(sizes.size, 1)
+  const s = [...sizes][0]
+  assert.match(s, /^\(min-width: 1280px\) [^,]*\/ 3\)?, \(min-width: 768px\) [^,]*\/ 2\)?, calc\(100vw - \d+(\.\d+)?rem\)$/)
+})
+
+test("/products keeps category headings in order, one header and one footer, valid links", async () => {
+  const html = await renderProductList()
+  const idx = CATALOGUE_GROUPS.map((g) => html.indexOf(`>${g.heading}</h2>`))
+  assert.ok(idx.every((i) => i >= 0) && idx[0] < idx[1] && idx[1] < idx[2], "headings present in order")
+  assert.equal((html.match(/<header/g) || []).length, 1)
+  assert.equal((html.match(/<footer/g) || []).length, 1)
+  const links = [...html.matchAll(/<article[\s\S]*?href="(\/products\/[^"]+)"/g)].map((m) => m[1])
+  assert.deepEqual(links.sort(), products.map((p) => `/products/${p.slug}`).sort())
+})
