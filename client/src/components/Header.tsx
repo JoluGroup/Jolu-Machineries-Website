@@ -93,8 +93,11 @@ const Header = () => {
             <div className="text-3xl font-bold text-white">JOLU</div>
           </Link>
 
-          {/* Desktop Menu */}
-          <nav className="hidden md:flex items-center space-x-6">
+          {/* Desktop Menu. The full nav needs about 1120px (measured: below that the brand is squeezed and
+              the Request a Quote button overflows the viewport), so it only appears from 1140px (24px of
+              breathing room). Below that the mobile menu is used. Keep this breakpoint in sync with the
+              two other min-[1140px] classes below and with tests/responsive-nav.test.mjs. */}
+          <nav className="hidden min-[1140px]:flex items-center space-x-6">
             {navItems.map((item) =>
               "dropdown" in item ? (
                 <div key={item.name} className="relative group">
@@ -164,7 +167,7 @@ const Header = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-white"
+            className="min-[1140px]:hidden text-white"
             onClick={() => setIsMenuOpen((s) => !s)}
             aria-label="Toggle menu"
           >
@@ -174,7 +177,7 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <div className="md:hidden mt-4 space-y-2 text-white">
+          <div className="min-[1140px]:hidden mt-4 space-y-2 text-white">
             {navItems.map((item) =>
               "dropdown" in item ? (
                 <details
@@ -242,9 +245,9 @@ const Header = () => {
             )}
             <QuoteDrawer
               trigger={
-                <Button className="w-full mt-2" onClick={() => setIsMenuOpen(false)}>
-                  Request a Quote
-                </Button>
+                // Do not close the menu on click: this trigger lives inside the menu, so unmounting the menu
+                // would unmount the drawer before it could open (the quote form never appeared on mobile).
+                <Button className="w-full mt-2">Request a Quote</Button>
               }
             />
           </div>
