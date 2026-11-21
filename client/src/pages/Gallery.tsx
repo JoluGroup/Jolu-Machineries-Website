@@ -2,6 +2,7 @@ import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
+import ResponsiveImage from "@/components/ResponsiveImage";
 
 const galleryItems = [
   {
@@ -88,9 +89,11 @@ const Gallery = () => {
               whileHover={{ scale: 1.02 }}
               className="relative group overflow-hidden rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 transition-colors duration-500"
             >
-              <img
+              <ResponsiveImage
                 src={item.src}
                 alt={item.caption}
+                sizes="(min-width: 1024px) 25vw, (min-width: 768px) calc((100vw - 6rem) / 3), (min-width: 640px) calc((100vw - 4.5rem) / 2), calc(100vw - 2rem)"
+                priority={index < 2}
                 className="w-full h-72 object-cover object-top transition-transform duration-300 group-hover:scale-105"
               />
               <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white text-xs sm:text-sm text-center px-3 py-2 transition-opacity duration-300">

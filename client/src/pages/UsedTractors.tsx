@@ -1,4 +1,5 @@
 // src/pages/UsedTractors.tsx
+import ResponsiveImage from "@/components/ResponsiveImage";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -39,7 +40,7 @@ const UsedTractors = () => {
 
       {/* Hero Section */}
       <section className="relative hero-gradient">
-        <img
+        <ResponsiveImage sizes="100vw" priority
           src={images[0]}
           alt="RX754-A Tractor"
           className="w-full h-[400px] md:h-[600px] lg:h-[700px] object-cover rounded-b-2xl"
@@ -87,7 +88,7 @@ const UsedTractors = () => {
               className="w-full aspect-[4/3] rounded-lg overflow-hidden hover:scale-105 transition-transform cursor-pointer"
               onClick={() => setModalImg(img)}
             >
-              <img
+              <ResponsiveImage sizes="(min-width: 768px) 25vw, 50vw"
                 src={img}
                 alt={`RX754-A ${index + 1}`}
                 className="w-full h-full object-cover"
@@ -107,7 +108,7 @@ const UsedTractors = () => {
             >
               &times;
             </button>
-            <img
+            <ResponsiveImage sizes="100vw"
               src={modalImg}
               alt="Tractor Large"
               className="w-full h-full object-contain"

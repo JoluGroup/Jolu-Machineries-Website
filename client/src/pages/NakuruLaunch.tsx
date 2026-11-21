@@ -1,5 +1,6 @@
 // src/pages/NakuruLaunch.tsx
 
+import ResponsiveImage from "@/components/ResponsiveImage";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -114,7 +115,7 @@ const NakuruLaunch: React.FC = () => {
       <main className="bg-background text-foreground">
         {/* Hero */}
         <section className="relative min-h-[75vh] flex items-center hero-gradient overflow-hidden">
-          <img
+          <ResponsiveImage sizes="100vw" priority
             src="/lovable-uploads/nakuru-launch/hero.jpg"
             alt="Jolu Group Nakuru Regional Offices and Showroom Grand Launch"
             className="absolute inset-0 w-full h-full object-cover opacity-75"
@@ -172,7 +173,7 @@ const NakuruLaunch: React.FC = () => {
               </p>
 
               <figure className="mb-10">
-                <img
+                <ResponsiveImage sizes="(min-width: 1024px) 60vw, 100vw"
                   src="/lovable-uploads/nakuru-launch/showroom.jpg"
                   alt="Jolu Group Nakuru showroom"
                   className="w-full rounded-xl object-cover shadow-lg"
@@ -200,7 +201,7 @@ const NakuruLaunch: React.FC = () => {
                       key={speaker.name}
                       className="product-card hover-lift"
                     >
-                      <img
+                      <ResponsiveImage sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                         src={speaker.image}
                         alt={speaker.name}
                         className="w-full h-64 object-cover"
@@ -265,7 +266,7 @@ const NakuruLaunch: React.FC = () => {
                       key={index}
                       className="relative group overflow-hidden rounded-xl shadow-md hover-lift"
                     >
-                      <img
+                      <ResponsiveImage sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                         src={img}
                         alt={`Nakuru launch photo ${index + 1}`}
                         className="w-full h-56 object-cover group-hover:scale-105 transition duration-500"
@@ -380,7 +381,7 @@ const NakuruLaunch: React.FC = () => {
                 </div>
 
                 <figure>
-                  <img
+                  <ResponsiveImage sizes="(min-width: 1024px) 33vw, 100vw"
                     src="/lovable-uploads/nakuru-launch/tractor.jpg"
                     alt="Machinery showcase"
                     className="w-full rounded-xl object-cover shadow-md"
@@ -391,7 +392,7 @@ const NakuruLaunch: React.FC = () => {
                 </figure>
 
                 <figure>
-                  <img
+                  <ResponsiveImage sizes="(min-width: 1024px) 33vw, 100vw"
                     src="/lovable-uploads/nakuru-launch/hero.jpg"
                     alt="Ribbon cutting ceremony"
                     className="w-full rounded-xl object-cover shadow-md"

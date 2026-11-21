@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   ArrowRight,
   Tractor,
@@ -13,12 +13,14 @@ import { Reveal } from "@/components/Reveal";
 import { CountUp } from "@/components/CountUp";
 import { useInView } from "@/hooks/use-in-view";
 import { cn } from "@/lib/utils";
+import ResponsiveImage from "@/components/ResponsiveImage";
+import { createSlideNavigator, wrapIndex } from "@/lib/slide-navigation";
 
-import heroImage1 from "@/assets/hero/tractor1.jpg";
-import heroImage2 from "@/assets/hero/tractor2.png";
-import heroImage3 from "@/assets/hero/hero-tractor.jpg";
-import heroImage4 from "@/assets/hero/hero-field.jpg";
-import heroImage5 from "@/assets/hero/tractor3.jpg";
+const heroImage1 = "@/assets/hero/tractor1.jpg";
+const heroImage2 = "@/assets/hero/tractor2.png";
+const heroImage3 = "@/assets/hero/hero-tractor.jpg";
+const heroImage4 = "@/assets/hero/hero-field.jpg";
+const heroImage5 = "@/assets/hero/tractor3.jpg";
 
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -74,20 +76,89 @@ const Hero = () => {
     },
   ];
 
-  // Auto-slide
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 6000);
-    return () => clearInterval(timer);
+  // Only the first slide is requested immediately. Neighbouring slides are
+  // requested once the page has loaded and again whenever the slide changes,
+  // so the next image is normally ready before its transition begins.
+  const [activeSlides, setActiveSlides] = useState<Set<number>>(() => new Set([0]));
+  const settledSlides = useRef<Set<number>>(new Set());
+  const slideCount = heroSlides.length;
+
+  const activateSlides = useCallback((...indexes: number[]) => {
+    setActiveSlides((prev) => {
+      if (indexes.every((i) => prev.has(i))) return prev;
+      const next = new Set(prev);
+      indexes.forEach((i) => next.add(i));
+      return next;
+    });
   }, []);
 
-  const nextSlide = () =>
-    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-  const prevSlide = () =>
-    setCurrentSlide((prev) =>
-      prev === 0 ? heroSlides.length - 1 : prev - 1
-    );
+  useEffect(() => {
+    const warm = () => activateSlides(1, slideCount - 1);
+    if (document.readyState === "complete") {
+      const t = setTimeout(warm, 300);
+      return () => clearTimeout(t);
+    }
+    let t: ReturnType<typeof setTimeout>;
+    const onLoad = () => {
+      t = setTimeout(warm, 300);
+    };
+    window.addEventListener("load", onLoad, { once: true });
+    return () => {
+      window.removeEventListener("load", onLoad);
+      clearTimeout(t);
+    };
+  }, [activateSlides, slideCount]);
+
+  useEffect(() => {
+    activateSlides((currentSlide + 1) % slideCount, (currentSlide - 1 + slideCount) % slideCount);
+  }, [currentSlide, activateSlides, slideCount]);
+
+  // Navigation never swaps in a slide whose image is not ready: the current slide
+  // stays visible until the requested one has loaded (see lib/slide-navigation.ts).
+  const currentRef = useRef(0);
+  currentRef.current = currentSlide;
+  const navigator = useRef<ReturnType<typeof createSlideNavigator> | null>(null);
+  if (navigator.current === null) {
+    navigator.current = createSlideNavigator({
+      count: slideCount,
+      isReady: (i) => settledSlides.current.has(i),
+      show: (i) => setCurrentSlide(i),
+      prepare: (i) => activateSlides(i),
+    });
+  }
+  const nav = navigator.current;
+  useEffect(() => () => nav.cancel(), [nav]);
+
+  const markSettled = useCallback(
+    (index: number) => {
+      settledSlides.current.add(index);
+      nav.settled(index);
+    },
+    [nav],
+  );
+
+  // A failed image is never "ready": it must not become the displayed slide.
+  // If it is the pending target, abandon the request so the current slide stays.
+  const markFailed = useCallback(
+    (index: number) => {
+      settledSlides.current.delete(index);
+      if (nav.pending() === index) nav.cancel();
+    },
+    [nav],
+  );
+
+  // Auto-slide: skipped while the next image is not ready or a manual request is pending.
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (nav.pending() !== null) return;
+      const next = wrapIndex(currentRef.current + 1, slideCount);
+      if (settledSlides.current.has(next)) nav.request(next);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [nav, slideCount]);
+
+  const nextSlide = () => nav.request(nav.base(currentRef.current) + 1);
+  const prevSlide = () => nav.request(nav.base(currentRef.current) - 1);
 
   return (
     <section
@@ -103,11 +174,23 @@ const Hero = () => {
       >
         {heroSlides.map((slide, index) => (
           <div key={index} className="w-full h-full flex-shrink-0 relative">
-            <img
-              src={slide.image}
-              alt="Agricultural Machinery"
-              className="w-full h-full object-cover opacity-55 contrast-110 saturate-[0.85]"
-            />
+            {activeSlides.has(index) && (
+              <ResponsiveImage
+                src={slide.image}
+                alt="Agricultural Machinery"
+                sizes="100vw"
+                priority={index === 0}
+                loading="eager"
+                fetchPriority={index === 0 ? "high" : "low"}
+                ref={(el) => {
+                  // Cached images can be complete before React attaches onLoad.
+                  if (el && el.complete && el.naturalWidth > 0) markSettled(index);
+                }}
+                onLoad={() => markSettled(index)}
+                onError={() => markFailed(index)}
+                className="w-full h-full object-cover opacity-55 contrast-110 saturate-[0.85]"
+              />
+            )}
           </div>
         ))}
       </div>
@@ -221,7 +304,7 @@ const Hero = () => {
           {heroSlides.map((_, index) => (
             <button
               key={index}
-              onClick={() => setCurrentSlide(index)}
+              onClick={() => nav.request(index)}
               aria-label={`Go to slide ${index + 1}`}
               aria-current={index === currentSlide ? "true" : undefined}
               className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
