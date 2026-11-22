@@ -45,15 +45,15 @@ const sheet: SpecSheet = {
     { label: "OVERALL L × W × H", value: "4600×2095×2950 mm" },
     { label: "MASS", value: "4,300 kg" },
     { label: "WHEELBASE", value: "2,350 mm" },
-    { label: "CALIBRATED POWER", value: "67 / 81 kW" },
+    { label: "HYDRAULIC OUTPUT", value: "3 groups" },
   ],
   kpis: [
     {
-      id: "power",
-      label: "Calibration power",
-      value: "67 / 81",
-      unit: "kW",
-      foot: "WEBSITE-PUBLISHED · SERIES PAIR, NOT ATTRIBUTED",
+      id: "wheelbase",
+      label: "Wheelbase",
+      value: "2,350",
+      unit: "mm",
+      foot: "WEBSITE-PUBLISHED",
       status: "website-published",
       sources: WEB,
     },
@@ -115,8 +115,8 @@ const sheet: SpecSheet = {
       rows: [
         {
           id: "power",
-          label: "Calibration power (published pair)",
-          entries: same(C, "67 / 81", "website-published", WEB, "kW", "Published as a pair for the series; the source does not attribute either figure to RN904 or RN1104."),
+          label: "Calibration power",
+          entries: same(C, "67 / 81", "website-published", WEB, "kW (series-level pair; not per model)", "Published as a pair for the series; the source does not attribute either figure to RN904 or RN1104."),
         },
         { id: "gears", label: "Number of gears", entries: [E("pro", "16F + 8R", "website-published", WEB), E("new2025", "12F + 12R", "website-published", WEB)] },
         { id: "tyres", label: "Tyre size (front / rear)", entries: same(C, "12.4-24 / 16.9-34", "website-published", WEB) },

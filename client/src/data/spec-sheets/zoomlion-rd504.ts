@@ -10,8 +10,8 @@ import {
  * RD504 appears in no JOLU document other than the website product data, so every published value is
  * WEBSITE-PUBLISHED. Nothing is corroborated and nothing is manufacturer-verified.
  *
- * Lifting capacity is published in KILOGRAMS ("1236 kg"), not kilonewtons. It is shown in the unit the source uses,
- * is not converted to kN, and is labelled so it cannot be read as a force rating.
+ * The website publishes "Max lifting capacity 1236 kg". Its measurement basis (lift point) is not established, so the figure is
+ * EXCLUDED from every customer-visible element (see `excluded`). It is not converted to kN and nothing replaces it.
  */
 const WEB = ["web-products"]
 const C = ["rd504"]
@@ -34,7 +34,7 @@ const sheet: SpecSheet = {
   variants: [{ id: "rd504", label: "RD504", short: "RD504", title: "RD504", kind: "single-machine" }],
   lede:
     "Published specifications for the Zoomlion RD504 wheeled tractor, supplied by JOLU Machineries. " +
-    "All values are published on the JOLU website only and have not been verified against a manufacturer datasheet. Lifting capacity is shown in kilograms, as published. Confirm all figures with JOLU before purchase.",
+    "All values are published on the JOLU website only and have not been verified against a manufacturer datasheet. Lifting capacity is withheld pending confirmation of its measurement basis. Confirm all figures with JOLU before purchase.",
   quoteHp: undefined,
   quick: [
     { label: "OVERALL L × W × H", value: "3654×1362×2620 mm" },
@@ -82,9 +82,9 @@ const sheet: SpecSheet = {
     {
       id: "implements",
       tag: "02 / IMPLEMENT SUPPORT",
-      title: "PTO and lifting",
-      text: "30 kW PTO output at 540/720 rpm. Lifting capacity is published as 1,236 kg, a mass rating with no force equivalent stated.",
-      derivedFrom: ["pto-power", "pto-speed", "lifting"],
+      title: "PTO",
+      text: "30 kW PTO output at 540/720 rpm.",
+      derivedFrom: ["pto-power", "pto-speed"],
     },
     {
       id: "chassis",
@@ -116,13 +116,8 @@ const sheet: SpecSheet = {
     },
     {
       id: "hydraulics",
-      title: "03 / LIFTING AND PTO",
+      title: "03 / PTO",
       rows: [
-        {
-          id: "lifting",
-          label: "Max lifting capacity (published in kg)",
-          entries: same(C, "1236", "website-published", WEB, "kg", "Published as a mass in kg. Not converted to kN: the source does not state the lift-point basis."),
-        },
         { id: "pto-power", label: "PTO output power", entries: same(C, "30", "website-published", WEB, "kW") },
         { id: "pto-speed", label: "PTO speed", entries: same(C, "540/720", "website-published", WEB, "rpm") },
       ],
@@ -150,10 +145,10 @@ const sheet: SpecSheet = {
   sources: [webSource("7", "RD504"), SRC_CONTACT],
   excluded: [
     {
-      id: "lifting-kn",
-      label: "Lifting capacity expressed in kilonewtons",
-      reason: "not-supplied",
-      detail: "The website publishes 'Max lifting capacity 1236 kg' only. A mass is not a force, and the lift-point distance needed for a valid conversion is not published, so no kN figure is derived. The kg value is shown exactly as published and labelled as such.",
+      id: "lifting-capacity",
+      label: "Max lifting capacity '1236 kg' (website table, RD504)",
+      reason: "unverified-claim",
+      detail: "Excluded pending confirmation of the lifting-capacity measurement basis: the source states a mass in kg and does not say at which lift point or distance it applies. The original value is preserved here and in the website source record (product 7). It is not converted to kN, no other lifting figure is substituted, and nothing about lifting is published on the sheet.",
     },
     {
       id: "emission",

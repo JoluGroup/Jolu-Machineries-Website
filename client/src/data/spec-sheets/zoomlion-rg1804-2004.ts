@@ -45,18 +45,9 @@ const sheet: SpecSheet = {
     { label: "OVERALL L × W × H", value: "5490×2430×3200 mm" },
     { label: "MASS", value: "7,050 / 7,800 kg" },
     { label: "WHEELBASE", value: "2,775 mm" },
-    { label: "CALIBRATED POWER", value: "132 / 147 kW" },
+    { label: "GROUND CLEARANCE", value: "490 mm" },
   ],
   kpis: [
-    {
-      id: "power",
-      label: "Calibrated power",
-      value: "132 / 147",
-      unit: "kW",
-      foot: "WEBSITE-PUBLISHED · SERIES PAIR, NOT ATTRIBUTED",
-      status: "website-published",
-      sources: WEB,
-    },
     {
       id: "traction",
       label: "Calibrated traction",
@@ -71,6 +62,15 @@ const sheet: SpecSheet = {
       label: "Maximum lifting force",
       value: "90",
       unit: "kN",
+      foot: "WEBSITE-PUBLISHED",
+      status: "website-published",
+      sources: WEB,
+    },
+    {
+      id: "length",
+      label: "Overall length",
+      value: "5,490",
+      unit: "mm",
       foot: "WEBSITE-PUBLISHED",
       status: "website-published",
       sources: WEB,
@@ -116,9 +116,9 @@ const sheet: SpecSheet = {
       rows: [
         {
           id: "power",
-          label: "Calibrated power (published pair)",
+          label: "Calibrated power",
           entries: [
-            E("series", "132 / 147", "website-published", WEB, "kW", "Published as a pair; the source does not attribute either figure to RG1804 or RG2004."),
+            E("series", "132 / 147", "website-published", WEB, "kW (series-level pair; not per model)", "Published as a pair; the source does not attribute either figure to RG1804 or RG2004."),
             E("new2025", "132", "website-published", WEB, "kW", "Published under the column heading RG1804 (2025 New)."),
           ],
         },
@@ -139,9 +139,9 @@ const sheet: SpecSheet = {
         { id: "traction", label: "Calibrated traction", entries: same(C, "61", "website-published", WEB, "kN") },
         {
           id: "pto-power",
-          label: "PTO power output (published pair)",
+          label: "PTO power output",
           entries: [
-            E("series", "113 / 126", "website-published", WEB, "kW", "Published as a pair; the source does not attribute either figure to RG1804 or RG2004."),
+            E("series", "113 / 126", "website-published", WEB, "kW (series-level pair; not per model)", "Published as a pair; the source does not attribute either figure to RG1804 or RG2004."),
             E("new2025", "126", "website-published", WEB, "kW", "Published under the column heading RG1804 (2025 New)."),
           ],
         },

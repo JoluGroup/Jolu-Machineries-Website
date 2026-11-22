@@ -139,12 +139,25 @@ test("content exclusions: disputed, unverified, optional, price and certificatio
   assert.ok(entriesOf(specSheets["zoomlion-rg1804-2004"]).filter((e) => e.row === "valves").every((e) => e.value === "3 groups"))
   for (const id of ["gearbox", "power-attribution", "optional-fourth-valve", "emission", "marketing-claims"]) assert.ok(ex("zoomlion-rg1804-2004", id), `RG excludes ${id}`)
   assert.equal(ex("zoomlion-rg1804-2004", "gearbox").reason, "disputed"); assert.equal(ex("zoomlion-rg1804-2004", "power-attribution").reason, "variant-unattributable")
-  assert.ok(rows("zoomlion-rg1804-2004").filter((r) => r.id === "power" || r.id === "pto-power").every((r) => /pair/i.test(r.label)), "RG: pair rows are labelled as pairs")
-  // RD504: lifting capacity stays in kg, is never converted to a force, and is labelled as published
-  const rdLift = entriesOf(specSheets["zoomlion-rd504"]).find((e) => e.row === "lifting")
-  assert.equal(rdLift.unit, "kg"); assert.equal(rdLift.value, "1236"); assert.match(rows("zoomlion-rd504").find((r) => r.id === "lifting").label, /kg/)
-  assert.ok(!/kN|12\.1|12\.12|newton/i.test(text("zoomlion-rd504")), "RD: no kN or converted lifting figure"); assert.ok(!/National/.test(text("zoomlion-rd504")))
-  assert.equal(ex("zoomlion-rd504", "lifting-kn").reason, "not-supplied")
+  // M3-A5 hardening: a power pair is never a KPI or quick-strip cell, and wherever it remains it says "series-level pair; not per model"
+  for (const [slug, rowIds] of [["zoomlion-rg1804-2004", ["power", "pto-power"]], ["zoomlion-rn904", ["power"]]]) {
+    const sh = specSheets[slug]
+    for (const k of sh.kpis) assert.ok(!/\//.test(k.value) && !/kW/i.test(k.unit) && !/power/i.test(k.label), `${slug} KPI ${k.id} must not carry a power pair`)
+    for (const q of sh.quick) assert.ok(!/\d\s*\/\s*\d/.test(q.value) || /MASS/.test(q.label), `${slug} quick ${q.label} must not carry a power pair`)
+    for (const id of rowIds) for (const e of entriesOf(sh).filter((x) => x.row === id && /\//.test(x.value))) assert.match(e.unit, /series-level pair; not per model/, `${slug}/${id} pair attribution`)
+    assert.ok(!/calibrat\w+ power|PTO power/i.test(sh.kpis.map((k) => k.label).join(" ")), slug)
+  }
+  assert.deepEqual(specSheets["zoomlion-rg1804-2004"].kpis.map((k) => k.label), ["Calibrated traction", "Maximum lifting force", "Overall length"])
+  assert.deepEqual(specSheets["zoomlion-rn904"].kpis.map((k) => k.label), ["Wheelbase", "Minimum operating mass", "Overall length"])
+  assert.equal(entriesOf(specSheets["zoomlion-rg1804-2004"]).find((e) => e.row === "power" && e.variant === "series").value, "132 / 147", "source record value unchanged")
+  // RD504 (M3-A5 hardening): the 1236 kg lifting figure is excluded from every customer-visible element, preserved in the internal record
+  const rdSheet = specSheets["zoomlion-rd504"]
+  assert.ok(!rows("zoomlion-rd504").some((r) => /lift/i.test(r.label)), "RD: no lifting row")
+  assert.ok(!/1236|1,236|lift|kN|newton|12\.1/i.test(text("zoomlion-rd504").replace("Lifting capacity is withheld pending confirmation of its measurement basis.", "")), "RD: no lifting figure or conversion in any customer-visible text")
+  assert.ok(!JSON.stringify(rdSheet.kpis).match(/lift|1236/i) && !JSON.stringify(rdSheet.quick).match(/lift|1236/i) && !JSON.stringify(rdSheet.capabilities).match(/lift|1236/i) && !JSON.stringify(rdSheet.standardEquipment).match(/lift|1236/i), "RD: overview, KPI, quick, capability and equipment content")
+  assert.ok(!/National/.test(text("zoomlion-rd504")))
+  const lx = ex("zoomlion-rd504", "lifting-capacity"); assert.equal(lx.reason, "unverified-claim"); assert.match(lx.detail + lx.label, /1236 kg/); assert.match(lx.detail, /measurement basis/); assert.match(lx.detail, /not converted to kN/)
+  assert.ok(!ex("zoomlion-rd504", "lifting-kn"))
   // RN904/1104: disputed traction is withheld in full, with all three figures and their sources recorded
   const rn = text("zoomlion-rn904")
   assert.ok(!/34\.5|≥\s?25|\b50\b|National|\bhp\b|\bcab\b|150\s?L/i.test(rn), "RN: traction, emission, hp headline and narrative claims withheld")
