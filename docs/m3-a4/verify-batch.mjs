@@ -71,7 +71,7 @@ for (const slug of SLUGS) {
 // unknown slug + existing routes
 {
   const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } }); const p = await ctx.newPage(); await p.route("**/*", guard(base))
-  for (const u of ["/products/nope/spec-sheet", "/products/constructor/spec-sheet", "/products/zoomlion-rn904/spec-sheet", "/products/__proto__/spec-sheet"]) { await p.goto(base + u, { waitUntil: "load" }); await p.waitForTimeout(400); R.routes[u] = await p.evaluate(() => /404|not found/i.test(document.body.innerText)) }
+  for (const u of ["/products/nope/spec-sheet", "/products/constructor/spec-sheet", "/products/zoomlion-rn1104/spec-sheet", "/products/__proto__/spec-sheet"]) { await p.goto(base + u, { waitUntil: "load" }); await p.waitForTimeout(400); R.routes[u] = await p.evaluate(() => /404|not found/i.test(document.body.innerText)) }
   for (const r of ["/", "/products", "/products/zoomlion-rc904-1104", "/products/zoomlion-pl2304"]) { await p.goto(base + r, { waitUntil: "load" }); await p.waitForTimeout(600); R.routes[r] = await p.evaluate(() => ({ h: !!document.querySelector("h1,h2,h3"), linksToSheet: [...document.querySelectorAll("a")].filter((a) => /spec-sheet/.test(a.getAttribute("href") || "")).length, cards: document.querySelectorAll('a[href^="/products/"]').length })) }
   await ctx.close()
 }

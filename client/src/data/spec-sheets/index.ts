@@ -4,9 +4,13 @@ import rc904 from "./zoomlion-rc904-1104"
 import rk504 from "./zoomlion-rk504-704"
 import pg2004 from "./zoomlion-pg2004"
 import pl2304 from "./zoomlion-pl2304"
+import rg1804 from "./zoomlion-rg1804-2004"
+import rd504 from "./zoomlion-rd504"
+import rn904 from "./zoomlion-rn904"
+import dv3504 from "./zoomlion-dv3504-wheeled-tractor"
 
 /** Registry of specification sheets, keyed by product slug. Unknown slugs resolve to undefined (NotFound). */
-const all: SpecSheet[] = [rs1304, rc904, rk504, pg2004, pl2304]
+const all: SpecSheet[] = [rs1304, rc904, rk504, pg2004, pl2304, rg1804, rd504, rn904, dv3504]
 
 export const specSheets: Record<string, SpecSheet> = Object.fromEntries(all.map((s) => [s.slug, s]))
 

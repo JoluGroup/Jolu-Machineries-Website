@@ -54,9 +54,11 @@ const DimensionDiagram = ({ d, columns }: { d: DimensionData; columns: VariantIn
   const wbEqual = allEqual(env.map((e) => e.wheelbaseMm))
   const wbItems = wbEqual ? [0] : env.map((_, k) => k)
 
+  // Ground clearance is optional: a sheet that withholds a disputed clearance draws no clearance bracket.
   const gcValues = columns.map((c) => d.groundClearanceMm[c.id])
-  const gcEqual = allEqual(gcValues)
-  const gcFirst = gcValues[0]
+  const hasGc = gcValues.every((v) => typeof v === "number")
+  const gcEqual = hasGc && allEqual(gcValues as number[])
+  const gcFirst = (gcValues[0] ?? 0) as number
 
   return (
     <svg viewBox={`0 0 660 ${vbH}`} role="img" aria-label="Illustrative dimension schematic of overall length, width, height, wheelbase and ground clearance">
@@ -102,8 +104,12 @@ const DimensionDiagram = ({ d, columns }: { d: DimensionData; columns: VariantIn
       })}
 
       {/* ground clearance bracket (first column's value; all values are listed in the note) */}
-      <path d={`M${sx + swMax + 10} ${ground}V${ground - gcFirst * sideScale}M${sx + swMax + 6} ${ground - gcFirst * sideScale}h8`} {...accent} />
-      <text x={sx + swMax + 18} y={ground - (gcFirst * sideScale) / 2 + 3} {...text} fontSize={11}>GC</text>
+      {hasGc && (
+        <>
+          <path d={`M${sx + swMax + 10} ${ground}V${ground - gcFirst * sideScale}M${sx + swMax + 6} ${ground - gcFirst * sideScale}h8`} {...accent} />
+          <text x={sx + swMax + 18} y={ground - (gcFirst * sideScale) / 2 + 3} {...text} fontSize={11}>GC</text>
+        </>
+      )}
 
       {/* length */}
       {lenRows.map((r, i) => {
@@ -153,7 +159,7 @@ const DimensionDiagram = ({ d, columns }: { d: DimensionData; columns: VariantIn
       })}
 
       {/* ground clearance note */}
-      {gcEqual ? (
+      {!hasGc ? null : gcEqual ? (
         <text x={px} y={vbH - 20} {...text} fontSize={11}>GC = ground clearance: {fmtInt(gcFirst)} mm</text>
       ) : (
         <>

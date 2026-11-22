@@ -125,8 +125,8 @@ export interface DimensionEnvelope {
 
 export interface DimensionData {
   envelopes: DimensionEnvelope[]
-  /** Ground clearance per column id. */
-  groundClearanceMm: Record<VariantId, number>
+  /** Ground clearance per column id. Omit a column (or leave empty) when the clearance is withheld; the diagram then draws none. */
+  groundClearanceMm: Record<VariantId, number | undefined>
   sources: string[]
 }
 

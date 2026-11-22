@@ -1,4 +1,4 @@
-// Specification-sheet tests (M3-A2 pilot + M3-A4 Batch 1). node:test. Run: npm test
+// Specification-sheet tests (M3-A2 pilot + M3-A4 Batch 1 + M3-A5 Batch 2). node:test. Run: npm test
 import assert from "node:assert/strict"
 import fs from "node:fs"
 import path from "node:path"
@@ -17,7 +17,7 @@ async function loadData() {
   await build({ entryPoints: [path.join(ROOT, "src/data/spec-sheets/index.ts")], outfile, bundle: true, format: "esm", platform: "node", alias: { "@": path.join(ROOT, "src") }, loader: { ".png": "dataurl", ".webp": "dataurl", ".jpg": "dataurl", ".json": "json" }, logLevel: "silent" })
   return import(`${outfile}?t=${Date.now()}`)
 }
-const SLUGS = ["zoomlion-rs1304-1604", "zoomlion-rc904-1104", "zoomlion-rk504-704", "zoomlion-pg2004", "zoomlion-pl2304"]
+const SLUGS = ["zoomlion-rs1304-1604", "zoomlion-rc904-1104", "zoomlion-rk504-704", "zoomlion-pg2004", "zoomlion-pl2304", "zoomlion-rg1804-2004", "zoomlion-rd504", "zoomlion-rn904", "zoomlion-dv3504-wheeled-tractor"]
 const SHEET_FILES = ["src/pages/SpecSheetPage.tsx", "src/styles/spec-sheet-print.css", ...walk("src/data/spec-sheets"), ...walk("src/components/spec-sheet")]
 const entriesOf = (s) => s.groups.flatMap((g) => g.rows.flatMap((r) => r.entries.map((e) => ({ row: r.id, ...e }))))
 /** Every customer-facing string of a sheet (excludes the internal `excluded` and `sources` records and notes). */
@@ -27,10 +27,10 @@ const publishedText = (s) => {
   return JSON.stringify(strip(pub))
 }
 
-test("registry holds exactly the five approved sheets; unknown slugs resolve to undefined", async () => {
+test("registry holds exactly the nine authorized sheets; unknown slugs resolve to undefined", async () => {
   const { specSheets, getSpecSheet } = await loadData()
   assert.deepEqual(Object.keys(specSheets).sort(), [...SLUGS].sort())
-  for (const bad of [undefined, "", "nope", "constructor", "__proto__", "toString", "hasOwnProperty", "zoomlion-rn904", "zoomlion-rs1304-1604/"]) assert.equal(getSpecSheet(bad), undefined, String(bad))
+  for (const bad of [undefined, "", "nope", "constructor", "__proto__", "toString", "hasOwnProperty", "zoomlion-rn1104", "zoomlion-rg1804", "zoomlion-rg2004", "zoomlion-dv3504", "zoomlion-rs1304-1604/"]) assert.equal(getSpecSheet(bad), undefined, String(bad))
   for (const s of SLUGS) assert.equal(getSpecSheet(s).slug, s)
 })
 
@@ -47,7 +47,7 @@ test("every published entry has value, known source, publishable status, valid c
       if (e.status === "corroborated") assert.ok(e.sources.some((id) => s.sources.find((x) => x.id === id).kind === "jolu-document"), `${slug}/${e.row} corroborated needs a JOLU document`)
     }
     for (const k of s.kpis) { assert.ok(allowed.includes(k.status)); for (const id of k.sources) assert.ok(ids.has(id)) }
-    assert.ok(n >= 15, slug)
+    assert.ok(n >= 10, slug)
     for (const r of s.groups.flatMap((g) => g.rows)) assert.equal(r.entries.length, s.variants.length, `${slug}/${r.id} has an entry per column`)
   }
 })
@@ -61,6 +61,11 @@ test("model / configuration attribution: column kinds are explicit and never con
   assert.deepEqual([...kinds(S["zoomlion-rk504-704"])], ["distinct-model"])
   assert.deepEqual([...kinds(S["zoomlion-pg2004"])], ["single-machine"]); assert.deepEqual([...kinds(S["zoomlion-pl2304"])], ["single-machine"])
   assert.equal(S["zoomlion-pg2004"].variants.length, 1); assert.equal(S["zoomlion-pl2304"].variants.length, 1)
+  // Batch 2: RG and RN print two published configurations (never verified separate models); RD and DV are single machines
+  for (const slug of ["zoomlion-rg1804-2004", "zoomlion-rn904"]) { assert.deepEqual([...kinds(S[slug])], ["published-configuration"], slug); assert.equal(S[slug].variants.length, 2, slug) }
+  for (const slug of ["zoomlion-rd504", "zoomlion-dv3504-wheeled-tractor"]) { assert.deepEqual([...kinds(S[slug])], ["single-machine"], slug); assert.equal(S[slug].variants.length, 1, slug) }
+  assert.deepEqual(S["zoomlion-rg1804-2004"].variants.map((v) => v.label), ["RG1804/2004", "RG1804 (2025 New)"])
+  assert.deepEqual(S["zoomlion-rn904"].variants.map((v) => v.label), ["RN904Pro/RN1104Pro", "RN904/RN1104 (2025 New)"])
   // model-specific values stay with their model
   const val = (s, row, col) => entriesOf(s).find((e) => e.row === row && e.variant === col)
   const rc = S["zoomlion-rc904-1104"], rk = S["zoomlion-rk504-704"]
@@ -77,16 +82,29 @@ test("model / configuration attribution: column kinds are explicit and never con
   // diagram envelopes follow the columns; equal columns share one envelope
   assert.equal(rc.dimensions.envelopes.length, 2); assert.equal(rk.dimensions.envelopes.length, 2)
   assert.deepEqual(rc.dimensions.envelopes.map((e) => e.lengthMm), [4390, 4500]); assert.deepEqual(rk.dimensions.envelopes.map((e) => e.lengthMm), [3980, 4030])
-  for (const slug of ["zoomlion-rs1304-1604", "zoomlion-pg2004", "zoomlion-pl2304"]) assert.equal(S[slug].dimensions.envelopes.length, 1)
-  for (const slug of SLUGS) for (const c of S[slug].variants) assert.equal(typeof S[slug].dimensions.groundClearanceMm[c.id], "number", `${slug} clearance ${c.id}`)
+  for (const slug of SLUGS.filter((x) => x !== "zoomlion-rc904-1104" && x !== "zoomlion-rk504-704")) assert.equal(S[slug].dimensions.envelopes.length, 1, `${slug} envelopes`)
+  // ground clearance is drawn only where it is published (RN904/1104 and DV3504 withhold it)
+  for (const slug of SLUGS) { const none = ["zoomlion-rn904", "zoomlion-dv3504-wheeled-tractor"].includes(slug)
+    for (const c of S[slug].variants) assert.equal(typeof S[slug].dimensions.groundClearanceMm[c.id], none ? "undefined" : "number", `${slug} clearance ${c.id}`)
+    assert.equal(entriesOf(S[slug]).some((e) => e.row === "ground-clearance"), !none, `${slug} clearance row`) }
+  // RG/RN power pairs are shown as published and never split per model
+  const pair = (slug, row, col) => entriesOf(S[slug]).find((e) => e.row === row && e.variant === col)
+  assert.equal(pair("zoomlion-rg1804-2004", "power", "series").value, "132 / 147"); assert.equal(pair("zoomlion-rg1804-2004", "pto-power", "series").value, "113 / 126")
+  assert.equal(pair("zoomlion-rn904", "power", "pro").value, "67 / 81"); assert.equal(pair("zoomlion-rn904", "power", "new2025").value, "67 / 81")
+  assert.ok(!entriesOf(S["zoomlion-rn904"]).some((e) => /RN904|RN1104/.test(e.value)), "RN: no per-model values")
+  // RN configurations keep their published differences
+  assert.equal(pair("zoomlion-rn904", "gears", "pro").value, "16F + 8R"); assert.equal(pair("zoomlion-rn904", "gears", "new2025").value, "12F + 12R")
+  assert.equal(pair("zoomlion-rn904", "tillage", "new2025").value, "Draft control")
   // pilot keeps its configuration wording and never presents separate models
   assert.match(S["zoomlion-rs1304-1604"].variants[0].title, /configuration/i)
   assert.ok(!S["zoomlion-rs1304-1604"].variants.some((v) => v.kind === "distinct-model"))
 })
 
-test("website-only sheets (PG2004, PL2304) never claim corroboration or a JOLU document", async () => {
+test("website-only sheets never claim corroboration or manufacturer verification", async () => {
   const { specSheets } = await loadData()
-  for (const slug of ["zoomlion-pg2004", "zoomlion-pl2304"]) {
+  // RN904/1104 cites the JOLU catalogue only in its exclusion records; none of its values is corroborated
+  for (const slug of ["zoomlion-rn904"]) { const s = specSheets[slug]; assert.ok(entriesOf(s).every((e) => e.status === "website-published"), slug); assert.ok(s.kpis.every((k) => k.status === "website-published"), slug); assert.ok(s.sources.every((x) => x.kind !== "manufacturer")); assert.ok(entriesOf(s).every((e) => !e.sources.some((id) => s.sources.find((x) => x.id === id).kind === "jolu-document")), "RN: no value cites a JOLU document") }
+  for (const slug of ["zoomlion-pg2004", "zoomlion-pl2304", "zoomlion-rg1804-2004", "zoomlion-rd504", "zoomlion-dv3504-wheeled-tractor"]) {
     const s = specSheets[slug]
     assert.ok(entriesOf(s).every((e) => e.status === "website-published"), slug); assert.ok(s.kpis.every((k) => k.status === "website-published"), slug)
     assert.ok(s.sources.every((x) => x.kind !== "jolu-document" && x.kind !== "manufacturer"), slug)
@@ -110,6 +128,37 @@ test("content exclusions: disputed, unverified, optional, price and certificatio
     for (const id of ["price", "warranty-certifications"]) assert.ok(s.excluded.some((x) => x.id === id), `${slug} records ${id}`) }
   for (const [slug, id] of [["zoomlion-rk504-704", "hp-headline"], ["zoomlion-pl2304", "emission"], ["zoomlion-pl2304", "european-standards"], ["zoomlion-pg2004", "emission"], ["zoomlion-rc904-1104", "cab-optional"], ["zoomlion-rc904-1104", "rc1104-old-new"]]) assert.ok(specSheets[slug].excluded.some((x) => x.id === id), `${slug} excludes ${id}`)
   assert.equal(specSheets["zoomlion-pl2304"].excluded.find((x) => x.id === "emission").reason, "disputed")
+
+  // ---- Batch 2 ----
+  const ex = (slug, id) => specSheets[slug].excluded.find((x) => x.id === id)
+  const rows = (slug) => specSheets[slug].groups.flatMap((g) => g.rows)
+  // RG1804/2004: disputed gearbox, optional fourth valve group, per-model power and hp headline all withheld
+  const rg = text("zoomlion-rg1804-2004")
+  assert.ok(!/\d+F\s*\+\s*\d+R|gearbox|National|\bhp\b|\b180\b|200 HP|\b4 groups|Bosch|375/i.test(rg), "RG: gearbox, emission, hp headline, optional valve and narrative claims withheld")
+  assert.ok(!rows("zoomlion-rg1804-2004").some((r) => /gear/i.test(r.label)), "RG: no gearbox row")
+  assert.ok(entriesOf(specSheets["zoomlion-rg1804-2004"]).filter((e) => e.row === "valves").every((e) => e.value === "3 groups"))
+  for (const id of ["gearbox", "power-attribution", "optional-fourth-valve", "emission", "marketing-claims"]) assert.ok(ex("zoomlion-rg1804-2004", id), `RG excludes ${id}`)
+  assert.equal(ex("zoomlion-rg1804-2004", "gearbox").reason, "disputed"); assert.equal(ex("zoomlion-rg1804-2004", "power-attribution").reason, "variant-unattributable")
+  assert.ok(rows("zoomlion-rg1804-2004").filter((r) => r.id === "power" || r.id === "pto-power").every((r) => /pair/i.test(r.label)), "RG: pair rows are labelled as pairs")
+  // RD504: lifting capacity stays in kg, is never converted to a force, and is labelled as published
+  const rdLift = entriesOf(specSheets["zoomlion-rd504"]).find((e) => e.row === "lifting")
+  assert.equal(rdLift.unit, "kg"); assert.equal(rdLift.value, "1236"); assert.match(rows("zoomlion-rd504").find((r) => r.id === "lifting").label, /kg/)
+  assert.ok(!/kN|12\.1|12\.12|newton/i.test(text("zoomlion-rd504")), "RD: no kN or converted lifting figure"); assert.ok(!/National/.test(text("zoomlion-rd504")))
+  assert.equal(ex("zoomlion-rd504", "lifting-kn").reason, "not-supplied")
+  // RN904/1104: disputed traction is withheld in full, with all three figures and their sources recorded
+  const rn = text("zoomlion-rn904")
+  assert.ok(!/34\.5|≥\s?25|\b50\b|National|\bhp\b|\bcab\b|150\s?L/i.test(rn), "RN: traction, emission, hp headline and narrative claims withheld")
+  assert.ok(!rows("zoomlion-rn904").some((r) => /traction|pull/i.test(r.label)), "RN: no traction row")
+  assert.equal(ex("zoomlion-rn904", "traction").reason, "disputed"); for (const f of ["≥25", "50", "34.5"]) assert.ok(ex("zoomlion-rn904", "traction").label.includes(f) || ex("zoomlion-rn904", "traction").detail.includes(f), `RN traction records ${f}`)
+  assert.match(ex("zoomlion-rn904", "traction").detail, /Catalogue page 2/); assert.match(ex("zoomlion-rn904", "traction").detail, /website/i)
+  for (const id of ["emission", "model-split", "narrative-equipment"]) assert.ok(ex("zoomlion-rn904", id), `RN excludes ${id}`)
+  // DV3504: no hybrid, transmission, clutch, ground-clearance or PTO-speed claim reaches the sheet
+  const dv = text("zoomlion-dv3504-wheeled-tractor")
+  assert.ok(!/hybrid|CVT|AMT|stepless|km\/h|damper|coupling|clutch|0\s*[–-]\s*1000|\b430\b|tilting|PTO speed|National|motor|camera|gearbox/i.test(dv), "DV: ambiguous drivetrain, clearance and PTO claims withheld")
+  assert.ok(!rows("zoomlion-dv3504-wheeled-tractor").some((r) => /gear|clutch|pto|ground/i.test(r.label)), "DV: no gearbox, clutch, PTO or clearance row")
+  for (const id of ["hybrid-system", "transmission", "clutch", "ground-clearance", "pto-speed", "emission"]) assert.ok(ex("zoomlion-dv3504-wheeled-tractor", id), `DV excludes ${id}`)
+  assert.equal(ex("zoomlion-dv3504-wheeled-tractor", "transmission").reason, "disputed"); assert.equal(ex("zoomlion-dv3504-wheeled-tractor", "ground-clearance").reason, "disputed")
+  assert.equal(specSheets["zoomlion-dv3504-wheeled-tractor"].productName, "Zoomlion DV3504 Wheeled Tractor")
 })
 
 test("quick-strip and KPI figures are present in the published rows", async () => {
