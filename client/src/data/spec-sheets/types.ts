@@ -161,10 +161,29 @@ export interface ContactInfo {
   sources: string[]
 }
 
+/**
+ * Explicit sheet layout. Drives presentation and page count only; never derived from a product name or slug.
+ *  - "tractor" and "harvester": the approved two-page A4 brochure (executive overview + technical page).
+ *  - "implement" (M3-A7A): a single A4 page for agricultural implements.
+ */
+export type SpecSheetLayout = "tractor" | "harvester" | "implement"
+
+/** Printed A4 pages per layout. The print harness and tests read this single source of truth. */
+export const LAYOUT_PAGES: Record<SpecSheetLayout, number> = { tractor: 2, harvester: 2, implement: 1 }
+
+/** The layout of a sheet; sheets that predate the discriminator are tractors. */
+export const layoutOf = (sheet: { machine?: SpecSheetLayout }): SpecSheetLayout => sheet.machine ?? "tractor"
+
+/** A specification that is deliberately not published, tied to its internal `excluded` record. */
+export interface NotPublishedItem {
+  label: string
+  excludedId: string
+}
+
 export interface SpecSheet {
   slug: string
-  /** Machine family; drives the presentation only (defaults to a tractor). */
-  machine?: "tractor" | "harvester"
+  /** Layout selector (field name kept from M3-A6). Omitted on tractor sheets, which default to "tractor". */
+  machine?: SpecSheetLayout
   /** Only sheets with a reviewState of "approved" render without the preview banner; unknown sheets 404. */
   reviewState: "pilot-preview" | "preview" | "approved"
   productName: string
@@ -190,6 +209,12 @@ export interface SpecSheet {
   dimensions?: DimensionData
   /** Capacity panel. Present only when `dimensions` is absent (harvesters without published overall dimensions). */
   capacity?: CapacityPanel
+  /** Implement layout only: the designation used by a JOLU document, shown with its source (never a verified value). */
+  catalogueDesignation?: { value: string; sources: string[] }
+  /** Implement layout only: specifications deliberately not published, each tied to an `excluded` record. */
+  notPublished?: NotPublishedItem[]
+  /** Implement layout only: one-sentence statement of where the values come from. */
+  sourceStatement?: string
   contact: ContactInfo
   confirmNote: string
   sources: SourceRef[]

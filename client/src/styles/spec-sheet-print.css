@@ -182,3 +182,32 @@
   .ss-view-tabs { display: none !important; }
   a { text-decoration: none; color: inherit; }
 }
+
+/* ---------- implement layout (M3-A7A): one A4 page; colours from the same variables as the two-page sheets ---------- */
+.ss-implement .ss-inner { padding: 11mm 15mm 10mm; }
+.ss-imp-head { background: var(--ss-dark); color: var(--ss-on-dark); padding: 6mm 8mm 6mm; display: grid; grid-template-columns: 1fr auto; gap: 8mm; align-items: start; border-bottom: 3px solid var(--ss-accent); }
+.ss-implement .ss-imp-head .ss-wordmark { font-size: 20px; color: var(--ss-on-dark); }
+.ss-imp-head .ss-eyebrow { margin: 5mm 0 0; }
+.ss-imp-head h1 { font-weight: 800; font-size: 32px; line-height: 1.08; letter-spacing: -0.035em; margin: 2mm 0 0; color: var(--ss-on-dark); }
+.ss-imp-head .ss-modeltag { max-width: 64mm; }
+.ss-imp-head .ss-modeltag strong { font-size: 13px; line-height: 1.25; }
+.ss-imp-lede { font-size: 11.5px; line-height: 1.6; color: var(--ss-ink); margin: 4.5mm 0 4.5mm; }
+.ss-imp-hero { display: grid; grid-template-columns: 1.55fr 1fr; grid-template-rows: minmax(0, 1fr); gap: 10px; height: 84mm; }
+.ss-imp-photo { border: 1px solid var(--ss-border); background: var(--ss-light); display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.ss-imp-photo-head { padding: 6px 10px; color: var(--ss-soft-ink); }
+.ss-imp-photo .ss-stage-img { margin: 0; border: 0; border-top: 1px solid var(--ss-border); border-bottom: 1px solid var(--ss-border); }
+.ss-imp-photo .ss-view-caption { color: var(--ss-soft-ink); }
+.ss-imp-kpis { background: var(--ss-dark); padding: 8px; display: flex; min-width: 0; }
+.ss-imp-kpis .ss-kpis { flex: 1; min-width: 0; color: var(--ss-on-dark); }
+.ss-imp-kpis .ss-kpi-number { color: var(--ss-on-dark); }
+.ss-implement .ss-spec-title { font-size: 14px; margin: 4.5mm 0 2mm; }
+.ss-implement .ss-table { font-size: 11px; }
+.ss-implement .ss-table td { padding: 4.6px 8px; }
+.ss-implement .ss-table td.v { font-size: 11px; }
+.ss-implement .ss-table td.k { width: 38%; }
+.ss-imp-notpub { margin-top: 3mm; border: 1px dashed var(--ss-border); padding: 5px 10px; font-size: 9.5px; line-height: 1.5; color: var(--ss-soft-ink); }
+.ss-imp-notpub strong { color: var(--ss-ink); }
+.ss-imp-source { margin-top: 2.5mm; font-size: 9px; line-height: 1.5; color: var(--ss-soft-ink); }
+.ss-imp-kpis .ss-kpis { gap: 8px; }
+.ss-imp-kpis .ss-kpi { padding: 8px 14px; }
+.ss-imp-kpis .ss-kpi-number { margin: 5px 0 3px; }

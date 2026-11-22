@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { getSpecSheet } from "@/data/spec-sheets"
+import { layoutOf } from "@/data/spec-sheets/types"
 import A4Page from "@/components/spec-sheet/A4Page"
 import ProductOverview from "@/components/spec-sheet/ProductOverview"
 import DimensionDiagram from "@/components/spec-sheet/DimensionDiagram"
@@ -8,6 +9,7 @@ import CapacityPanel from "@/components/spec-sheet/CapacityPanel"
 import SpecTable from "@/components/spec-sheet/SpecTable"
 import ConfigurationList from "@/components/spec-sheet/ConfigurationList"
 import ProcurementBlock from "@/components/spec-sheet/ProcurementBlock"
+import ImplementSheet from "@/components/spec-sheet/ImplementSheet"
 import { STATUS_MARK, columnsStatement } from "@/components/spec-sheet/format"
 import NotFound from "@/pages/NotFound"
 import "@/styles/spec-sheet-print.css"
@@ -52,6 +54,8 @@ const SpecSheetPage = () => {
 
   if (!sheet) return <NotFound />
 
+  // Explicit layout selector: implements print on one A4 page, tractors and harvesters on two.
+  const layout = layoutOf(sheet)
   const stmt = columnsStatement(sheet)
   // Long tables (>= 17 rows) get tighter spacing, never smaller type.
   const rowCount = sheet.groups.reduce((n, g) => n + g.rows.length, 0)
@@ -82,6 +86,10 @@ const SpecSheetPage = () => {
       </div>
 
       <main className="ss-pages">
+        {layout === "implement" ? (
+          <ImplementSheet sheet={sheet} legend={legend} />
+        ) : (
+          <>
         <A4Page tone="dark" label="Page 1 executive overview" index="01 / 02">
           <ProductOverview sheet={sheet} />
         </A4Page>
@@ -145,6 +153,8 @@ const SpecSheetPage = () => {
           <ConfigurationList sheet={sheet} />
           <ProcurementBlock sheet={sheet} />
         </A4Page>
+          </>
+        )}
       </main>
     </div>
   )

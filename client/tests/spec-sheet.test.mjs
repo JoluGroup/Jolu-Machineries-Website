@@ -1,4 +1,4 @@
-// Specification-sheet tests (M3-A2 pilot + M3-A4 Batch 1 + M3-A5 Batch 2 + M3-A6 harvesters). node:test. Run: npm test
+// Specification-sheet tests (M3-A2 pilot + M3-A4 Batch 1 + M3-A5 Batch 2 + M3-A6 harvesters + M3-A7A implement layout). node:test. Run: npm test
 import assert from "node:assert/strict"
 import fs from "node:fs"
 import path from "node:path"
@@ -17,9 +17,10 @@ async function loadData() {
   await build({ entryPoints: [path.join(ROOT, "src/data/spec-sheets/index.ts")], outfile, bundle: true, format: "esm", platform: "node", alias: { "@": path.join(ROOT, "src") }, loader: { ".png": "dataurl", ".webp": "dataurl", ".jpg": "dataurl", ".json": "json" }, logLevel: "silent" })
   return import(`${outfile}?t=${Date.now()}`)
 }
-const SLUGS = ["zoomlion-rs1304-1604", "zoomlion-rc904-1104", "zoomlion-rk504-704", "zoomlion-pg2004", "zoomlion-pl2304", "zoomlion-rg1804-2004", "zoomlion-rd504", "zoomlion-rn904", "zoomlion-dv3504-wheeled-tractor", "zoomlion-te100-combine-harvester", "tf150-combine-harvester", "zl105-combine-harvester", "zc123s-combine-harvester"]
+const SLUGS = ["zoomlion-rs1304-1604", "zoomlion-rc904-1104", "zoomlion-rk504-704", "zoomlion-pg2004", "zoomlion-pl2304", "zoomlion-rg1804-2004", "zoomlion-rd504", "zoomlion-rn904", "zoomlion-dv3504-wheeled-tractor", "zoomlion-te100-combine-harvester", "tf150-combine-harvester", "zl105-combine-harvester", "zc123s-combine-harvester", "3-disk-plough"]
 const HARVESTERS = ["zoomlion-te100-combine-harvester", "tf150-combine-harvester", "zl105-combine-harvester", "zc123s-combine-harvester"]
-const TRACTORS = SLUGS.filter((x) => !HARVESTERS.includes(x))
+const IMPLEMENTS = ["3-disk-plough"]
+const TRACTORS = SLUGS.filter((x) => !HARVESTERS.includes(x) && !IMPLEMENTS.includes(x))
 const SHEET_FILES = ["src/pages/SpecSheetPage.tsx", "src/styles/spec-sheet-print.css", ...walk("src/data/spec-sheets"), ...walk("src/components/spec-sheet")]
 const entriesOf = (s) => s.groups.flatMap((g) => g.rows.flatMap((r) => r.entries.map((e) => ({ row: r.id, ...e }))))
 /** Every customer-facing string of a sheet (excludes the internal `excluded` and `sources` records and notes). */
@@ -29,7 +30,7 @@ const publishedText = (s) => {
   return JSON.stringify(strip(pub))
 }
 
-test("registry holds exactly the thirteen authorized sheets; unknown slugs resolve to undefined", async () => {
+test("registry holds exactly the fourteen authorized sheets; unknown slugs resolve to undefined", async () => {
   const { specSheets, getSpecSheet } = await loadData()
   assert.deepEqual(Object.keys(specSheets).sort(), [...SLUGS].sort())
   for (const bad of [undefined, "", "nope", "constructor", "__proto__", "toString", "hasOwnProperty", "zoomlion-rn1104", "zoomlion-te100", "zoomlion-zl120-combine-harvester", "tf150", "zl105", "zc123s", "zoomlion-rg1804", "zoomlion-rg2004", "zoomlion-dv3504", "zoomlion-rs1304-1604/"]) assert.equal(getSpecSheet(bad), undefined, String(bad))
@@ -49,7 +50,7 @@ test("every published entry has value, known source, publishable status, valid c
       if (e.status === "corroborated") assert.ok(e.sources.some((id) => s.sources.find((x) => x.id === id).kind === "jolu-document"), `${slug}/${e.row} corroborated needs a JOLU document`)
     }
     for (const k of s.kpis) { assert.ok(allowed.includes(k.status)); for (const id of k.sources) assert.ok(ids.has(id)) }
-    assert.ok(n >= 7, slug)
+    assert.ok(n >= (IMPLEMENTS.includes(slug) ? 6 : 7), slug)
     for (const r of s.groups.flatMap((g) => g.rows)) assert.equal(r.entries.length, s.variants.length, `${slug}/${r.id} has an entry per column`)
   }
 })
@@ -270,4 +271,119 @@ test("generic route is registered; catalogue and product detail do not link to a
 
 test("no new dependencies", () => {
   const pkg = JSON.parse(read("package.json")); assert.ok(!Object.keys({ ...pkg.dependencies, ...pkg.devDependencies }).some((k) => /print|pdf|html2canvas|jspdf|qrcode/i.test(k)))
+})
+
+// ---------------------------------------------------------------------------------------------------------------------
+// M3-A7A: explicit layout variant + the one-page 3-Disk Plough implement sheet
+// ---------------------------------------------------------------------------------------------------------------------
+async function loadTypes() {
+  const cache = path.join(ROOT, "node_modules/.cache"); fs.mkdirSync(cache, { recursive: true })
+  const outfile = path.join(cache, "spec-types.mjs")
+  await build({ entryPoints: [path.join(ROOT, "src/data/spec-sheets/types.ts")], outfile, bundle: true, format: "esm", platform: "node", alias: { "@": path.join(ROOT, "src") } })
+  return import(`${outfile}?t=${Date.now()}`)
+}
+const PLOUGH = "3-disk-plough"
+const PLOUGH_IMAGE_SHA256 = "02da07292dc7dd42c20776322a4d4bb99ed9343daaa9fbb96a7a312889448b7f" // identical to production main
+
+test("layout selection is explicit and typed: implement sheets are one page, tractors and harvesters stay two pages", async () => {
+  const { specSheets } = await loadData(); const { layoutOf, LAYOUT_PAGES } = await loadTypes()
+  assert.deepEqual(LAYOUT_PAGES, { tractor: 2, harvester: 2, implement: 1 })
+  for (const slug of TRACTORS) { assert.equal(layoutOf(specSheets[slug]), "tractor", slug); assert.equal(LAYOUT_PAGES[layoutOf(specSheets[slug])], 2, slug) }
+  for (const slug of HARVESTERS) { assert.equal(layoutOf(specSheets[slug]), "harvester", slug); assert.equal(LAYOUT_PAGES[layoutOf(specSheets[slug])], 2, slug) }
+  for (const slug of IMPLEMENTS) { assert.equal(specSheets[slug].machine, "implement", `${slug} selects its layout explicitly`); assert.equal(layoutOf(specSheets[slug]), "implement"); assert.equal(LAYOUT_PAGES.implement, 1) }
+  assert.equal(TRACTORS.length + HARVESTERS.length, 13, "the approved thirteen sheets keep their two-page layouts")
+  assert.equal(Object.keys(specSheets).length, 14)
+  // the page chooses its layout from the typed discriminator, never from a slug or product name
+  const page = read("src/pages/SpecSheetPage.tsx"); const imp = read("src/components/spec-sheet/ImplementSheet.tsx")
+  assert.match(page, /layoutOf\(sheet\)/); assert.match(page, /layout === "implement"/)
+  for (const t of [page, imp]) assert.ok(!/slug\s*(===|==|!==|\.startsWith|\.includes)|productName\s*(===|\.includes)|["']3-disk-plough["']/.test(t), "no slug or name based page logic")
+  assert.match(read("src/data/spec-sheets/types.ts"), /export type SpecSheetLayout = "tractor" \| "harvester" \| "implement"/)
+})
+
+test("one-page implement rendering reuses shared components and omits two-page-only parts; the two-page layout is preserved", () => {
+  const imp = read("src/components/spec-sheet/ImplementSheet.tsx"); const page = read("src/pages/SpecSheetPage.tsx")
+  assert.equal((imp.match(/<A4Page/g) || []).length, 1, "exactly one A4 page"); assert.match(imp, /index="01 \/ 01"/)
+  for (const shared of ["KpiRow", "SpecTable", "ProcurementBlock", "ResponsiveImage"]) assert.match(imp, new RegExp(`<${shared}`), `reuses ${shared}`)
+  for (const twoPageOnly of ["DimensionDiagram", "CapacityPanel", "ConfigurationList", "ProductOverview", "ss-view-tabs"]) assert.ok(!imp.includes(twoPageOnly), `implement layout must not render ${twoPageOnly}`)
+  assert.match(page, /index="01 \/ 02"/); assert.match(page, /index="02 \/ 02"/); assert.equal((page.match(/<A4Page/g) || []).length, 2, "two-page layouts still render exactly two pages")
+  assert.match(page, /<ProductOverview sheet=\{sheet\} \/>/); assert.match(page, /sheet\.dimensions \?/)
+  const css = read("src/styles/spec-sheet-print.css"); assert.match(css, /\.ss-implement \.ss-inner/); assert.match(css, /\.ss-imp-hero/); assert.match(css, /\.ss-stage:last-child \{ break-after: auto/)
+  assert.ok(!/ss-implement[^{]*\{[^}]*(display: none|position: fixed)/.test(css))
+})
+
+test("3-Disk Plough registry entry: slug, single published model, no two-page-only data", async () => {
+  const { specSheets, getSpecSheet } = await loadData(); const s = specSheets[PLOUGH]
+  assert.equal(getSpecSheet(PLOUGH), s); assert.equal(s.slug, PLOUGH); assert.equal(s.productName, "3-Disk Plough"); assert.notEqual(s.reviewState, "approved")
+  assert.deepEqual(s.variants.map((v) => v.kind), ["single-machine"]); assert.equal(s.kpis.length, 3)
+  assert.equal(s.dimensions, undefined); assert.equal(s.capacity, undefined); assert.deepEqual(s.quick, []); assert.deepEqual(s.capabilities, []); assert.deepEqual(s.standardEquipment, [])
+  assert.deepEqual(s.groups.flatMap((g) => g.rows).map((r) => r.id), ["discs", "disc-diameter", "working-width", "working-depth", "tractor-power", "weight"])
+  for (const slug of ["zoomlion-zl120", "disk-harrow", "implements-set", "water-bowser"]) assert.equal(getSpecSheet(slug), undefined, `${slug} is not authorized`)
+})
+
+test("3-Disk Plough: all six values are exactly as published, units and ranges unconverted, KPIs as authorized", async () => {
+  const { specSheets } = await loadData(); const s = specSheets[PLOUGH]
+  const row = (id) => entriesOf(s).find((e) => e.row === id)
+  const want = { discs: ["3", undefined], "disc-diameter": ["660", "mm (26 in)"], "working-width": ["Approx. 90–110", "cm"], "working-depth": ["25–30", "cm"], "tractor-power": ["70–90", "HP"], weight: ["Approx. 320–350", "kg"] }
+  for (const [id, [value, unit]] of Object.entries(want)) { assert.equal(row(id).value, value, id); assert.equal(row(id).unit, unit, id) }
+  assert.deepEqual(s.kpis.map((k) => [k.id, k.value, k.unit]), [["discs", "3", "discs"], ["power", "70–90", "HP"], ["width", "90–110", "cm"]])
+  // the repository product record agrees with the sheet (verified against the source, not retyped)
+  const rec = read("src/data/products.ts"); const block = rec.slice(rec.indexOf('slug: "3-disk-plough"'), rec.indexOf('ctaHeadline: "Prepare your land'))
+  for (const frag of ['["No. of Discs", "3"]', '["Disc Diameter", "660 mm"]', '"660 mm (26 in)"', '["Tractor Compatibility", "70–90 HP"]', '["Working Width", "90–110 cm"]', '"Approx. 90 cm – 110 cm"', '["Working Depth", "25–30 cm"]', '["Approx. Weight", "320–350 kg"]']) assert.ok(block.includes(frag), `product record contains ${frag}`)
+  const t = publishedText(s); assert.ok(!/\b(0\.9|1\.1|0\.9–1\.1|900|1100|1,100|lb|lbs|inch|in\.)\b/.test(t.replace("660", "").replace("26 in", "")), "no silent unit conversion"); assert.ok(!/\bm\b/.test(t.replace(/[^\w ]/g, " ").replace(/\bmm\b/g, "")), "no metre values")
+})
+
+test("3-Disk Plough: approximate values are labelled, exact values are not, and website-only provenance is visible", async () => {
+  const { specSheets } = await loadData(); const s = specSheets[PLOUGH]; const row = (id) => entriesOf(s).find((e) => e.row === id)
+  for (const id of ["working-width", "weight"]) assert.match(row(id).value, /^Approx\. /, `${id} is labelled approximate`)
+  for (const id of ["discs", "disc-diameter", "working-depth", "tractor-power"]) assert.ok(!/approx/i.test(row(id).value), `${id} is published as an exact value and is not relabelled`)
+  const width = s.kpis.find((k) => k.id === "width"); assert.match(width.label, /approx/i); assert.match(width.foot, /APPROXIMATE/); assert.match(s.lede, /approximate/i)
+  assert.ok(!/guarantee|exactly|precise|certified/i.test(publishedText(s)), "no exact-engineering guarantee")
+  assert.match(s.lede, /website only/i); assert.match(s.lede, /not been verified against a manufacturer datasheet/i); assert.ok(s.kpis.every((k) => /WEBSITE-PUBLISHED/.test(k.foot)))
+  const imp = read("src/components/spec-sheet/ImplementSheet.tsx"); assert.match(imp, /STATUS_MARK/)
+})
+
+test("3-Disk Plough: source attribution keeps the website values and the catalogue designation distinct", async () => {
+  const { specSheets } = await loadData(); const s = specSheets[PLOUGH]; const byId = Object.fromEntries(s.sources.map((x) => [x.id, x]))
+  assert.ok(entriesOf(s).every((e) => e.status === "website-published" && e.sources.length === 1 && e.sources[0] === "web-products"), "every value is website-published from the website record only")
+  assert.ok(s.kpis.every((k) => k.status === "website-published" && k.sources.length === 1 && k.sources[0] === "web-products"))
+  assert.equal(byId["web-products"].kind, "website"); assert.ok(!s.sources.some((x) => x.kind === "manufacturer"), "no manufacturer source is invented")
+  assert.deepEqual(s.catalogueDesignation, { value: "3 Disc Mounted Disc Plough", sources: ["catalogue-p2-implements", "company-profile-p6-implements"] })
+  for (const id of s.catalogueDesignation.sources) { assert.equal(byId[id].kind, "jolu-document"); assert.match(byId[id].note, /not a manufacturer datasheet/); assert.match(byId[id].note, /no technical values/) }
+  for (const e of entriesOf(s)) assert.ok(!e.sources.some((id) => id.startsWith("catalogue") || id.startsWith("company-profile")), `${e.row}: the catalogue is not cited as support for a value`)
+  assert.ok(!/manufacturer-verified|corroborated by/i.test(publishedText(s)) || /not been verified/.test(s.lede), "no verification claim")
+  assert.match(s.sourceStatement, /No value has been verified against a manufacturer datasheet/)
+  assert.ok(!entriesOf(s).some((e) => e.status !== "website-published")); assert.ok(!/KSH|price/i.test(publishedText(s)), "no price in customer-visible text"); assert.ok(!/KSH\s?[\d,]+/i.test(JSON.stringify(s.sources)), "no price figure in any source record")
+})
+
+test("3-Disk Plough: hitch category and other unsupported content are excluded, recorded and never published", async () => {
+  const { specSheets } = await loadData(); const s = specSheets[PLOUGH]; const ex = (id) => s.excluded.find((x) => x.id === id)
+  for (const id of ["hitch-category", "mounting-specification", "overall-dimensions", "durability-and-soil-claims", "operating-characteristics", "materials", "price", "warranty-certifications"]) { assert.ok(ex(id), `excludes ${id}`); assert.ok(ex(id).detail.length > 20 && ex(id).reason, id) }
+  assert.equal(ex("hitch-category").reason, "not-supplied"); assert.match(ex("hitch-category").detail, /no hitch category is inferred/)
+  for (const n of s.notPublished) assert.ok(ex(n.excludedId), `notPublished ${n.label} is tied to an exclusion record`)
+  const t = publishedText(s).replace('"Hitch category"', ""); const cust = JSON.stringify({ ...s, excluded: undefined, sources: undefined, notPublished: undefined })
+  assert.ok(!/hitch|linkage|three[- ]point|3[- ]point|category\s*[1-4IV]\b|\bcat\.?\s*[1-4]/i.test(cust), "no hitch category in customer-visible data")
+  assert.ok(!/heavy[- ]duty|robust|durab|long service|low maintenance|rocky|hard soil|penetrat|corros|boron|warrant|certif|\bISO\b|\bCE\b|price|KSH/i.test(t), "no unsupported durability, material, warranty, certification or price claims")
+  assert.equal((JSON.stringify({ ...s, excluded: undefined, sources: undefined }).match(/Mounted/g) || []).length, 1, "'Mounted' appears only inside the catalogue designation")
+  assert.ok(!/\d+\s*(×|x)\s*\d+/.test(t), "no invented overall dimensions"); assert.ok(!/\b(speed|rpm|km\/h|ha\/h|acres?)\b/i.test(t), "no invented operating characteristics")
+})
+
+test("3-Disk Plough: the original product image is used unmodified, whole, at native scale and without distortion", async () => {
+  const { specSheets } = await loadData(); const s = specSheets[PLOUGH]; const file = path.join(ROOT, "src/assets/threeDiskPlough.webp")
+  assert.equal(s.image, "@/assets/threeDiskPlough.webp"); const crypto = await import("node:crypto")
+  assert.equal(crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex"), PLOUGH_IMAGE_SHA256, "the original image is byte-identical to production main")
+  const meta = await sharp(file).metadata(); assert.equal(meta.width, 700); assert.equal(meta.height, 460)
+  assert.equal(s.imageFit.scale, 1, "shown at 100%: no enlargement and no crop"); assert.equal(s.imageFit.sourceWidthPx, 700)
+  assert.ok((s.imageFit.subject.right - s.imageFit.subject.left) <= 0.9 && s.imageFit.subject.left >= 0 && s.imageFit.subject.right <= 1 && s.imageFit.subject.top >= 0 && s.imageFit.subject.bottom <= 1, "whole machine inside the frame")
+  const css = read("src/styles/spec-sheet-print.css"); assert.match(css, /\.ss-stage-img img \{[^}]*height: auto[^}]*object-fit: contain/s); assert.ok(!/\.ss-imp[^{]*img[^{]*\{[^}]*(object-fit: (cover|fill)|height: \d)/.test(css), "implement layout never stretches or crops the photo")
+  assert.match(s.imageAlt, /three-disc plough/i)
+  const man = JSON.parse(read("src/generated/image-manifest.json")); assert.ok(JSON.stringify(man).includes("threeDiskPlough"), "optimised variants exist for the image")
+})
+
+test("route and print behaviour: one generic route, harness uses the layout page counts, other products are untouched", async () => {
+  const app = read("src/App.tsx"); assert.equal((app.match(/spec-sheet/g) || []).length, 1, "single generic route"); assert.match(app, /\/products\/:slug\/spec-sheet/)
+  const harness = fs.readFileSync(path.join(ROOT, "../docs/m3-a4/verify-batch.mjs"), "utf8"); assert.match(harness, /LAYOUT_PAGES/); assert.match(harness, /expectedPages/); assert.match(harness, /x\.pages === x\.expectedPages/)
+  const { specSheets } = await loadData()
+  // the four unauthorized implement-category products and ZL120 have no sheet, and their records and images are not part of this change
+  for (const slug of ["zoomlion-zl120", "disk-harrow", "implements-set", "water-bowser"]) assert.ok(!specSheets[slug])
+  const sheets = read("src/data/spec-sheets/index.ts"); assert.equal((sheets.match(/three-disk-plough/g) || []).length, 1)
 })
