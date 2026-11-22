@@ -112,6 +112,8 @@ export interface ExcludedItem {
   label: string
   reason: ExclusionReason
   detail: string
+  /** Original source values preserved verbatim with their locations, so excluded evidence is never lost (M3-A7B). */
+  evidence?: { value: string; location: string }[]
 }
 
 /** One overall envelope. Two envelopes are only used when the sources attribute different dimensions to distinct models. */
@@ -213,6 +215,8 @@ export interface SpecSheet {
   catalogueDesignation?: { value: string; sources: string[] }
   /** Implement layout only: specifications deliberately not published, each tied to an `excluded` record. */
   notPublished?: NotPublishedItem[]
+  /** Implement layout only: optional hero (photo + KPI) height in mm; omitted = the approved 84 mm. Lets a portrait photo be shown larger without touching other sheets. */
+  heroHeightMm?: number
   /** Implement layout only: one-sentence statement of where the values come from. */
   sourceStatement?: string
   contact: ContactInfo

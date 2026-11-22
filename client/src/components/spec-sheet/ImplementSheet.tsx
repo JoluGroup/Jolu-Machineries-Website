@@ -37,7 +37,7 @@ const ImplementSheet = ({ sheet, legend }: ImplementSheetProps) => (
 
     <p className="ss-imp-lede">{sheet.lede}</p>
 
-    <div className="ss-imp-hero">
+    <div className="ss-imp-hero" style={sheet.heroHeightMm ? { ["--ss-imp-hero-h" as string]: `${sheet.heroHeightMm}mm` } : undefined}>
       <div className="ss-imp-photo">
         <div className="ss-imp-photo-head ss-caps">Product photograph</div>
         <div className="ss-stage-img" style={{ ["--ss-img-scale" as string]: sheet.imageFit.scale }}>

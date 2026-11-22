@@ -13,9 +13,10 @@ import tf150 from "./tf150-combine-harvester"
 import zl105 from "./zl105-combine-harvester"
 import zc123s from "./zc123s-combine-harvester"
 import plough3 from "./three-disk-plough"
+import plough2 from "./two-disk-plough"
 
 /** Registry of specification sheets, keyed by product slug. Unknown slugs resolve to undefined (NotFound). */
-const all: SpecSheet[] = [rs1304, rc904, rk504, pg2004, pl2304, rg1804, rd504, rn904, dv3504, te100, tf150, zl105, zc123s, plough3]
+const all: SpecSheet[] = [rs1304, rc904, rk504, pg2004, pl2304, rg1804, rd504, rn904, dv3504, te100, tf150, zl105, zc123s, plough3, plough2]
 
 export const specSheets: Record<string, SpecSheet> = Object.fromEntries(all.map((s) => [s.slug, s]))
 
