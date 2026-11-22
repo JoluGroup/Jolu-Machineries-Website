@@ -100,3 +100,68 @@ Header nav overflow at 768-893 px; floating contact stack vs. controls at 360 px
 3. If a code rollback is needed: `git revert -m 1 <PR #12 merge commit>` on a branch, open a PR, merge (triggers a Production deploy), or redeploy 6244d87.
 4. After rollback verify: home loads, `/products` loads, one deep link, one `/_img/` WebP returns 200, and a missing `/_img/` file returns 404 without `immutable`.
 5. Note: generated images are produced at build time and are not in git; a rollback to 6244d87 restores the pre-M2 image set.
+
+## M2 FINAL RELEASE READINESS (after M2-R05)
+PR #16 (M2-R05 responsive navigation) was merged into `integration/m2-machineries-release` with a normal merge commit after the owner reviewed its preview.
+- **Final integrated code commit: `20d28ffb7ebc1a3d67ebab0a2219358d855394ad`; tree SHA `63e440b242b59bbd254a83719e97f74bbc92aad7`.** Docs-only commits may follow (the docs head is recorded in PR #12).
+- **Exact Vercel preview of the final code commit (build succeeded):** https://jolu-machineries-website-7nwpuly41-jolu-group.vercel.app
+- Production baseline to roll back to: `6244d87c7610318b16c28cc15b24c0dd2efc4c3f` (main, unchanged throughout).
+
+### Owner-verified visual evidence (screenshots reviewed by the owner on the PR #16 preview) and its limits
+Verified by the owner: desktop navigation visually intact; tablet-width navigation switches to the hamburger layout without visible overlap; actual iPhone homepage renders correctly; the mobile quotation form opens; homepage shows 500 tractors sold, 5 years of experience, 480 happy customers; desktop hero controls are separated from the statistics.
+**Limits.** Screenshots do not confirm form submission, form dismissal, a complete mobile catalogue walkthrough, or that the commercial statistics are true. Form dismissal and all 18 catalogue products were checked by Claude in automated browser runs (below); no real enquiry was submitted (all non-GET requests were blocked in the test). **The statistics 500 / 5 / 480 remain owner-supplied and NOT factually confirmed: that is a separate production publication gate.**
+
+### Complete M2 regression on 20d28ff (Claude-run on local builds of the final commit)
+| Check | Result |
+|---|---|
+| Automated tests | 73/73 pass (includes vercel-routing, generator-safety, integration, catalogue, hero-controls, responsive-nav) |
+| Production build | succeeds |
+| TypeScript | 5 errors, all pre-existing in `ScheduleVisit.tsx` (none new) |
+| ESLint | 7 errors / 7 warnings (unchanged baseline) |
+| Generated WebP | 385 files, set hash `3b58fe06`, identical to every earlier M2 tree |
+| Original images | 0 diffs against main in `src/assets` and `public/lovable-uploads` |
+| Catalogue | 18 cards, 18 decoded, `object-fit: contain`, equal-height rows, groups 9/5/4, links valid, 0 broken images, CLS 0 at 412 / 820 / 1366 px |
+| Product detail routes | all 18 render a heading with no page errors |
+| Navigation | 75-row matrix (15 widths x home, catalogue, product detail, gallery, news): 74 clean; the flagged row is the pre-existing homepage 10px overflow at 360px (H6) |
+| Mobile quote form | opens at 390, 820 and 1280 px; closes with Escape and with the close control; 0 non-GET requests (nothing submitted) |
+| Hero | 12 stress scenarios, 0 blank frames, 0 errors; stats read 500 / 5 / 480 |
+| Performance | home 1.12 MB total (0.83 MB images), CLS 0.0004-0.0005; catalogue 1.15 MB full, 0.53 MB initial, CLS 0.002; unchanged vs. earlier M2 trees. Throttled LCP varies run to run (2.4-3.7 s on identical home builds), so it is not a usable regression signal; transfer bytes and CLS are |
+| Vercel routing | `client/vercel.json` byte-identical to the version owner-verified live in M2-R03 (no change since 5880cf6) |
+| R-01 cache isolation | configuration unchanged and covered by `vercel-routing.test.mjs`; **live HTTP behaviour was owner-verified on the R03 preview, not re-run on production, see the smoke test below** |
+
+### Consolidated hardening queue (all deferred, none blocks release unless the owner decides otherwise)
+Full table with impact, priority and acceptance criteria: `docs/m2-r05/HARDENING-QUEUE.md` (H1 floating contact overlap at 360x640; H2 5 TS errors and 7 ESLint errors; H3 missing JS assets return HTML with 200; H4 failed hero image not retried; H5 low-resolution sources incl. `diskHarrow18` 224x224; H6 homepage 10px overflow at 360px; H7 mobile menu accessibility). Also open: CDN-level negative caching of 404s not independently established (R-01 note), and Vercel project settings are not verifiable from here.
+
+### Production deployment procedure (owner-authorized steps only)
+1. Owner confirms the statistics 500 / 5 / 480 are factually correct (or edits them first).
+2. Owner gives explicit written authorization to merge PR #12 into `main`.
+3. Before merging, note the current Production deployment in Vercel (built from `6244d87`) so it can be restored.
+4. Mark PR #12 ready for review and merge it with a normal merge commit. **This triggers an automatic Production deployment** (R-05; no GitHub Actions, main is unprotected). Do not merge any other PR at the same time.
+5. Watch the Vercel Production build finish (first build after merge regenerates the 385 images; expect about 2 minutes for that step). Do not change settings during the build.
+6. Run the smoke test below immediately.
+
+### Post-deployment smoke test (run against the production domain)
+- Pages: `/`, `/products`, one `/products/<slug>`, `/gallery`, `/news`, a deep link refreshed in the browser (SPA routing), the browser console clean.
+- Home: counters read 500 / 5 / 480, hero advances, controls sit below the statistics.
+- Catalogue: 18 products, images uncropped, a Details link works.
+- Navigation: desktop width shows the full nav; at 768-1139 px and on a phone the hamburger opens and "Request a Quote" opens the form; close it WITHOUT submitting.
+- **R-01 live HTTP checks** (replace HOST):
+  - `IMG=$(curl -s https://HOST/ | grep -o '/_img/[^"]*\.webp' | head -1)`
+  - `curl -sI https://HOST$IMG` expect `200`, `content-type: image/webp`, `cache-control` containing `immutable`.
+  - `curl -sI https://HOST/_img/not-a-real-image-480.webp` expect `404` and `cache-control` WITHOUT `immutable`.
+  - `curl -sI https://HOST/_img/not-a-real-image-480.0123456789abcdef.webp` expect `404` and no `immutable`.
+  - `curl -sI https://HOST/products` expect `200` `text/html` (SPA fallback).
+  - Record whether `x-vercel-cache` appears on the 404s; if not, CDN negative caching stays "not established".
+- Email and DNS are not part of this release; do not touch them.
+
+### Rollback to the production baseline (`6244d87`)
+1. Fastest: in Vercel, Instant Rollback (or Promote) the earlier Production deployment built from `6244d87` (the owner does this; availability depends on project settings that cannot be verified from here).
+2. Code rollback: `git revert -m 1 <PR #12 merge commit>` on a branch, open a PR to main and merge (this triggers a Production deploy), or redeploy the `6244d87` commit.
+3. After rollback verify: home and `/products` load, a deep link works, and an `/_img/` request behaves as the pre-M2 site did (the pre-M2 image set is restored).
+4. Rolling back does not undo any DNS or email change (none are part of this release).
+
+### Remaining production gates
+1. Factual confirmation of the commercial statistics (500 / 5 / 480).
+2. Owner decision to accept or fix the deferred hardening items.
+3. Explicit written authorization to merge PR #12 into `main` (triggers Production).
+4. Post-deployment smoke test, including the live R-01 responses.
