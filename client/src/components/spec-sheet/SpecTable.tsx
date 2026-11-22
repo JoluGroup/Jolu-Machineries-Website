@@ -8,8 +8,8 @@ const SpecTable = ({ sheet }: { sheet: SpecSheet }) => {
       <thead>
         <tr>
           <th scope="col">PARAMETER</th>
-          <th scope="col">{a.label}</th>
-          <th scope="col">{b.label}</th>
+          <th scope="col">{a.title}<small>Published as “{a.label}”</small></th>
+          <th scope="col">{b.title}<small>Published as “{b.label}”</small></th>
         </tr>
       </thead>
       {sheet.groups.map((g) => (

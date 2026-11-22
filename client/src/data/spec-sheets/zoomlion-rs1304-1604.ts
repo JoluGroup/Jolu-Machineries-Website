@@ -9,7 +9,7 @@ import type { SpecEntry, SpecSheet, PublishableStatus } from "./types"
  *           A JOLU document, NOT a manufacturer datasheet.
  *  No value here is manufacturer-verified yet.
  *
- * Variants are the two columns the sources publish: "RS1304/1604" and "RS1304/1604 (2025 New)".
+ * Configurations are the two columns the sources publish: "RS1304/1604" and "RS1304/1604 (2025 New)".
  * Figures are published per column for the series; separate RS1304 and RS1604 figures are not
  * published for most values, so anything that would need that split is in `excluded`.
  */
@@ -31,7 +31,7 @@ const nw = (value: string, status: PublishableStatus, sources: string[], unit?: 
   status,
   sources,
 })
-/** Same value in both published variant columns. */
+/** Same value in both published configuration columns. */
 const both = (value: string, status: PublishableStatus, sources: string[], unit?: string): SpecEntry[] => [
   std(value, status, sources, unit),
   nw(value, status, sources, unit),
@@ -47,12 +47,12 @@ const sheet: SpecSheet = {
   imageAlt: "Zoomlion RS1304/1604 wheeled tractor",
   doc: { code: "JM-RS1304-1604-DS", revision: "PILOT 00", issued: "2026-11" },
   variants: [
-    { id: "standard", label: "RS1304/1604", short: "STANDARD" },
-    { id: "new2025", label: "RS1304/1604 (2025 New)", short: "2025 NEW" },
+    { id: "standard", label: "RS1304/1604", short: "STANDARD", title: "Standard configuration" },
+    { id: "new2025", label: "RS1304/1604 (2025 New)", short: "2025 NEW", title: "2025 New configuration" },
   ],
   lede:
     "Published specifications for the Zoomlion RS1304/1604 wheeled tractor, supplied by JOLU Machineries. " +
-    "Values are shown for each published variant. Confirm all figures with JOLU before purchase.",
+    "Values are shown for each published configuration; the sources do not publish separate RS1304 and RS1604 figures. Confirm all figures with JOLU before purchase.",
   kpis: [
     {
       id: "power-range",
@@ -68,7 +68,7 @@ const sheet: SpecSheet = {
       label: "Calibrated traction",
       value: "51",
       unit: "kN",
-      foot: "CORROBORATED · BOTH VARIANTS",
+      foot: "CORROBORATED · BOTH CONFIGURATIONS",
       status: "corroborated",
       sources: BOTH,
     },
@@ -88,7 +88,7 @@ const sheet: SpecSheet = {
       tag: "01 / DRIVETRAIN",
       title: "Gearbox and clutch",
       text:
-        "16F+8R gearbox on the standard variant and 24F+8R on the 2025 New variant, with a dry, independently operated double-action clutch.",
+        "16F+8R gearbox in the standard configuration and 24F+8R in the 2025 New configuration, with a dry, independently operated double-action clutch.",
       derivedFrom: ["gearbox", "clutch"],
     },
     {
@@ -253,7 +253,7 @@ const sheet: SpecSheet = {
       id: "optional-gearbox",
       label: "24F+8R described as 'optional'",
       reason: "unverified-claim",
-      detail: "The website key-spec line calls 24F+8R optional, while the table presents it as the 2025 New variant. Shown only as the 2025 New variant.",
+      detail: "The website key-spec line calls 24F+8R optional, while the table presents it as the 2025 New configuration. Shown only in the 2025 New configuration.",
     },
     {
       id: "price",

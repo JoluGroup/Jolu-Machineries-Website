@@ -88,7 +88,7 @@ const SpecSheetPage = () => {
             <div>
               <div className="ss-wordmark">JOLU MACHINERIES</div>
               <h2 className="ss-title">{sheet.modelDesignation} / Technical data</h2>
-              <div className="ss-sub">{sheet.productName} · values shown per published variant</div>
+              <div className="ss-sub">{sheet.productName} · values shown per published configuration</div>
             </div>
             <div className="ss-revision ss-mono">
               <div><strong>DOC</strong> {sheet.doc.code}</div>

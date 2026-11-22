@@ -29,9 +29,10 @@ const ProductOverview = ({ sheet }: { sheet: SpecSheet }) => {
         <div className="ss-modeltag">
           <div className="ss-caps" style={{ color: "var(--ss-highlight)" }}>MODEL</div>
           <strong className="ss-mono">{sheet.modelDesignation}</strong>
+          <div className="ss-modelnote">Series designation as published · 2 published configurations</div>
           <div className="ss-variants">
             {sheet.variants.map((v) => (
-              <span className="ss-chip" key={v.id}>{v.label.toUpperCase()}</span>
+              <span className="ss-chip" key={v.id}>{v.title.toUpperCase()}</span>
             ))}
           </div>
         </div>
@@ -50,7 +51,7 @@ const ProductOverview = ({ sheet }: { sheet: SpecSheet }) => {
               <ResponsiveImage
                 src={sheet.image}
                 alt={sheet.imageAlt}
-                sizes="(min-width: 900px) 420px, 90vw"
+                sizes="(min-width: 900px) 560px, 90vw"
                 priority
               />
             </div>

@@ -14,6 +14,8 @@ export interface VariantInfo {
   /** Exact column name used by the sources. */
   label: string
   short: string
+  /** Conservative display name: a published configuration, not a verified model variant. */
+  title: string
 }
 
 /**
