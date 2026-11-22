@@ -3,6 +3,7 @@ import ResponsiveImage from "@/components/ResponsiveImage"
 import type { SpecSheet } from "@/data/spec-sheets/types"
 import KpiRow from "./KpiRow"
 import DimensionDiagram from "./DimensionDiagram"
+import { columnsStatement } from "./format"
 
 type View = "photo" | "dimensions"
 
@@ -18,7 +19,7 @@ const ProductOverview = ({ sheet }: { sheet: SpecSheet }) => {
   const caption =
     view === "photo"
       ? "PRODUCT PHOTOGRAPH · IMAGE FOR REFERENCE"
-      : "ILLUSTRATIVE SCHEMATIC · NOT A MANUFACTURER DRAWING · NOT TO SCALE"
+      : "Illustrative diagram — not to scale. Confirm installation dimensions before purchase."
   return (
     <>
       <header className="ss-top">
@@ -29,12 +30,14 @@ const ProductOverview = ({ sheet }: { sheet: SpecSheet }) => {
         <div className="ss-modeltag">
           <div className="ss-caps" style={{ color: "var(--ss-highlight)" }}>MODEL</div>
           <strong className="ss-mono">{sheet.modelDesignation}</strong>
-          <div className="ss-modelnote">Series designation as published · 2 published configurations</div>
-          <div className="ss-variants">
-            {sheet.variants.map((v) => (
-              <span className="ss-chip" key={v.id}>{v.title.toUpperCase()}</span>
-            ))}
-          </div>
+          <div className="ss-modelnote">{columnsStatement(sheet).tag}</div>
+          {sheet.variants.length > 1 && (
+            <div className="ss-variants">
+              {sheet.variants.map((v) => (
+                <span className="ss-chip" key={v.id}>{v.title.toUpperCase()}</span>
+              ))}
+            </div>
+          )}
         </div>
       </header>
       <div className="ss-eyebrow ss-caps">{sheet.category} · product specification</div>
@@ -47,7 +50,7 @@ const ProductOverview = ({ sheet }: { sheet: SpecSheet }) => {
             <span className="ss-mono">{view === "photo" ? "VIEW 01 / PHOTO" : "VIEW 02 / DIMENSIONS"}</span>
           </div>
           {view === "photo" ? (
-            <div className="ss-stage-img">
+            <div className="ss-stage-img" style={{ ["--ss-img-scale" as string]: sheet.imageFit.scale }}>
               <ResponsiveImage
                 src={sheet.image}
                 alt={sheet.imageAlt}
@@ -57,7 +60,7 @@ const ProductOverview = ({ sheet }: { sheet: SpecSheet }) => {
             </div>
           ) : (
             <div className="ss-stage-diagram">
-              <DimensionDiagram d={sheet.dimensions} />
+              <DimensionDiagram d={sheet.dimensions} columns={sheet.variants} />
             </div>
           )}
           <div className="ss-view-caption ss-mono">{caption}</div>

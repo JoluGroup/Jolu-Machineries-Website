@@ -7,7 +7,7 @@ import DimensionDiagram from "@/components/spec-sheet/DimensionDiagram"
 import SpecTable from "@/components/spec-sheet/SpecTable"
 import ConfigurationList from "@/components/spec-sheet/ConfigurationList"
 import ProcurementBlock from "@/components/spec-sheet/ProcurementBlock"
-import { STATUS_MARK, entryFor, entryText, fmtInt, rowById } from "@/components/spec-sheet/format"
+import { STATUS_MARK, columnsStatement } from "@/components/spec-sheet/format"
 import NotFound from "@/pages/NotFound"
 import "@/styles/spec-sheet-print.css"
 
@@ -51,11 +51,13 @@ const SpecSheetPage = () => {
 
   if (!sheet) return <NotFound />
 
-  const dims = rowById(sheet, "dimensions")!
-  const mass = rowById(sheet, "mass")!
-  const [va, vb] = sheet.variants
-  const massA = entryFor(mass.entries, va.id)!
-  const massB = entryFor(mass.entries, vb.id)!
+  const stmt = columnsStatement(sheet)
+  // Long tables (>= 17 rows) get tighter spacing, never smaller type.
+  const rowCount = sheet.groups.reduce((n, g) => n + g.rows.length, 0)
+  const dense = rowCount >= 17
+  // Legend lists only the evidence statuses actually used on this sheet.
+  const used = new Set(sheet.groups.flatMap((g) => g.rows.flatMap((r) => r.entries.map((e) => e.status))))
+  const legend = (["corroborated", "website-published", "manufacturer-verified"] as const).filter((s) => used.has(s))
 
   return (
     <div className="ss-root" ref={ref} style={{ ["--ss-scale" as string]: scale }}>
@@ -73,7 +75,7 @@ const SpecSheetPage = () => {
         </div>
         {sheet.reviewState !== "approved" && (
           <div className="ss-pilot" role="note">
-            Pilot preview. This sheet is pending owner approval. In the print dialog, enable "Background graphics" for full colour.
+            Preview. This sheet is pending owner approval and is not for public circulation. In the print dialog, enable "Background graphics" for full colour.
           </div>
         )}
       </div>
@@ -83,12 +85,12 @@ const SpecSheetPage = () => {
           <ProductOverview sheet={sheet} />
         </A4Page>
 
-        <A4Page tone="light" label="Page 2 technical specification" index="02 / 02">
+        <A4Page tone="light" label="Page 2 technical specification" index="02 / 02" className={dense ? "ss-dense" : undefined}>
           <header className="ss-light-top">
             <div>
               <div className="ss-wordmark">JOLU MACHINERIES</div>
               <h2 className="ss-title">{sheet.modelDesignation} / Technical data</h2>
-              <div className="ss-sub">{sheet.productName} · values shown per published configuration</div>
+              <div className="ss-sub">{sheet.productName} · {stmt.sub}</div>
             </div>
             <div className="ss-revision ss-mono">
               <div><strong>DOC</strong> {sheet.doc.code}</div>
@@ -97,26 +99,30 @@ const SpecSheetPage = () => {
             </div>
           </header>
           <div className="ss-quick">
-            <div><span className="ss-caps">OVERALL L × W × H</span><b>{entryText(entryFor(dims.entries, va.id)!)}</b></div>
-            <div><span className="ss-caps">MASS · {va.short}</span><b>{fmtInt(Number(massA.value))} {massA.unit}</b></div>
-            <div><span className="ss-caps">MASS · {vb.short}</span><b>{fmtInt(Number(massB.value))} {massB.unit}</b></div>
-            <div><span className="ss-caps">POWER RANGE</span><b>130–160 hp</b></div>
+            {sheet.quick.map((q) => (
+              <div key={q.label}><span className="ss-caps">{q.label}</span><b>{q.value}</b></div>
+            ))}
           </div>
           <div className="ss-diagram-title">
             <h3>Dimension schematic</h3>
             <span className="ss-mono">ILLUSTRATIVE · NOT TO SCALE</span>
           </div>
           <div className="ss-footprint">
-            <DimensionDiagram d={sheet.dimensions} />
+            <DimensionDiagram d={sheet.dimensions} columns={sheet.variants} />
           </div>
           <div className="ss-diagram-note">
-            Illustration drawn from the published overall dimensions only. It is not a manufacturer drawing, does not show the machine outline
-            or axle positions, and is not suitable for installation planning.
+            Illustrative diagram — not to scale. Confirm installation dimensions before purchase. Drawn from the published overall dimensions
+            only; it is not a manufacturer drawing and does not show the machine outline or axle positions.
           </div>
           <h3 className="ss-spec-title">
             Technical specification
             <small>
-              {STATUS_MARK.corroborated.mark} corroborated by a second JOLU document · {STATUS_MARK["website-published"].mark} published on the JOLU website
+              {legend.map((s, i) => (
+                <span key={s}>
+                  {i > 0 && " · "}
+                  {STATUS_MARK[s].mark} {STATUS_MARK[s].legend}
+                </span>
+              ))}
             </small>
           </h3>
           <SpecTable sheet={sheet} />

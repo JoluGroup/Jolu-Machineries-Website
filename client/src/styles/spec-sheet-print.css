@@ -77,9 +77,9 @@
 .ss-viewport-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; color: var(--ss-on-dark-soft); }
 .ss-viewport-head .ss-mono { font-size: 9px; }
 .ss-stage-img { flex: 1; margin: 0 12px; background: var(--ss-light); position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; border: 1px solid hsl(var(--border)); }
-/* The source PNG carries ~39% horizontal margin around the machine (tractor spans ~61% of the width). Rendering the image at 120% and clipping only that empty margin enlarges the machine ~20% with no crop of the tractor and no distortion. */
+/* Per-sheet fit: --ss-img-scale comes from the sheet's imageFit (measured from the source image). Scale >1 clips only empty margin around the machine; the image is never stretched (height auto, object-fit contain). */
 .ss-stage-img { overflow: hidden; }
-.ss-stage-img img { width: 120%; max-width: none; height: auto; flex: none; object-fit: contain; }
+.ss-stage-img img { width: calc(var(--ss-img-scale, 1) * 100%); max-width: none; max-height: 100%; height: auto; flex: none; object-fit: contain; }
 .ss-stage-diagram { flex: 1; margin: 0 12px; background: var(--ss-light); color: var(--ss-ink); display: flex; align-items: center; justify-content: center; min-height: 0; border: 1px solid hsl(var(--border)); }
 .ss-stage-diagram svg { width: 100%; height: 100%; }
 .ss-view-caption { padding: 6px 12px; font-size: 8.5px; color: var(--ss-on-dark-soft); }
@@ -132,6 +132,7 @@
 .ss-table thead th { background: var(--ss-dark-surface); }
 .ss-table td { border-bottom: 1px solid var(--ss-border); padding: 2.3px 8px; vertical-align: top; line-height: 1.25; }
 .ss-table td.k { color: var(--ss-ink); font-weight: 500; width: 33%; }
+.ss-table.ss-cols-1 td.k { width: 33%; }
 .ss-table td.v { font-family: var(--ss-mono); font-variant-numeric: tabular-nums; font-size: 9.5px; font-weight: 600; }
 .ss-table tbody tr:nth-child(even) td { background: var(--ss-muted-surface); }
 .ss-table tr.group th { background: var(--ss-dark); }
@@ -151,6 +152,16 @@
 .ss-cta:hover { background: var(--ss-dark-surface); }
 .ss-cta:focus-visible { outline: 2px solid var(--ss-accent); outline-offset: 2px; }
 .ss-fineprint { margin-top: 5px; font-size: 8px; color: var(--ss-soft-ink); line-height: 1.45; }
+
+/* dense mode: long tables keep the same type size; only spacing tightens */
+.ss-dense .ss-table td { padding-top: 1.9px; padding-bottom: 1.9px; }
+.ss-dense .ss-config { margin-top: 3mm; margin-bottom: 2.5mm; }
+.ss-dense .ss-config-col ul { display: grid; grid-template-columns: 1fr 1fr; column-gap: 10px; padding: 5px 10px; }
+.ss-dense .ss-config-col h3 { padding: 5px 10px; }
+.ss-dense .ss-config-col p { padding: 5px 10px; }
+.ss-dense .ss-procurement { padding-top: 7px; }
+.ss-dense .ss-contact { display: grid; grid-template-columns: auto auto; column-gap: 22px; line-height: 1.5; align-items: start; }
+.ss-dense .ss-contact strong { grid-column: 1 / -1; }
 
 /* ---------- print: exactly two A4 pages, no controls ---------- */
 @media print {

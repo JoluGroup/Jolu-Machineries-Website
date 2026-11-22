@@ -6,16 +6,36 @@
  * (with the reason) so they are visible to reviewers but never reach the customer-facing sheet.
  */
 
-/** A machine variant exactly as the source tables name it (a column in the published table). */
-export type VariantId = "standard" | "new2025"
+/**
+ * What a column of the published table identifies. Never inferred from product names:
+ *  - "single-machine":           the table describes one machine (one column).
+ *  - "distinct-model":           columns are separate models with their own model-specific values.
+ *  - "published-configuration":  columns are published configurations of a series; the sources do not
+ *                                establish that they are separate verified models.
+ */
+export type ColumnKind = "single-machine" | "distinct-model" | "published-configuration"
+
+/** Column id, unique within one sheet. */
+export type VariantId = string
 
 export interface VariantInfo {
   id: VariantId
   /** Exact column name used by the sources. */
   label: string
   short: string
-  /** Conservative display name: a published configuration, not a verified model variant. */
+  /** Display name (for configurations: a published configuration, not a verified model variant). */
   title: string
+  kind: ColumnKind
+}
+
+/** Per-sheet product photo fitting. scale 1 = fit the panel; >1 enlarges by clipping only empty margin. */
+export interface ImageFit {
+  scale: number
+  /** Subject bounding box as fractions of the source image (left, top, right, bottom), measured from the file. */
+  subject: { left: number; top: number; right: number; bottom: number }
+  /** Intrinsic width of the original source image in px. */
+  sourceWidthPx: number
+  rationale: string
 }
 
 /**
@@ -46,6 +66,8 @@ export interface SpecEntry {
   status: PublishableStatus
   /** ids of SourceRef */
   sources: string[]
+  /** Internal reviewer note (never rendered), e.g. why an attribution status was chosen. */
+  note?: string
 }
 
 export interface SpecRow {
@@ -92,13 +114,25 @@ export interface ExcludedItem {
   detail: string
 }
 
-export interface DimensionData {
+/** One overall envelope. Two envelopes are only used when the sources attribute different dimensions to distinct models. */
+export interface DimensionEnvelope {
+  label: string
   lengthMm: number
   widthMm: number
   heightMm: number
   wheelbaseMm: number
+}
+
+export interface DimensionData {
+  envelopes: DimensionEnvelope[]
+  /** Ground clearance per column id. */
   groundClearanceMm: Record<VariantId, number>
   sources: string[]
+}
+
+export interface QuickItem {
+  label: string
+  value: string
 }
 
 export interface ContactInfo {
@@ -110,17 +144,22 @@ export interface ContactInfo {
 
 export interface SpecSheet {
   slug: string
-  /** Only sheets with a reviewState of "approved" render without the pilot banner; unknown sheets 404. */
-  reviewState: "pilot-preview" | "approved"
+  /** Only sheets with a reviewState of "approved" render without the preview banner; unknown sheets 404. */
+  reviewState: "pilot-preview" | "preview" | "approved"
   productName: string
   modelDesignation: string
   category: string
   /** Existing optimized site image (resolved by ResponsiveImage). */
   image: string
   imageAlt: string
+  imageFit: ImageFit
   doc: { code: string; revision: string; issued: string }
   variants: VariantInfo[]
   lede: string
+  /** Four cells shown under the page-2 title; every figure must be present in the published rows. */
+  quick: QuickItem[]
+  /** hp text passed to the existing quote drawer; omitted when no headline hp is published. */
+  quoteHp?: string
   kpis: KpiItem[]
   capabilities: CapabilityItem[]
   groups: SpecGroup[]

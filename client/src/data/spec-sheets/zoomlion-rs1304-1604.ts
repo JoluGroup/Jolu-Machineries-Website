@@ -45,10 +45,23 @@ const sheet: SpecSheet = {
   category: "Wheeled tractor",
   image: "@/assets/tractor-7.png",
   imageAlt: "Zoomlion RS1304/1604 wheeled tractor",
+  imageFit: {
+    scale: 1.2,
+    subject: { left: 0.181, top: 0.039, right: 0.792, bottom: 0.953 },
+    sourceWidthPx: 990,
+    rationale: "Tractor spans ~61% of the source width; 120% clips only empty margin (approved M3-A2 pilot setting).",
+  },
+  quoteHp: "130–160 hp",
+  quick: [
+    { label: "OVERALL L × W × H", value: "5200×2435×3250 mm" },
+    { label: "MASS · STANDARD", value: "5,810 kg" },
+    { label: "MASS · 2025 NEW", value: "6,500 kg" },
+    { label: "POWER RANGE", value: "130–160 hp" },
+  ],
   doc: { code: "JM-RS1304-1604-DS", revision: "PILOT 00", issued: "2026-11" },
   variants: [
-    { id: "standard", label: "RS1304/1604", short: "STANDARD", title: "Standard configuration" },
-    { id: "new2025", label: "RS1304/1604 (2025 New)", short: "2025 NEW", title: "2025 New configuration" },
+    { id: "standard", label: "RS1304/1604", short: "STANDARD", title: "Standard configuration", kind: "published-configuration" },
+    { id: "new2025", label: "RS1304/1604 (2025 New)", short: "2025 NEW", title: "2025 New configuration", kind: "published-configuration" },
   ],
   lede:
     "Published specifications for the Zoomlion RS1304/1604 wheeled tractor, supplied by JOLU Machineries. " +
@@ -183,10 +196,7 @@ const sheet: SpecSheet = {
   optionalConfigurationNote:
     "No optional configurations have been verified for this machine. Ask JOLU Machineries for available options.",
   dimensions: {
-    lengthMm: 5200,
-    widthMm: 2435,
-    heightMm: 3250,
-    wheelbaseMm: 2640,
+    envelopes: [{ label: "RS1304/1604", lengthMm: 5200, widthMm: 2435, heightMm: 3250, wheelbaseMm: 2640 }],
     groundClearanceMm: { standard: 450, new2025: 490 },
     sources: BOTH,
   },

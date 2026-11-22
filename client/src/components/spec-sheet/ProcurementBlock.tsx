@@ -14,7 +14,7 @@ const ProcurementBlock = ({ sheet }: { sheet: SpecSheet }) => (
         ))}
       </div>
       <QuoteDrawer
-        product={{ name: sheet.productName, hp: "130–160 hp" }}
+        product={{ name: sheet.productName, hp: sheet.quoteHp }}
         trigger={<button type="button" className="ss-cta">Request a quote →</button>}
       />
     </footer>
