@@ -22,6 +22,7 @@ const UsedTractors = lazy(() => import("./pages/UsedTractors"));
 const Careers = lazy(() => import("./pages/Careers"));
 const Mud4Fun = lazy(() => import("./pages/Mud4Fun"));
 const NakuruLaunch = lazy(() => import("./pages/NakuruLaunch"));
+const SpecSheetPage = lazy(() => import("./pages/SpecSheetPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 
@@ -47,6 +48,8 @@ const App = () => {
               {/* Products */}
               <Route path="/products" element={<ProductList />} />
               <Route path="/products/:slug" element={<ProductDetail />} />
+              {/* M3-A2 pilot: direct route only (not linked from the catalogue or product pages yet) */}
+              <Route path="/products/:slug/spec-sheet" element={<SpecSheetPage />} />
               <Route path="/spare-parts" element={<SpareParts />} />
               <Route path="/used-tractors" element={<UsedTractors />} />
 
