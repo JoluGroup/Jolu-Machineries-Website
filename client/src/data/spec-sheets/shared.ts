@@ -81,3 +81,18 @@ export const ENGINE_DETAIL_EXCLUSION: ExcludedItem = {
   reason: "not-supplied",
   detail: "Not present as table values in any JOLU source reviewed.",
 }
+
+/** Harvester sheets (M3-A6): a key-spec card weight that is not in the specification table. */
+export const keySpecWeightExclusion = (value: string, product: string): ExcludedItem => ({
+  id: "weight",
+  label: `Weight '${value}' (website key-spec card, ${product})`,
+  reason: "unverified-claim",
+  detail: "Appears only in the product's key-spec card, not in its specification table, and the basis (dry, shipping or operating mass) is not stated. Withheld; no weight is inferred from any other model.",
+})
+
+export const NO_DIMENSIONS_EXCLUSION: ExcludedItem = {
+  id: "overall-dimensions",
+  label: "Overall dimensions (L×W×H)",
+  reason: "not-supplied",
+  detail: "The website specification table publishes no overall dimensions for this machine. None are invented and no dimension schematic is drawn; a capacity panel of supported values is shown instead.",
+}

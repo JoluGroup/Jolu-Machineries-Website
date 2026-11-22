@@ -40,8 +40,8 @@ for (const slug of SLUGS) {
     const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } }); const p = await ctx.newPage(); let nonGet = 0
     await p.route("**/*", async (r) => { const q = r.request(); if (!q.url().startsWith(base)) return r.abort(); if (q.method() !== "GET") { nonGet++; return r.abort() } r.continue() })
     await p.goto(base + ROUTE, { waitUntil: "load" }); await p.waitForSelector(".ss-page")
-    await p.click('button:has-text("DIMENSIONS")'); await p.waitForTimeout(200)
-    rec.dimTab = await p.locator(".ss-stage-diagram svg").count()
+    await p.click(".ss-view-tabs button:nth-child(2)"); await p.waitForTimeout(200)
+    rec.dimTab = await p.locator(".ss-stage-diagram svg, .ss-stage-diagram .ss-capacity-grid").count()
     await p.screenshot({ path: `${out}/${slug}-dimtab.png`, clip: { x: 0, y: 0, width: 1280, height: 900 } })
     await p.click('button:has-text("PHOTO")')
     await p.getByRole("button", { name: /Request a quote/i }).click(); await p.waitForTimeout(600)

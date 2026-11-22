@@ -3,6 +3,7 @@ import ResponsiveImage from "@/components/ResponsiveImage"
 import type { SpecSheet } from "@/data/spec-sheets/types"
 import KpiRow from "./KpiRow"
 import DimensionDiagram from "./DimensionDiagram"
+import CapacityPanel from "./CapacityPanel"
 import { columnsStatement } from "./format"
 
 type View = "photo" | "dimensions"
@@ -16,10 +17,14 @@ const ProductOverview = ({ sheet }: { sheet: SpecSheet }) => {
     window.addEventListener("beforeprint", reset)
     return () => window.removeEventListener("beforeprint", reset)
   }, [])
+  // Machines without published overall dimensions get a capacity panel instead of a dimension schematic.
+  const hasDims = Boolean(sheet.dimensions)
   const caption =
     view === "photo"
       ? "PRODUCT PHOTOGRAPH · IMAGE FOR REFERENCE"
-      : "Illustrative diagram — not to scale. Confirm installation dimensions before purchase."
+      : hasDims
+        ? "Illustrative diagram — not to scale. Confirm installation dimensions before purchase."
+        : "Supported published capacities only. No overall dimensions are published, so none are drawn."
   return (
     <>
       <header className="ss-top">
@@ -46,8 +51,8 @@ const ProductOverview = ({ sheet }: { sheet: SpecSheet }) => {
       <div className="ss-hero">
         <div className="ss-viewport">
           <div className="ss-viewport-head">
-            <span className="ss-caps">{view === "photo" ? "PRODUCT VIEW" : "DIMENSION VIEW"}</span>
-            <span className="ss-mono">{view === "photo" ? "VIEW 01 / PHOTO" : "VIEW 02 / DIMENSIONS"}</span>
+            <span className="ss-caps">{view === "photo" ? "PRODUCT VIEW" : hasDims ? "DIMENSION VIEW" : "CAPACITY VIEW"}</span>
+            <span className="ss-mono">{view === "photo" ? "VIEW 01 / PHOTO" : hasDims ? "VIEW 02 / DIMENSIONS" : "VIEW 02 / CAPACITY"}</span>
           </div>
           {view === "photo" ? (
             <div className="ss-stage-img" style={{ ["--ss-img-scale" as string]: sheet.imageFit.scale }}>
@@ -60,13 +65,17 @@ const ProductOverview = ({ sheet }: { sheet: SpecSheet }) => {
             </div>
           ) : (
             <div className="ss-stage-diagram">
-              <DimensionDiagram d={sheet.dimensions} columns={sheet.variants} />
+              {sheet.dimensions ? (
+                <DimensionDiagram d={sheet.dimensions} columns={sheet.variants} />
+              ) : sheet.capacity ? (
+                <CapacityPanel panel={sheet.capacity} />
+              ) : null}
             </div>
           )}
           <div className="ss-view-caption ss-mono">{caption}</div>
           <div className="ss-view-tabs" role="group" aria-label="Machine views">
             <button type="button" aria-pressed={view === "photo"} onClick={() => setView("photo")}>PHOTO</button>
-            <button type="button" aria-pressed={view === "dimensions"} onClick={() => setView("dimensions")}>DIMENSIONS</button>
+            <button type="button" aria-pressed={view === "dimensions"} onClick={() => setView("dimensions")}>{hasDims ? "DIMENSIONS" : "CAPACITY"}</button>
           </div>
         </div>
         <KpiRow kpis={sheet.kpis} />

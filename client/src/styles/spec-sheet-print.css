@@ -122,6 +122,14 @@
 .ss-diagram-title span { color: var(--ss-soft-ink); font-size: 9px; }
 .ss-footprint { height: 49mm; border: 1px solid var(--ss-border); background-color: var(--ss-muted-surface); background-image: linear-gradient(hsl(var(--border) / 0.7) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--border) / 0.7) 1px, transparent 1px); background-size: 7mm 7mm; color: var(--ss-ink); }
 .ss-footprint svg { width: 100%; height: 100%; display: block; }
+.ss-capacity { height: auto; min-height: 32mm; display: flex; align-items: stretch; }
+.ss-capacity-grid { display: grid; width: 100%; }
+.ss-capacity-cell { padding: 10px 12px; border-right: 1px solid var(--ss-border); border-bottom: 1px solid var(--ss-border); display: flex; flex-direction: column; justify-content: center; gap: 4px; background: hsl(var(--background) / 0.82); }
+.ss-capacity-cell .ss-caps { font-size: 8.5px; color: var(--ss-soft-ink); }
+.ss-capacity-cell b { font: 700 16px var(--ss-mono); color: var(--ss-ink); }
+.ss-capacity-cell b small { font: 600 10px var(--ss-mono); color: var(--ss-soft-ink); }
+.ss-stage-diagram .ss-capacity-grid { background: var(--ss-light); align-self: stretch; }
+.ss-stage-diagram .ss-capacity-cell { min-height: 22%; }
 .ss-diagram-note { color: var(--ss-ink); font-size: 8.5px; margin-top: 3px; line-height: 1.4; }
 .ss-spec-title { margin: 3.5mm 0 2mm; display: flex; justify-content: space-between; align-items: center; }
 .ss-spec-title small { font-weight: 500; font-size: 9px; color: var(--ss-ink); }

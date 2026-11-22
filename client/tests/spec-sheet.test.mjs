@@ -1,4 +1,4 @@
-// Specification-sheet tests (M3-A2 pilot + M3-A4 Batch 1 + M3-A5 Batch 2). node:test. Run: npm test
+// Specification-sheet tests (M3-A2 pilot + M3-A4 Batch 1 + M3-A5 Batch 2 + M3-A6 harvesters). node:test. Run: npm test
 import assert from "node:assert/strict"
 import fs from "node:fs"
 import path from "node:path"
@@ -17,7 +17,9 @@ async function loadData() {
   await build({ entryPoints: [path.join(ROOT, "src/data/spec-sheets/index.ts")], outfile, bundle: true, format: "esm", platform: "node", alias: { "@": path.join(ROOT, "src") }, loader: { ".png": "dataurl", ".webp": "dataurl", ".jpg": "dataurl", ".json": "json" }, logLevel: "silent" })
   return import(`${outfile}?t=${Date.now()}`)
 }
-const SLUGS = ["zoomlion-rs1304-1604", "zoomlion-rc904-1104", "zoomlion-rk504-704", "zoomlion-pg2004", "zoomlion-pl2304", "zoomlion-rg1804-2004", "zoomlion-rd504", "zoomlion-rn904", "zoomlion-dv3504-wheeled-tractor"]
+const SLUGS = ["zoomlion-rs1304-1604", "zoomlion-rc904-1104", "zoomlion-rk504-704", "zoomlion-pg2004", "zoomlion-pl2304", "zoomlion-rg1804-2004", "zoomlion-rd504", "zoomlion-rn904", "zoomlion-dv3504-wheeled-tractor", "zoomlion-te100-combine-harvester", "tf150-combine-harvester", "zl105-combine-harvester", "zc123s-combine-harvester"]
+const HARVESTERS = ["zoomlion-te100-combine-harvester", "tf150-combine-harvester", "zl105-combine-harvester", "zc123s-combine-harvester"]
+const TRACTORS = SLUGS.filter((x) => !HARVESTERS.includes(x))
 const SHEET_FILES = ["src/pages/SpecSheetPage.tsx", "src/styles/spec-sheet-print.css", ...walk("src/data/spec-sheets"), ...walk("src/components/spec-sheet")]
 const entriesOf = (s) => s.groups.flatMap((g) => g.rows.flatMap((r) => r.entries.map((e) => ({ row: r.id, ...e }))))
 /** Every customer-facing string of a sheet (excludes the internal `excluded` and `sources` records and notes). */
@@ -27,10 +29,10 @@ const publishedText = (s) => {
   return JSON.stringify(strip(pub))
 }
 
-test("registry holds exactly the nine authorized sheets; unknown slugs resolve to undefined", async () => {
+test("registry holds exactly the thirteen authorized sheets; unknown slugs resolve to undefined", async () => {
   const { specSheets, getSpecSheet } = await loadData()
   assert.deepEqual(Object.keys(specSheets).sort(), [...SLUGS].sort())
-  for (const bad of [undefined, "", "nope", "constructor", "__proto__", "toString", "hasOwnProperty", "zoomlion-rn1104", "zoomlion-rg1804", "zoomlion-rg2004", "zoomlion-dv3504", "zoomlion-rs1304-1604/"]) assert.equal(getSpecSheet(bad), undefined, String(bad))
+  for (const bad of [undefined, "", "nope", "constructor", "__proto__", "toString", "hasOwnProperty", "zoomlion-rn1104", "zoomlion-te100", "zoomlion-zl120-combine-harvester", "tf150", "zl105", "zc123s", "zoomlion-rg1804", "zoomlion-rg2004", "zoomlion-dv3504", "zoomlion-rs1304-1604/"]) assert.equal(getSpecSheet(bad), undefined, String(bad))
   for (const s of SLUGS) assert.equal(getSpecSheet(s).slug, s)
 })
 
@@ -47,7 +49,7 @@ test("every published entry has value, known source, publishable status, valid c
       if (e.status === "corroborated") assert.ok(e.sources.some((id) => s.sources.find((x) => x.id === id).kind === "jolu-document"), `${slug}/${e.row} corroborated needs a JOLU document`)
     }
     for (const k of s.kpis) { assert.ok(allowed.includes(k.status)); for (const id of k.sources) assert.ok(ids.has(id)) }
-    assert.ok(n >= 10, slug)
+    assert.ok(n >= 7, slug)
     for (const r of s.groups.flatMap((g) => g.rows)) assert.equal(r.entries.length, s.variants.length, `${slug}/${r.id} has an entry per column`)
   }
 })
@@ -56,6 +58,8 @@ test("model / configuration attribution: column kinds are explicit and never con
   const { specSheets } = await loadData(); const S = specSheets
   const kinds = (s) => new Set(s.variants.map((v) => v.kind))
   for (const slug of SLUGS) assert.equal(kinds(S[slug]).size, 1, `${slug} columns share one kind`)
+  for (const slug of HARVESTERS) { assert.deepEqual([...kinds(S[slug])], ["single-machine"], slug); assert.equal(S[slug].variants.length, 1, slug); assert.equal(S[slug].machine, "harvester", slug) }
+  for (const slug of TRACTORS) assert.notEqual(S[slug].machine, "harvester", slug)
   assert.deepEqual([...kinds(S["zoomlion-rs1304-1604"])], ["published-configuration"])
   assert.deepEqual([...kinds(S["zoomlion-rc904-1104"])], ["distinct-model"])
   assert.deepEqual([...kinds(S["zoomlion-rk504-704"])], ["distinct-model"])
@@ -82,9 +86,9 @@ test("model / configuration attribution: column kinds are explicit and never con
   // diagram envelopes follow the columns; equal columns share one envelope
   assert.equal(rc.dimensions.envelopes.length, 2); assert.equal(rk.dimensions.envelopes.length, 2)
   assert.deepEqual(rc.dimensions.envelopes.map((e) => e.lengthMm), [4390, 4500]); assert.deepEqual(rk.dimensions.envelopes.map((e) => e.lengthMm), [3980, 4030])
-  for (const slug of SLUGS.filter((x) => x !== "zoomlion-rc904-1104" && x !== "zoomlion-rk504-704")) assert.equal(S[slug].dimensions.envelopes.length, 1, `${slug} envelopes`)
+  for (const slug of TRACTORS.filter((x) => x !== "zoomlion-rc904-1104" && x !== "zoomlion-rk504-704")) assert.equal(S[slug].dimensions.envelopes.length, 1, `${slug} envelopes`)
   // ground clearance is drawn only where it is published (RN904/1104 and DV3504 withhold it)
-  for (const slug of SLUGS) { const none = ["zoomlion-rn904", "zoomlion-dv3504-wheeled-tractor"].includes(slug)
+  for (const slug of TRACTORS) { const none = ["zoomlion-rn904", "zoomlion-dv3504-wheeled-tractor"].includes(slug)
     for (const c of S[slug].variants) assert.equal(typeof S[slug].dimensions.groundClearanceMm[c.id], none ? "undefined" : "number", `${slug} clearance ${c.id}`)
     assert.equal(entriesOf(S[slug]).some((e) => e.row === "ground-clearance"), !none, `${slug} clearance row`) }
   // RG/RN power pairs are shown as published and never split per model
@@ -103,8 +107,8 @@ test("model / configuration attribution: column kinds are explicit and never con
 test("website-only sheets never claim corroboration or manufacturer verification", async () => {
   const { specSheets } = await loadData()
   // RN904/1104 cites the JOLU catalogue only in its exclusion records; none of its values is corroborated
-  for (const slug of ["zoomlion-rn904"]) { const s = specSheets[slug]; assert.ok(entriesOf(s).every((e) => e.status === "website-published"), slug); assert.ok(s.kpis.every((k) => k.status === "website-published"), slug); assert.ok(s.sources.every((x) => x.kind !== "manufacturer")); assert.ok(entriesOf(s).every((e) => !e.sources.some((id) => s.sources.find((x) => x.id === id).kind === "jolu-document")), "RN: no value cites a JOLU document") }
-  for (const slug of ["zoomlion-pg2004", "zoomlion-pl2304", "zoomlion-rg1804-2004", "zoomlion-rd504", "zoomlion-dv3504-wheeled-tractor"]) {
+  for (const slug of ["zoomlion-rn904", "zl105-combine-harvester"]) { const s = specSheets[slug]; assert.ok(entriesOf(s).every((e) => e.status === "website-published"), slug); assert.ok(s.kpis.every((k) => k.status === "website-published"), slug); assert.ok(s.sources.every((x) => x.kind !== "manufacturer")); assert.ok(entriesOf(s).every((e) => !e.sources.some((id) => s.sources.find((x) => x.id === id).kind === "jolu-document")), "RN: no value cites a JOLU document") }
+  for (const slug of ["zoomlion-pg2004", "zoomlion-pl2304", "zoomlion-rg1804-2004", "zoomlion-rd504", "zoomlion-dv3504-wheeled-tractor", "zoomlion-te100-combine-harvester", "tf150-combine-harvester", "zc123s-combine-harvester"]) {
     const s = specSheets[slug]
     assert.ok(entriesOf(s).every((e) => e.status === "website-published"), slug); assert.ok(s.kpis.every((k) => k.status === "website-published"), slug)
     assert.ok(s.sources.every((x) => x.kind !== "jolu-document" && x.kind !== "manufacturer"), slug)
@@ -172,6 +176,43 @@ test("content exclusions: disputed, unverified, optional, price and certificatio
   for (const id of ["hybrid-system", "transmission", "clutch", "ground-clearance", "pto-speed", "emission"]) assert.ok(ex("zoomlion-dv3504-wheeled-tractor", id), `DV excludes ${id}`)
   assert.equal(ex("zoomlion-dv3504-wheeled-tractor", "transmission").reason, "disputed"); assert.equal(ex("zoomlion-dv3504-wheeled-tractor", "ground-clearance").reason, "disputed")
   assert.equal(specSheets["zoomlion-dv3504-wheeled-tractor"].productName, "Zoomlion DV3504 Wheeled Tractor")
+
+  // ---- M3-A6 harvesters ----
+  const H = (slug) => specSheets[slug]; const hRows = (slug) => rows(slug); const hv = (slug, id) => entriesOf(H(slug)).find((e) => e.row === id)
+  for (const slug of HARVESTERS) {
+    assert.ok(!hRows(slug).some((r) => /pto|hitch|lifting|traction|wheelbase.*pto/i.test(r.label) || /pto|hitch|lifting|traction/i.test(r.label)), `${slug}: no tractor-only rows`)
+    assert.ok(entriesOf(H(slug)).every((e) => !/^[-–—\s]*$/.test(e.value)), `${slug}: no blank or dash value`)
+    assert.ok(!/National/.test(text(slug)), `${slug}: website-only emission withheld`)
+    assert.ok(ex(slug, "emission") || slug === "zl105-combine-harvester" || slug === "zc123s-combine-harvester", `${slug} emission record`)
+  }
+  // TE100: the row-count / millimetre entry is never published, and the wheat width stays a separate row
+  const te = "zoomlion-te100-combine-harvester"
+  assert.ok(!/\brow\b|5\s*[–-]\s*6|corn|soy|sorghum|hydrostatic|Yuchai|\bcab\b/i.test(text(te)), "TE100: ambiguous cutting width, crop claims and narrative withheld")
+  assert.equal(hv(te, "cutting-wheat").value, "4000"); assert.equal(hv(te, "cutting-wheat").unit, "mm"); assert.match(hRows(te).find((r) => r.id === "cutting-wheat").label, /wheat/i)
+  assert.ok(!hRows(te).some((r) => /corn|soy/i.test(r.label)), "TE100: no corn/soybean row"); assert.equal(ex(te, "cutting-width-corn-soybean").reason, "disputed"); assert.match(ex(te, "cutting-width-corn-soybean").detail, /not interchangeable/)
+  assert.equal(H(te).dimensions.envelopes.length, 1); assert.equal(H(te).dimensions.envelopes[0].wheelbaseMm, undefined, "TE100: no wheelbase is published, none is drawn"); assert.equal(H(te).capacity, undefined)
+  assert.equal(hv(te, "dimensions").value, "6100×2800×3420")
+  // TF150: no dimensions, weight or optional equipment; wheelbase only because the table row exists
+  const tf = "tf150-combine-harvester"
+  assert.equal(H(tf).dimensions, undefined); assert.ok(H(tf).capacity); assert.ok(!hRows(tf).some((r) => /weight|dimension|mass/i.test(r.label)), "TF150: no weight or dimension row")
+  assert.ok(!/12650|12,650|<\s?0\.4|breakage|Bosch|header|slope/i.test(text(tf)), "TF150: weight, performance claims and optional headers withheld")
+  assert.equal(hv(tf, "wheelbase").value, "3586"); for (const id of ["overall-dimensions", "weight", "emission", "performance-claims", "optional-headers"]) assert.ok(ex(tf, id), `TF150 excludes ${id}`)
+  // ZL105: website designation kept, no rice or crop claim, no tank options, no Smart Edition, no dimensions or weight
+  const zl = "zl105-combine-harvester"
+  assert.equal(H(zl).productName, "Zoomlion ZL105 Combine Harvester"); assert.equal(H(zl).dimensions, undefined)
+  assert.ok(!/rice|smart|660|1800|1,800|3950|3,950|crop|paddy/i.test(text(zl)), "ZL105: no crop claim, tank option, Smart Edition or weight")
+  for (const id of ["overall-dimensions", "weight", "grain-tank-options", "smart-edition", "rice-designation"]) assert.ok(ex(zl, id), `ZL105 excludes ${id}`)
+  assert.ok(H(zl).sources.some((x) => x.kind === "jolu-document" && /RICE HARVESTER ZL 105/.test(x.note)), "ZL105: catalogue designation is recorded as a source")
+  // ZC123S: the dash rated speed is missing, never a value, and nothing replaces it
+  const zc = "zc123s-combine-harvester"
+  assert.ok(!hRows(zc).some((r) => /speed/i.test(r.label)), "ZC123S: no rated-speed row"); assert.ok(!JSON.stringify(H(zc).kpis).match(/speed/i) && !JSON.stringify(H(zc).quick).match(/speed/i) && !JSON.stringify(H(zc).capacity.items).match(/speed/i))
+  assert.equal(ex(zc, "rated-speed").reason, "not-supplied"); assert.match(ex(zc, "rated-speed").detail, /dash|missing/i)
+  assert.ok(!/4250|4,250|1800|220\s?L|crop|rapeseed|attachment/i.test(text(zc)), "ZC123S: weight, narrative tanks and crop claims withheld"); assert.equal(H(zc).dimensions, undefined)
+  for (const id of ["overall-dimensions", "weight", "tank-capacities", "crop-and-attachments"]) assert.ok(ex(zc, id), `ZC123S excludes ${id}`)
+  // layout: dimension schematic XOR capacity panel; every capacity figure is a published row value
+  for (const slug of HARVESTERS) { const sh = H(slug); assert.ok(Boolean(sh.dimensions) !== Boolean(sh.capacity), `${slug}: schematic xor capacity panel`)
+    if (sh.capacity) { assert.ok(sh.capacity.items.length >= 3 && sh.capacity.items.length <= 6, slug); for (const it of sh.capacity.items) { const e = entriesOf(sh).find((x) => x.row === it.rowId); assert.ok(e, `${slug} capacity row ${it.rowId}`); assert.ok(e.value.includes(it.value) && (it.unit ?? "") === (it.unit ? e.unit : ""), `${slug} capacity ${it.label} matches its row`) } } }
+  for (const slug of HARVESTERS) assert.equal(H(slug).kpis.length, 3, `${slug}: three credible KPI cards`)
 })
 
 test("quick-strip and KPI figures are present in the published rows", async () => {

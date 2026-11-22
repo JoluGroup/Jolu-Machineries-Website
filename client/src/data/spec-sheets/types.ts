@@ -120,7 +120,8 @@ export interface DimensionEnvelope {
   lengthMm: number
   widthMm: number
   heightMm: number
-  wheelbaseMm: number
+  /** Omitted when the source publishes no wheelbase; the diagram then draws none. */
+  wheelbaseMm?: number
 }
 
 export interface DimensionData {
@@ -128,6 +129,24 @@ export interface DimensionData {
   /** Ground clearance per column id. Omit a column (or leave empty) when the clearance is withheld; the diagram then draws none. */
   groundClearanceMm: Record<VariantId, number | undefined>
   sources: string[]
+}
+
+/** One supported capacity figure (harvesters). The value must also appear in a published row (`rowId`). */
+export interface CapacityItem {
+  label: string
+  value: string
+  unit?: string
+  rowId: string
+}
+
+/**
+ * Capacity-oriented engineering panel, used INSTEAD of the dimension schematic when no reliable overall
+ * dimensions are published. It shows only supported values and draws no dimension arrows.
+ */
+export interface CapacityPanel {
+  title: string
+  items: CapacityItem[]
+  note: string
 }
 
 export interface QuickItem {
@@ -144,6 +163,8 @@ export interface ContactInfo {
 
 export interface SpecSheet {
   slug: string
+  /** Machine family; drives the presentation only (defaults to a tractor). */
+  machine?: "tractor" | "harvester"
   /** Only sheets with a reviewState of "approved" render without the preview banner; unknown sheets 404. */
   reviewState: "pilot-preview" | "preview" | "approved"
   productName: string
@@ -165,7 +186,10 @@ export interface SpecSheet {
   groups: SpecGroup[]
   standardEquipment: { label: string; rowId: string }[]
   optionalConfigurationNote: string
-  dimensions: DimensionData
+  /** Overall-dimension schematic. Present only when reliable overall dimensions are published. */
+  dimensions?: DimensionData
+  /** Capacity panel. Present only when `dimensions` is absent (harvesters without published overall dimensions). */
+  capacity?: CapacityPanel
   contact: ContactInfo
   confirmNote: string
   sources: SourceRef[]

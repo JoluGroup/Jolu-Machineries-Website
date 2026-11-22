@@ -4,6 +4,7 @@ import { getSpecSheet } from "@/data/spec-sheets"
 import A4Page from "@/components/spec-sheet/A4Page"
 import ProductOverview from "@/components/spec-sheet/ProductOverview"
 import DimensionDiagram from "@/components/spec-sheet/DimensionDiagram"
+import CapacityPanel from "@/components/spec-sheet/CapacityPanel"
 import SpecTable from "@/components/spec-sheet/SpecTable"
 import ConfigurationList from "@/components/spec-sheet/ConfigurationList"
 import ProcurementBlock from "@/components/spec-sheet/ProcurementBlock"
@@ -103,17 +104,32 @@ const SpecSheetPage = () => {
               <div key={q.label}><span className="ss-caps">{q.label}</span><b>{q.value}</b></div>
             ))}
           </div>
-          <div className="ss-diagram-title">
-            <h3>Dimension schematic</h3>
-            <span className="ss-mono">ILLUSTRATIVE · NOT TO SCALE</span>
-          </div>
-          <div className="ss-footprint">
-            <DimensionDiagram d={sheet.dimensions} columns={sheet.variants} />
-          </div>
-          <div className="ss-diagram-note">
-            Illustrative diagram — not to scale. Confirm installation dimensions before purchase. Drawn from the published overall dimensions
-            only; it is not a manufacturer drawing and does not show the machine outline or axle positions.
-          </div>
+          {sheet.dimensions ? (
+            <>
+              <div className="ss-diagram-title">
+                <h3>Dimension schematic</h3>
+                <span className="ss-mono">ILLUSTRATIVE · NOT TO SCALE</span>
+              </div>
+              <div className="ss-footprint">
+                <DimensionDiagram d={sheet.dimensions} columns={sheet.variants} />
+              </div>
+              <div className="ss-diagram-note">
+                Illustrative diagram — not to scale. Confirm installation dimensions before purchase. Drawn from the published overall dimensions
+                only; it is not a manufacturer drawing and does not show the machine outline or axle positions.
+              </div>
+            </>
+          ) : sheet.capacity ? (
+            <>
+              <div className="ss-diagram-title">
+                <h3>{sheet.capacity.title}</h3>
+                <span className="ss-mono">PUBLISHED VALUES ONLY · NO DIMENSION DRAWING</span>
+              </div>
+              <div className="ss-footprint ss-capacity">
+                <CapacityPanel panel={sheet.capacity} />
+              </div>
+              <div className="ss-diagram-note">{sheet.capacity.note}</div>
+            </>
+          ) : null}
           <h3 className="ss-spec-title">
             Technical specification
             <small>

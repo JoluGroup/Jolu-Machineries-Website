@@ -51,8 +51,10 @@ const DimensionDiagram = ({ d, columns }: { d: DimensionData; columns: VariantIn
   const lenRows = rows((e) => e.lengthMm)
   const hgtRows = rows((e) => e.heightMm)
   const widRows = rows((e) => e.widthMm)
-  const wbEqual = allEqual(env.map((e) => e.wheelbaseMm))
-  const wbItems = wbEqual ? [0] : env.map((_, k) => k)
+  // Wheelbase is drawn only when every envelope has a published wheelbase.
+  const wbKnown = env.every((e) => typeof e.wheelbaseMm === "number")
+  const wbEqual = wbKnown && allEqual(env.map((e) => e.wheelbaseMm as number))
+  const wbItems = !wbKnown ? [] : wbEqual ? [0] : env.map((_, k) => k)
 
   // Ground clearance is optional: a sheet that withholds a disputed clearance draws no clearance bracket.
   const gcValues = columns.map((c) => d.groundClearanceMm[c.id])
@@ -61,7 +63,7 @@ const DimensionDiagram = ({ d, columns }: { d: DimensionData; columns: VariantIn
   const gcFirst = (gcValues[0] ?? 0) as number
 
   return (
-    <svg viewBox={`0 0 660 ${vbH}`} role="img" aria-label="Illustrative dimension schematic of overall length, width, height, wheelbase and ground clearance">
+    <svg viewBox={`0 0 660 ${vbH}`} role="img" aria-label="Illustrative dimension schematic of the published overall dimensions">
       <defs>
         <pattern id="ss-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
           <path d="M0 0v8" stroke="hsl(var(--primary-glow))" strokeWidth="2" opacity="0.5" />
@@ -89,10 +91,11 @@ const DimensionDiagram = ({ d, columns }: { d: DimensionData; columns: VariantIn
 
       {/* wheelbase: length only; its position inside the envelope is not specified by the sources */}
       {wbItems.map((k, i) => {
-        const wb = env[k].wheelbaseMm * sideScale
+        const wbMm = env[k].wheelbaseMm as number
+        const wb = wbMm * sideScale
         const mid = sx + sw(k) / 2
         const y = ground - 34 - i * 24
-        const label = wbEqual ? `Wheelbase ${fmtInt(env[k].wheelbaseMm)} mm${two ? " (both)" : ""}` : `${env[k].label} wheelbase ${fmtInt(env[k].wheelbaseMm)} mm`
+        const label = wbEqual ? `Wheelbase ${fmtInt(wbMm)} mm${two ? " (both)" : ""}` : `${env[k].label} wheelbase ${fmtInt(wbMm)} mm`
         return (
           <g key={`wb${k}`}>
             <path d={`M${mid - wb / 2} ${y}H${mid + wb / 2}`} {...accent} />
