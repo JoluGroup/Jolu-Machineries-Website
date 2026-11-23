@@ -93,6 +93,20 @@ The `render.yaml` Blueprint defines that single web service; it contains no secr
 3.  In production the server refuses to start and prints which variable names are missing.
 4.  Point the website at the API by setting `VITE_API_BASE` (absolute `https://` URL, no trailing slash) in the Vercel project, then redeploy.
 
+### Reliability behavior (what is and is not guaranteed)
+
+*   **Records first.** Every enquiry is stored before any email is attempted. If email fails the record is kept and the customer gets an honest error (502), never a success message.
+*   **Notification claim.** A record is claimed for sending with one atomic database update that also takes a 60-second lease, so concurrent requests, retries, restarts and multiple processes cannot send for the same record at the same time.
+*   **Provider idempotency.** Every send carries a stable Resend `Idempotency-Key` (`<collection>-<record id>`) with an identical payload. A retry after a timeout or network error therefore does not create a second email **while Resend honors the key (24 hours at the time of writing)**. This is **not** an exactly-once guarantee: "accepted by Resend" is also not "delivered to the inbox".
+*   **Statuses.** `sent` (Resend accepted), `failed` (Resend definitively refused: 4xx), `unknown` (timeout / network error / 5xx / 429: may have been accepted), `sending` (leased).
+*   **Recovery sweep.** Every 5 minutes (first run 30 s after boot) the API re-claims records that are `failed`, `unknown` or stranded in `sending` after a crash or redeploy. It is bounded: at most 5 per collection per run, exponential backoff (1 min doubling to 1 h), at most 6 attempts, and only records younger than 24 h. Anything beyond those limits stays stored and is logged as `notification.needs_manual_review` (a count, no customer data). Safe with several processes because of the lease. While the free Render instance is asleep nothing runs; recovery resumes when it wakes.
+*   **Quotation deduplication.** An identical enquiry (email, phone digits, name, county, area, product interest, message) repeated within 10 minutes of the accepted one returns the existing record (`200`, `duplicate: true`) instead of creating another; after 10 minutes the same enquiry is a new quote. An unsent record is always reused by an identical retry, whatever its age. Different county, area or message is a different enquiry. This is enforced by a unique partial index (`quotes_active_fingerprint`), not by timing.
+*   **Readiness.** `/api/ready` checks valid configuration, a MongoDB `ping` (cached 10 s), the required quotes index, and that the email provider is *configured*. It does **not** call Resend: key validity, reachability and sender-domain verification are only discovered by an actual send.
+*   **Startup.** The API keeps retrying the database connection (capped backoff) instead of crash-looping, and an index failure never stops it: it is logged and reported by `/api/ready`.
+*   **Subscribers index.** The unique `email` index on `subscribers` is best effort. If legacy data contains exact duplicate emails it cannot be built; the API still works. To inspect the data read-only, run `MONGO_URI=... MONGO_DB_NAME=... node scripts/audit-subscribers.js` from `server/` (prints duplicate groups, changes nothing; the output contains addresses, keep it private). Resolve duplicates deliberately (keep the oldest record, remove or merge the others after review) and restart; the API retries index creation for about 10 minutes after boot.
+*   **Shutdown.** SIGTERM stops new connections, lets in-flight requests (including an email send) finish, closes the database client, then exits (10 s hard deadline).
+*   **Tests.** `cd server && npm test` (mocked database and mailer; no network, no real email).
+
 ## Can I connect a custom domain to my Lovable project?
 
 Yes, you can!

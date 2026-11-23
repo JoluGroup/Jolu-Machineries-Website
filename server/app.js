@@ -7,27 +7,44 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const { z } = require("zod");
 const { isOriginAllowed } = require("./config");
+const { builders } = require("./messages");
+const { createNotifier } = require("./notifier");
 
-const t = (min) => z.string().trim().min(min);
+// --- Input validation: length limits, and control characters removed so nothing can break a subject line. ---
+const stripLine = (s) => s.replace(/[\u0000-\u001F\u007F\u2028\u2029]+/g, " ");
+const stripBlock = (s) => s.replace(/\r\n?/g, "\n").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\u2028\u2029]/g, "");
+const line = (min, max) => z.string().transform(stripLine).pipe(z.string().trim().min(min).max(max));
+const block = (min, max) => z.string().transform(stripBlock).pipe(z.string().trim().min(min).max(max));
+const emailField = z.string().trim().max(254).email();
+
 const contactSchema = z.object({
-  name: t(2), email: z.string().trim().email(), phone: t(7), county: t(2), area: t(2),
-  productInterest: z.string().trim().optional().nullable(), message: t(10),
+  name: line(2, 100), email: emailField, phone: line(7, 30), county: line(2, 100), area: line(2, 100),
+  productInterest: line(0, 200).optional().nullable(), message: block(10, 5000),
 });
 const quoteSchema = contactSchema;
 const scheduleSchema = z.object({
-  name: t(2), email: z.string().trim().email(), phone: t(7), preferredDate: t(4), preferredTime: t(2),
-  product: t(2), notes: z.string().trim().optional().nullable(),
+  name: line(2, 100), email: emailField, phone: line(7, 30), preferredDate: line(4, 40), preferredTime: line(2, 40),
+  product: line(2, 200), notes: block(0, 2000).optional().nullable(),
 });
-const subscribeSchema = z.object({ email: z.string().trim().email() });
+const subscribeSchema = z.object({ email: emailField });
 
+// Deduplication: an identical enquiry (same contact details, county, area, product and message) submitted again while the
+// previous one is ACTIVE returns that record instead of creating another. A record stays active until it has been
+// notified AND is older than the window, so a retry after a failed notification always reuses the unsent record.
 const DEDUPE_WINDOW_MS = 10 * 60 * 1000;
+const PING_TTL_MS = 10 * 1000;
+const PING_TIMEOUT_MS = 3000;
 
+const norm = (s) => String(s || "").trim().toLowerCase();
 const fingerprintOf = (p) =>
   crypto.createHash("sha256").update(JSON.stringify([
-    p.email.toLowerCase(), p.phone.replace(/\D/g, ""), p.name.toLowerCase(), p.message, (p.productInterest || "").toLowerCase(),
+    norm(p.email), String(p.phone || "").replace(/\D/g, ""), norm(p.name), norm(p.county), norm(p.area), String(p.message || "").trim(), norm(p.productInterest),
   ])).digest("hex");
 
-function createApp({ config, getDb, mailer, logger, now = () => Date.now(), submitLimit = { windowMs: 60 * 1000, max: 10 } }) {
+function createApp({
+  config, getDb, mailer, logger, now = () => Date.now(), submitLimit = { windowMs: 60 * 1000, max: 10 },
+  getIndexState = () => ({ quotes: true, subscribers: true }),
+}) {
   const app = express();
   app.set("trust proxy", 1);
   app.disable("x-powered-by");
@@ -55,93 +72,134 @@ function createApp({ config, getDb, mailer, logger, now = () => Date.now(), subm
   app.use(rateLimit({ windowMs: 60 * 1000, max: 60, standardHeaders: true, legacyHeaders: false }));
   const submitLimiter = rateLimit({ windowMs: submitLimit.windowMs, max: submitLimit.max, standardHeaders: true, legacyHeaders: false, message: { ok: false, code: "rate_limited", message: "Too many requests. Please wait a minute and try again." } });
 
-  const ready = () => ({ config: config.valid, database: !!getDb(), email: !!(mailer && mailer.configured) });
-  const isReady = () => Object.values(ready()).every(Boolean);
+  // Centralized async error handling: a rejected handler becomes a safe 500, never a dead process.
+  const wrap = (fn) => (req, res, next) => Promise.resolve().then(() => fn(req, res, next)).catch(next);
 
-  // --- Health (liveness, always 200 while the process is up) and readiness (503 until dependencies are usable) ---
-  app.get("/api/health", (_req, res) => res.json({ ok: true, ready: isReady(), checks: ready(), timestamp: new Date().toISOString() }));
-  app.get("/api/ready", (_req, res) => res.status(isReady() ? 200 : 503).json({ ok: isReady(), checks: ready() }));
+  const notifier = createNotifier({ getDb, mailer, logger, now, builders });
+  app.recover = (opts) => notifier.sweep(opts); // bounded recovery sweep, driven by the process entry point
+
+  // --- Liveness and readiness ---
+  // Readiness checks: configuration is valid, MongoDB answers a ping (cached briefly so probes cannot hammer it),
+  // required indexes exist, and the email provider is CONFIGURED. Resend reachability, key validity and sender-domain
+  // verification are deliberately not probed here (a probe would send traffic to the provider on every check).
+  let ping = { at: -Infinity, ok: false };
+  async function databaseAnswers() {
+    const db = getDb();
+    if (!db) return false;
+    if (now() - ping.at < PING_TTL_MS) return ping.ok;
+    let timer; let ok = false;
+    try {
+      await Promise.race([db.command({ ping: 1 }), new Promise((_, rej) => { timer = setTimeout(() => rej(new Error("ping timeout")), PING_TIMEOUT_MS); })]);
+      ok = true;
+    } catch { ok = false; } finally { clearTimeout(timer); }
+    ping = { at: now(), ok };
+    return ok;
+  }
+  async function readiness() {
+    const checks = {
+      config: !!config.valid,
+      database: await databaseAnswers(),
+      indexes: !!getIndexState().quotes,
+      email: !!(mailer && mailer.configured),
+    };
+    return { ok: Object.values(checks).every(Boolean), checks };
+  }
+  app.get("/api/health", (_req, res) => res.json({ ok: true, timestamp: new Date().toISOString() }));
+  app.get("/api/ready", wrap(async (_req, res) => { const r = await readiness(); res.status(r.ok ? 200 : 503).json(r); }));
 
   const unavailable = (res) => res.status(503).json({ ok: false, code: "service_unavailable", message: "The service is temporarily unavailable. Please try again shortly or contact us directly." });
   const validation = (res, err) => res.status(400).json({ ok: false, errors: err.flatten() });
   const requestId = () => crypto.randomUUID();
-
-  async function notify(coll, id, rid, route, message) {
-    const result = await mailer.send(message);
-    const set = result.ok
-      ? { emailStatus: "sent", emailAcceptedAt: new Date(now()), emailProviderId: result.id }
-      : { emailStatus: "failed", emailFailedAt: new Date(now()), emailFailureKind: result.kind };
-    try { await coll.updateOne({ _id: id }, { $set: set, $inc: { emailAttempts: 1 } }); }
-    catch { logger.error("record.update_failed", { requestId: rid, route }); }
-    if (!result.ok) logger.error("email.not_accepted", { requestId: rid, route, kind: result.kind, name: result.name, status: result.status });
-    return result;
-  }
-
+  const usable = (db) => !!(db && mailer && mailer.configured);
+  const storageFailed = (res, rid) => res.status(503).json({ ok: false, code: "storage_failed", requestId: rid, message: "We could not save your request. Nothing was submitted, so it is safe to try again." });
+  const inProgress = (res) => res.status(409).json({ ok: false, code: "in_progress", message: "This request is already being processed. Please wait a moment." });
   const emailFailed = (res, rid) => res.status(502).json({
     ok: false, code: "notification_failed", requestId: rid,
     message: "We saved your request but could not notify our team. Please try again in a few minutes or contact us directly.",
   });
 
-  // --- Quotes: idempotent within a 10-minute window; the record is kept if email fails; retries never duplicate. ---
-  app.post("/api/quotes", submitLimiter, async (req, res) => {
+  // --- Quotes ---
+  // 1. Store (or find the active identical record) atomically: a unique partial index on the active fingerprint lets exactly
+  //    one concurrent request create the record; the others receive it. 2. Only the request that holds the notification
+  //    lease sends. Retries after a failed or ambiguous send claim the SAME record and reuse the same provider idempotency key.
+  async function storeQuote(coll, p) {
+    const fingerprint = fingerprintOf(p);
+    for (let i = 0; i < 3; i++) {
+      // Retire sent records whose window has passed so an identical new enquiry can be accepted again.
+      await coll.updateMany({ fingerprint, dedupeActive: true, emailStatus: "sent", createdAt: { $lte: new Date(now() - DEDUPE_WINDOW_MS) } }, { $set: { dedupeActive: false } });
+      const doc = { ...p, fingerprint, dedupeActive: true, createdAt: new Date(now()), ...notifier.initialClaim() };
+      try {
+        const r = await coll.insertOne(doc);
+        return { doc: { ...doc, _id: r.insertedId }, isNew: true };
+      } catch (e) {
+        if (!(e && e.code === 11000)) throw e;
+        const existing = await coll.findOne({ fingerprint, dedupeActive: true });
+        if (existing) return { doc: existing, isNew: false };
+        // The active record was retired between our insert and read: loop and try again.
+      }
+    }
+    throw new Error("dedupe_contention");
+  }
+
+  app.post("/api/quotes", submitLimiter, wrap(async (req, res) => {
     const rid = requestId();
     const parsed = quoteSchema.safeParse(req.body);
     if (!parsed.success) return validation(res, parsed.error);
     const db = getDb();
-    if (!db || !mailer || !mailer.configured) return unavailable(res);
-    const p = parsed.data;
+    if (!usable(db)) return unavailable(res);
     const coll = db.collection("quotes");
-    const filter = { fingerprint: fingerprintOf(p), windowKey: Math.floor(now() / DEDUPE_WINDOW_MS) };
-    const doc = { ...p, ...filter, createdAt: new Date(now()), emailStatus: "pending", emailAttempts: 0 };
-    let r;
-    try {
-      const upsert = () => coll.findOneAndUpdate(filter, { $setOnInsert: doc }, { upsert: true, returnDocument: "after", includeResultMetadata: true });
-      try { r = await upsert(); } catch (e) { if (e && e.code === 11000) r = await upsert(); else throw e; }
-    } catch {
-      logger.error("quote.store_failed", { requestId: rid, route: "/api/quotes" });
-      return res.status(503).json({ ok: false, code: "storage_failed", requestId: rid, message: "We could not save your request. Nothing was submitted, so it is safe to try again." });
+    let stored;
+    try { stored = await storeQuote(coll, parsed.data); }
+    catch { logger.error("quote.store_failed", { requestId: rid, route: "/api/quotes" }); return storageFailed(res, rid); }
+
+    let doc = stored.doc;
+    if (!stored.isNew) {
+      if (doc.emailStatus === "sent") return res.status(200).json({ ok: true, duplicate: true, message: "Your request has already been received." });
+      let claimed;
+      try { claimed = await notifier.claimById(coll, doc._id); }
+      catch { logger.error("quote.claim_failed", { requestId: rid, route: "/api/quotes" }); return storageFailed(res, rid); }
+      if (!claimed) {
+        // Another request or process holds the notification lease (or just finished it).
+        let current = null;
+        try { current = await coll.findOne({ _id: doc._id }); } catch { /* answer conservatively below */ }
+        if (current && current.emailStatus === "sent") return res.status(200).json({ ok: true, duplicate: true, message: "Your request has already been received." });
+        return inProgress(res);
+      }
+      doc = claimed;
     }
-    const saved = r.value;
-    const isNew = !!(r.lastErrorObject && r.lastErrorObject.upserted);
-    if (!isNew && saved.emailStatus === "sent") return res.status(200).json({ ok: true, duplicate: true, message: "Your request has already been received." });
-    if (!isNew && saved.emailStatus === "pending") return res.status(409).json({ ok: false, code: "in_progress", message: "This request is already being processed. Please wait a moment." });
-    const result = await notify(coll, saved._id, rid, "/api/quotes", {
-      subject: `New Quote Request: ${p.name} (${p.productInterest || "General"})`,
-      text: `Name: ${p.name}\nEmail: ${p.email}\nPhone: ${p.phone}\nCounty: ${p.county}\nArea: ${p.area}\nInterest: ${p.productInterest || "N/A"}\n\nMessage:\n${p.message}`,
-    });
+    const result = await notifier.attempt(coll, "quotes", doc, { requestId: rid, route: "/api/quotes" });
     if (!result.ok) return emailFailed(res, rid);
     return res.status(201).json({ ok: true, message: "Quote request received." });
-  });
+  }));
 
-  // --- Contact and schedule: stored, then notified; email failure is reported honestly. ---
-  const simpleRoute = (path, schema, collection, build) => app.post(path, submitLimiter, async (req, res) => {
+  // --- Contact and schedule: stored with a notification lease, then notified; failures are reported honestly and the
+  // record is picked up by the recovery sweep. ---
+  const simpleRoute = (path, schema, collection) => app.post(path, submitLimiter, wrap(async (req, res) => {
     const rid = requestId();
     const parsed = schema.safeParse(req.body);
     if (!parsed.success) return validation(res, parsed.error);
     const db = getDb();
-    if (!db || !mailer || !mailer.configured) return unavailable(res);
+    if (!usable(db)) return unavailable(res);
     const coll = db.collection(collection);
-    let inserted;
-    try { inserted = await coll.insertOne({ ...parsed.data, createdAt: new Date(now()), emailStatus: "pending", emailAttempts: 0 }); }
-    catch {
+    let doc;
+    try {
+      doc = { ...parsed.data, createdAt: new Date(now()), ...notifier.initialClaim() };
+      const r = await coll.insertOne(doc);
+      doc = { ...doc, _id: r.insertedId };
+    } catch {
       logger.error("record.store_failed", { requestId: rid, route: path });
-      return res.status(503).json({ ok: false, code: "storage_failed", requestId: rid, message: "We could not save your request. Nothing was submitted, so it is safe to try again." });
+      return storageFailed(res, rid);
     }
-    const result = await notify(coll, inserted.insertedId, rid, path, build(parsed.data));
+    const result = await notifier.attempt(coll, collection, doc, { requestId: rid, route: path });
     if (!result.ok) return emailFailed(res, rid);
     return res.status(201).json({ ok: true, message: "Request received." });
-  });
-  simpleRoute("/api/contact", contactSchema, "contacts", (p) => ({
-    subject: `New Contact: ${p.name} (${p.productInterest || "General"})`,
-    text: `Name: ${p.name}\nEmail: ${p.email}\nPhone: ${p.phone}\nCounty: ${p.county}\nArea: ${p.area}\nInterest: ${p.productInterest || "N/A"}\nMessage:\n${p.message}`,
   }));
-  simpleRoute("/api/schedule", scheduleSchema, "schedules", (p) => ({
-    subject: `Demo Request: ${p.name} — ${p.product}`,
-    text: `Name: ${p.name}\nEmail: ${p.email}\nPhone: ${p.phone}\nPreferred Date: ${p.preferredDate}\nPreferred Time: ${p.preferredTime}\nProduct: ${p.product}\nNotes:\n${p.notes || "N/A"}`,
-  }));
+  simpleRoute("/api/contact", contactSchema, "contacts");
+  simpleRoute("/api/schedule", scheduleSchema, "schedules");
 
-  // --- Subscribe: the subscription is the product; the staff notification is best-effort and logged on failure. ---
-  app.post("/api/subscribe", submitLimiter, async (req, res) => {
+  // --- Subscribe: the subscription is the product. A staff notice is sent only for NEW subscribers and never delays the
+  // response; its failure is logged. ---
+  app.post("/api/subscribe", submitLimiter, wrap(async (req, res) => {
     const rid = requestId();
     const parsed = subscribeSchema.safeParse(req.body);
     if (!parsed.success) return validation(res, parsed.error);
@@ -151,12 +209,10 @@ function createApp({ config, getDb, mailer, logger, now = () => Date.now(), subm
     try {
       const r = await db.collection("subscribers").updateOne({ email }, { $setOnInsert: { email, createdAt: new Date(now()) } }, { upsert: true });
       const already = r.upsertedCount === 0;
-      if (mailer && mailer.configured) {
-        const result = await mailer.send({
-          subject: already ? `Existing subscriber tried again: ${email}` : `New newsletter subscriber: ${email}`,
-          text: already ? `The email ${email} attempted to subscribe again, but is already on the list.` : `A new subscriber signed up.\nEmail: ${email}`,
-        });
-        if (!result.ok) logger.warn("subscribe.notice_not_accepted", { requestId: rid, kind: result.kind, name: result.name, status: result.status });
+      if (!already && mailer && mailer.configured) {
+        Promise.resolve(mailer.send({ subject: `New newsletter subscriber: ${email}`, text: `A new subscriber signed up.\nEmail: ${email}` }))
+          .then((result) => { if (!result.ok) logger.warn("subscribe.notice_not_accepted", { requestId: rid, kind: result.kind, name: result.name, status: result.status }); })
+          .catch(() => logger.warn("subscribe.notice_failed", { requestId: rid }));
       }
       return res.status(already ? 200 : 201).json({ ok: true, status: already ? "already_subscribed" : "subscribed" });
     } catch (err) {
@@ -164,7 +220,7 @@ function createApp({ config, getDb, mailer, logger, now = () => Date.now(), subm
       logger.error("subscribe.failed", { requestId: rid, route: "/api/subscribe" });
       return res.status(500).json({ ok: false, code: "server_error", message: "Server error" });
     }
-  });
+  }));
 
   app.get("/", (_req, res) => res.type("text").send("JOLU Machinery API. Health: /api/health, readiness: /api/ready"));
 
