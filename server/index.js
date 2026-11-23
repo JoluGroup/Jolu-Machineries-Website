@@ -70,10 +70,10 @@ async function connectToMongo() {
   }
   if (!db || stopping) return;
   // Index failures never stop the API; they are retried a limited number of times and surfaced via /api/ready.
-  const tryIndexes = async (attempt) => {
+  const tryIndexes = async (indexAttempt) => {
     if (stopping) return;
     indexState = await ensureIndexes(db, logger);
-    if ((!indexState.quotes || !indexState.subscribers) && attempt < INDEX_RETRY_MAX) later(() => tryIndexes(attempt + 1), INDEX_RETRY_MS);
+    if ((!indexState.quotes || !indexState.subscribers) && indexAttempt < INDEX_RETRY_MAX) later(() => tryIndexes(indexAttempt + 1), INDEX_RETRY_MS);
   };
   await tryIndexes(1);
   startSweep();

@@ -1,5 +1,6 @@
 // Structured, secret-safe logging. Only whitelisted primitive fields are written; request bodies,
 // customer details, API keys and connection strings are never passed in here.
+// NOTE: "codeName" and "category" are only ever supplied by mongoDiagnostics.classifyMongoError (validated); never pass free text under them.
 const SAFE = new Set(["code", "status", "kind", "name", "requestId", "route", "attempt", "reason", "count", "origin", "variables", "problems", "codeName", "category"]);
 
 function createLogger(sink = console) {

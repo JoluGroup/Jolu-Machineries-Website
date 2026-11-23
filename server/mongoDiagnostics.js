@@ -12,11 +12,12 @@
 const KNOWN_NAMES = new Set([
   "MongoServerError", "MongoNetworkError", "MongoNetworkTimeoutError", "MongoServerSelectionError",
   "MongoParseError", "MongoAPIError", "MongoInvalidArgumentError", "MongoRuntimeError", "MongoTopologyClosedError",
+  "MongoWriteConcernError", "MongoClientBulkWriteError", "MongoSystemError", "MongoOperationTimeoutError", "MongoNotConnectedError",
   "MongoError", "MongoDriverError", "MongoCompatibilityError", "MongoMissingCredentialsError", "MongoMissingDependencyError",
 ]);
 
 const CATEGORIES = Object.freeze([
-  "authentication", "atlas_rejected", "authorization", "api_version", "network", "server_selection",
+  "authentication", "atlas_rejected", "authorization", "api_version", "network", "server_selection", "dns",
   "uri_or_options", "server_error", "unknown",
 ]);
 
@@ -45,8 +46,13 @@ function pickCodeName(err) {
   return typeof c === "string" && /^[A-Za-z]{1,40}$/.test(c) ? c : undefined;
 }
 
-function categorize(name, code) {
-  if (name === "MongoServerError") {
+// Node DNS failures (e.g. a mistyped mongodb+srv host) are plain Errors with a STRING code. Only membership in this fixed
+// set is used to pick the "dns" category; the string itself is never copied into the output.
+const DNS_CODES = new Set(["ENOTFOUND", "ENODATA", "ESERVFAIL", "ETIMEDOUT", "ECONNREFUSED", "EAI_AGAIN"]);
+
+function categorize(name, code, rawCode) {
+  if (name === "Other" && typeof rawCode === "string" && DNS_CODES.has(rawCode)) return "dns";
+  if (name === "MongoServerError" || name === "MongoWriteConcernError" || name === "MongoClientBulkWriteError") {
     if (code === CODE_AUTHENTICATION_FAILED) return "authentication";
     if (code === CODE_ATLAS_ERROR) return "atlas_rejected";
     if (code === CODE_UNAUTHORIZED) return "authorization";
@@ -64,7 +70,7 @@ function classifyMongoError(err) {
   const name = pickName(err);
   const code = pickCode(err);
   const codeName = pickCodeName(err);
-  const out = { name, category: categorize(name, code) };
+  const out = { name, category: categorize(name, code, safeGet(err, "code")) };
   if (code !== undefined) out.code = code;
   if (codeName !== undefined) out.codeName = codeName;
   return out;

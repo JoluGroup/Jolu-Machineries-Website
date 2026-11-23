@@ -68,6 +68,15 @@ test("hostile or malformed values are dropped, never copied", () => {
   assert.equal(classifyMongoError(Object.assign(new Error("x"), { code: Infinity })).code, undefined);
 });
 
+test("DNS failures are categorised from a fixed code set without copying the string; subclasses keep server_error", () => {
+  const dns = Object.assign(new Error(`querySrv ENOTFOUND _mongodb._tcp.jolu-websites.kjwfoym.mongodb.net ${PASSWORD}`), { code: "ENOTFOUND", hostname: "jolu-websites.kjwfoym.mongodb.net" });
+  assert.deepEqual(classifyMongoError(dns), { name: "Other", category: "dns" });
+  assertClean(JSON.stringify(classifyMongoError(dns)));
+  assert.equal(classifyMongoError(Object.assign(new Error("x"), { code: "SOMETHING_ELSE" })).category, "unknown");
+  class MongoWriteConcernError extends Error { get name() { return "MongoWriteConcernError"; } }
+  assert.equal(classifyMongoError(Object.assign(new MongoWriteConcernError("x"), { code: 64 })).category, "server_error");
+});
+
 test("throwing getters and non-error inputs cannot break or leak", () => {
   const trap = {}; for (const k of ["name", "code", "codeName"]) Object.defineProperty(trap, k, { get() { throw new Error(PASSWORD); } });
   assert.deepEqual(classifyMongoError(trap), { name: "Other", category: "unknown" });
