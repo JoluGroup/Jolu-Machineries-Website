@@ -47,11 +47,12 @@ async function connectToMongo() {
   if (!config.mongoUri || !config.mongoDbName) return;
   let delay = 2000;
   while (!stopping) {
-    const candidate = new MongoClient(config.mongoUri, {
-      serverApi: { version: ServerApiVersion.v1, strict: true, deprecationErrors: true },
-      serverSelectionTimeoutMS: 10000,
-    });
+    let candidate = null;
     try {
+      candidate = new MongoClient(config.mongoUri, { // a malformed URI throws here: log it and keep retrying instead of going silent
+        serverApi: { version: ServerApiVersion.v1, strict: true, deprecationErrors: true },
+        serverSelectionTimeoutMS: 10000,
+      });
       await candidate.connect();
       client = candidate;
       db = candidate.db(config.mongoDbName);
@@ -59,7 +60,7 @@ async function connectToMongo() {
       break;
     } catch (err) {
       logger.error("mongo.connect_failed", { name: err && err.name ? String(err.name) : undefined });
-      try { await candidate.close(); } catch { /* ignore */ }
+      try { if (candidate) await candidate.close(); } catch { /* ignore */ }
       await sleep(delay);
       delay = Math.min(delay * 2, 60 * 1000);
     }

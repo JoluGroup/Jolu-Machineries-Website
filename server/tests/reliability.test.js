@@ -327,3 +327,50 @@ test("obsolete files are gone and nothing references them", () => {
   assert.equal(fs.existsSync(path.join(root, "testMango.js")), false); assert.equal(fs.existsSync(path.join(root, "data")), false);
   for (const f of ["app.js", "index.js", "config.js", "mailer.js", "notifier.js", "indexes.js"]) assert.doesNotMatch(fs.readFileSync(path.join(root, f), "utf8"), /testMango|data\/(contacts|schedules)\.json/);
 });
+
+// ---------------------------------------------------------------- follow-up to the independent review (findings A, B, I)
+test("review A: the window runs from ACCEPTANCE - a late-sent record still protects against an immediate resubmit", async () => {
+  const clock = makeClock(); const mailer = fakeMailer("timeout"); const s = await start({ clock, mailer });
+  assert.equal((await s.post("/api/quotes", FORM)).status, 502);
+  clock.advance(12 * MIN); mailer.behaviour = "ok";
+  assert.equal((await s.post("/api/quotes", FORM)).status, 201, "the customer's retry sends the same record");
+  assert.equal((await s.post("/api/quotes", FORM)).status, 200, "an immediate resubmit is a duplicate, not a new quote");
+  assert.equal(s.db.store.quotes.rows.length, 1); assert.equal(mailer.sent.length, 2); assert.equal(mailer.sent[0].idempotencyKey, mailer.sent[1].idempotencyKey);
+  clock.advance(DEDUPE_WINDOW_MS + 1000);
+  assert.equal((await s.post("/api/quotes", FORM)).status, 201, "ten minutes after acceptance it is a new enquiry again");
+  s.close();
+});
+
+test("review A: a quote swept long after creation is also protected from an immediate resubmit", async () => {
+  const clock = makeClock(); const mailer = fakeMailer("exception"); const s = await start({ clock, mailer });
+  assert.equal((await s.post("/api/quotes", FORM)).status, 502);
+  clock.advance(3 * 60 * MIN); mailer.behaviour = "ok";
+  assert.equal((await s.app.recover()).sent, 1, "a 3 hour old record is within the 24 h sweep age cap");
+  assert.equal((await s.post("/api/quotes", FORM)).status, 200); assert.equal(s.db.store.quotes.rows.length, 1);
+  s.close();
+});
+
+test("review B: quotes are refused (503) while the quotes unique index is missing, so duplicates cannot slip through", async () => {
+  const db = fakeDb(); db.flags.failIndex.quotes = true;
+  const state = await ensureIndexes(db, silent); assert.equal(state.quotes, false);
+  const s = await start({ db, skipIndexes: true, indexState: () => state });
+  const rs = await Promise.all([1, 2, 3].map(() => s.post("/api/quotes", FORM)));
+  assert.deepEqual(rs.map((r) => r.status), [503, 503, 503]); assert.equal(s.mailer.sent.length, 0); assert.equal((s.db.store.quotes || { rows: [] }).rows.length, 0);
+  assert.equal((await s.post("/api/contact", FORM)).status, 201, "unrelated routes are not affected");
+  state.quotes = true; // index built later (retry): accepted again
+  assert.equal((await s.post("/api/quotes", FORM)).status, 201);
+  s.close();
+});
+
+test("review I: a worker whose lease was taken over cannot overwrite the new owner's state on FAILURE, but a confirmed SENT always wins", async () => {
+  const { createNotifier } = require("../notifier");
+  const { builders } = require("../messages");
+  const clock = makeClock();
+  const mk = (behaviour) => { const db = fakeDb({ quotes: [{ ...FORM, createdAt: new Date(clock.t), emailStatus: "sending", emailAttempts: 2, leaseOwner: "B", leaseUntil: new Date(clock.t + LEASE_MS) }] }); const mailer = fakeMailer(behaviour); const n = createNotifier({ getDb: () => db, mailer, logger: silent, now: clock.now, builders }); return { db, n }; };
+  const stale = (db) => ({ ...db.store.quotes.rows[0], leaseOwner: "A" }); // worker A thinks it still owns the record
+  const f = mk("rejected"); await f.n.attempt(f.db.collection("quotes"), "quotes", stale(f.db), { requestId: "t", route: "t" });
+  assert.equal(f.db.store.quotes.rows[0].emailStatus, "sending", "B's lease and state are untouched by A's failure");
+  assert.equal(f.db.store.quotes.rows[0].leaseOwner, "B");
+  const g = mk("ok"); await g.n.attempt(g.db.collection("quotes"), "quotes", stale(g.db), { requestId: "t", route: "t" });
+  assert.equal(g.db.store.quotes.rows[0].emailStatus, "sent", "an accepted email is recorded even by a previous owner");
+});

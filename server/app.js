@@ -30,7 +30,7 @@ const subscribeSchema = z.object({ email: emailField });
 
 // Deduplication: an identical enquiry (same contact details, county, area, product and message) submitted again while the
 // previous one is ACTIVE returns that record instead of creating another. A record stays active until it has been
-// notified AND is older than the window, so a retry after a failed notification always reuses the unsent record.
+// notified AND the notification was accepted more than the window ago (the window runs from acceptance, not creation), so a retry after a failed notification always reuses the unsent record.
 const DEDUPE_WINDOW_MS = 10 * 60 * 1000;
 const PING_TTL_MS = 10 * 1000;
 const PING_TIMEOUT_MS = 3000;
@@ -126,7 +126,7 @@ function createApp({
     const fingerprint = fingerprintOf(p);
     for (let i = 0; i < 3; i++) {
       // Retire sent records whose window has passed so an identical new enquiry can be accepted again.
-      await coll.updateMany({ fingerprint, dedupeActive: true, emailStatus: "sent", createdAt: { $lte: new Date(now() - DEDUPE_WINDOW_MS) } }, { $set: { dedupeActive: false } });
+      await coll.updateMany({ fingerprint, dedupeActive: true, emailStatus: "sent", emailAcceptedAt: { $lte: new Date(now() - DEDUPE_WINDOW_MS) } }, { $set: { dedupeActive: false } });
       const doc = { ...p, fingerprint, dedupeActive: true, createdAt: new Date(now()), ...notifier.initialClaim() };
       try {
         const r = await coll.insertOne(doc);
@@ -146,7 +146,7 @@ function createApp({
     const parsed = quoteSchema.safeParse(req.body);
     if (!parsed.success) return validation(res, parsed.error);
     const db = getDb();
-    if (!usable(db)) return unavailable(res);
+    if (!usable(db) || !getIndexState().quotes) return unavailable(res); // never accept quotes without the duplicate-protection index
     const coll = db.collection("quotes");
     let stored;
     try { stored = await storeQuote(coll, parsed.data); }
