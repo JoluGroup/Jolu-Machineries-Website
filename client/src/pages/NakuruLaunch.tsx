@@ -20,6 +20,12 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
+// Verified on the official JOLU Group channel (@jolugroupltd, Live tab):
+// "JOLU GROUP NAKURU REGIONAL OFFICE & SHOW ROOM---OFFICIAL LAUNCH",
+// streamed 21 Feb 2026, about 5 h 4 min. Individual speaker clips and speech
+// texts are NOT yet verified, so the per-speaker links below are left as-is.
+const FULL_EVENT_URL = "https://www.youtube.com/watch?v=Z2qy5pVIKiQ";
+
 const NakuruLaunch: React.FC = () => {
   const metaTitle = "Jolu Group Nakuru Regional Offices & Showroom Grand Launch";
   const metaDescription =
@@ -436,7 +442,10 @@ const NakuruLaunch: React.FC = () => {
         </section>
 
         <a
-          href="#speeches"
+          href={FULL_EVENT_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Watch Full Event on YouTube (opens in a new tab)"
           className="fixed bottom-6 right-6 bg-primary hover:bg-primary/90 text-primary-foreground p-4 rounded-full shadow-lg flex items-center gap-2 z-50"
         >
           <Youtube className="w-5 h-5 text-accent" />
