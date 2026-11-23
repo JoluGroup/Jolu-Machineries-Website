@@ -190,6 +190,14 @@ const Footer = () => {
                   </button>
                 </li>
               ))}
+              <li>
+                <Link
+                  to="/products"
+                  className="text-white/80 no-underline hover:text-primary-glow transition-colors duration-200"
+                >
+                  Full Catalogue
+                </Link>
+              </li>
             </ul>
 
             <p className="text-sm font-semibold uppercase tracking-wider text-primary-glow mb-3">

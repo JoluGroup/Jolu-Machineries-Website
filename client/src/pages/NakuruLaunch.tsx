@@ -1,5 +1,6 @@
 // src/pages/NakuruLaunch.tsx
 
+import ResponsiveImage from "@/components/ResponsiveImage";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -18,6 +19,30 @@ import {
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+
+// Verified on the official JOLU Group channel (@jolugroupltd, Live tab):
+// "JOLU GROUP NAKURU REGIONAL OFFICE & SHOW ROOM---OFFICIAL LAUNCH",
+// streamed 21 Feb 2026, about 5 h 4 min.
+const FULL_EVENT_URL = "https://www.youtube.com/watch?v=Z2qy5pVIKiQ";
+
+// Owner-approved speaker start times, in whole seconds from the start of the recording.
+// A speaker set to `null` renders a pending, non-navigating button. Never copy one
+// speaker's value to another and never guess.
+const SPEAKER_START_SECONDS: Record<string, number | null> = {
+  "Pastor Carol": 2775,
+  "Lucy Ndung’u": 4970,
+  "Kelvin Macharia": 5540,
+  "Jackson Oduor": 7050,
+  "John Ndung’u": 11115,
+  "Catherine": 13710,
+};
+
+const speakerVideoUrl = (name: string): string | null => {
+  const t = SPEAKER_START_SECONDS[name];
+  return typeof t === "number" && Number.isInteger(t) && t >= 0
+    ? `${FULL_EVENT_URL}&t=${t}s`
+    : null;
+};
 
 const NakuruLaunch: React.FC = () => {
   const metaTitle = "Jolu Group Nakuru Regional Offices & Showroom Grand Launch";
@@ -52,43 +77,31 @@ const NakuruLaunch: React.FC = () => {
       name: "Pastor Carol",
       title: "Opening Prayer & Sermon",
       image: "/lovable-uploads/nakuru-launch/pastor-carol.jpg",
-      video: "#",
-      speech: "#",
     },
     {
       name: "Lucy Ndung’u",
       title: "Welcome & Opening Remarks",
       image: "/lovable-uploads/nakuru-launch/lucy.jpg",
-      video: "#",
-      speech: "#",
     },
     {
       name: "Kelvin Macharia",
       title: "Jolu Group Presentation",
       image: "/lovable-uploads/nakuru-launch/kelvin.jpg",
-      video: "#",
-      speech: "#",
     },
     {
       name: "Jackson Oduor",
       title: "Farm Mechanization Talk",
       image: "/lovable-uploads/nakuru-launch/jackson.jpg",
-      video: "#",
-      speech: "#",
     },
     {
       name: "John Ndung’u",
       title: "CEO Address",
       image: "/lovable-uploads/nakuru-launch/john.jpg",
-      video: "#",
-      speech: "#",
     },
     {
       name: "Catherine",
       title: "Vote of Thanks",
       image: "/lovable-uploads/nakuru-launch/catherine.jpg",
-      video: "#",
-      speech: "#",
     },
   ];
 
@@ -114,7 +127,7 @@ const NakuruLaunch: React.FC = () => {
       <main className="bg-background text-foreground">
         {/* Hero */}
         <section className="relative min-h-[75vh] flex items-center hero-gradient overflow-hidden">
-          <img
+          <ResponsiveImage sizes="100vw" priority
             src="/lovable-uploads/nakuru-launch/hero.jpg"
             alt="Jolu Group Nakuru Regional Offices and Showroom Grand Launch"
             className="absolute inset-0 w-full h-full object-cover opacity-75"
@@ -172,7 +185,7 @@ const NakuruLaunch: React.FC = () => {
               </p>
 
               <figure className="mb-10">
-                <img
+                <ResponsiveImage sizes="(min-width: 1024px) 60vw, 100vw"
                   src="/lovable-uploads/nakuru-launch/showroom.jpg"
                   alt="Jolu Group Nakuru showroom"
                   className="w-full rounded-xl object-cover shadow-lg"
@@ -200,7 +213,7 @@ const NakuruLaunch: React.FC = () => {
                       key={speaker.name}
                       className="product-card hover-lift"
                     >
-                      <img
+                      <ResponsiveImage sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                         src={speaker.image}
                         alt={speaker.name}
                         className="w-full h-64 object-cover"
@@ -216,31 +229,31 @@ const NakuruLaunch: React.FC = () => {
                         </p>
 
                         <div className="flex flex-wrap gap-3">
-                          <a
-                            href={speaker.video}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <Button size="sm" className="btn-agricultural">
+                          {speakerVideoUrl(speaker.name) ? (
+                            <a
+                              href={speakerVideoUrl(speaker.name) as string}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              aria-label={`Watch ${speaker.name} on YouTube (opens in a new tab)`}
+                            >
+                              <Button size="sm" className="btn-agricultural">
+                                <PlayCircle className="w-4 h-4 mr-2" />
+                                Watch Video
+                              </Button>
+                            </a>
+                          ) : (
+                            <Button
+                              size="sm"
+                              className="btn-agricultural"
+                              disabled
+                              aria-disabled="true"
+                              title="Video link pending verification"
+                              data-pending-video="true"
+                            >
                               <PlayCircle className="w-4 h-4 mr-2" />
                               Watch Video
                             </Button>
-                          </a>
-
-                          <a
-                            href={speaker.speech}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="border-border text-primary hover:bg-accent hover:text-accent-foreground"
-                            >
-                              <Mic className="w-4 h-4 mr-2" />
-                              Read Speech
-                            </Button>
-                          </a>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -265,7 +278,7 @@ const NakuruLaunch: React.FC = () => {
                       key={index}
                       className="relative group overflow-hidden rounded-xl shadow-md hover-lift"
                     >
-                      <img
+                      <ResponsiveImage sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                         src={img}
                         alt={`Nakuru launch photo ${index + 1}`}
                         className="w-full h-56 object-cover group-hover:scale-105 transition duration-500"
@@ -380,7 +393,7 @@ const NakuruLaunch: React.FC = () => {
                 </div>
 
                 <figure>
-                  <img
+                  <ResponsiveImage sizes="(min-width: 1024px) 33vw, 100vw"
                     src="/lovable-uploads/nakuru-launch/tractor.jpg"
                     alt="Machinery showcase"
                     className="w-full rounded-xl object-cover shadow-md"
@@ -391,7 +404,7 @@ const NakuruLaunch: React.FC = () => {
                 </figure>
 
                 <figure>
-                  <img
+                  <ResponsiveImage sizes="(min-width: 1024px) 33vw, 100vw"
                     src="/lovable-uploads/nakuru-launch/hero.jpg"
                     alt="Ribbon cutting ceremony"
                     className="w-full rounded-xl object-cover shadow-md"
@@ -435,7 +448,10 @@ const NakuruLaunch: React.FC = () => {
         </section>
 
         <a
-          href="#speeches"
+          href={FULL_EVENT_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Watch Full Event on YouTube (opens in a new tab)"
           className="fixed bottom-6 right-6 bg-primary hover:bg-primary/90 text-primary-foreground p-4 rounded-full shadow-lg flex items-center gap-2 z-50"
         >
           <Youtube className="w-5 h-5 text-accent" />

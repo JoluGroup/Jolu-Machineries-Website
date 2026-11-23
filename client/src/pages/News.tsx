@@ -1,4 +1,5 @@
 // src/pages/News.tsx
+import ResponsiveImage from "@/components/ResponsiveImage";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Calendar, MapPin, Users, Mic, Youtube, ArrowUp} from "lucide-react";
@@ -157,7 +158,7 @@ useEffect(() => {
             <article className="md:flex-1">
               {/* Hero image */}
               <figure className="mb-6">
-                <img
+                <ResponsiveImage sizes="(min-width: 1024px) 60vw, calc(100vw - 2rem)" priority
                   src="/lovable-uploads/event/launch-hero.jpg"
                   alt="Ribbon cutting at Jolu Group launch"
                   className="w-full rounded-lg object-cover shadow-md"
@@ -188,7 +189,7 @@ useEffect(() => {
 
                   return (
                     <div key={speaker.name} className="bg-zinc-50 dark:bg-zinc-800 p-4 rounded-lg shadow-sm">
-                      <img
+                      <ResponsiveImage sizes="(min-width: 1024px) 276px, (min-width: 768px) calc(50vw - 236px), calc(100vw - 4rem)"
                         src={speaker.image}
                         alt={speaker.name}
                         className="w-full h-auto object-contain md:h-72 md:object-cover lg:h-80 rounded-md mb-2"
@@ -230,7 +231,7 @@ useEffect(() => {
       <Dialog>
         <DialogTrigger asChild>
           <div className="relative cursor-pointer group">
-            <img
+            <ResponsiveImage sizes="(min-width: 1024px) 276px, (min-width: 768px) calc(50vw - 236px), calc(100vw - 4rem)"
               src={client.image}
               alt={client.name}
               className="w-full h-auto object-contain md:h-64 md:object-cover rounded-md"
@@ -338,17 +339,17 @@ useEffect(() => {
               </div>
 
               <figure className="mt-6">
-                <img src="/lovable-uploads/event/cakecutting.jpg" alt="cake cutting session during the event" className="w-full rounded-md object-cover" />
+                <ResponsiveImage sizes="(min-width: 1024px) 33vw, calc(100vw - 2rem)" src="/lovable-uploads/event/cakecutting.jpg" alt="cake cutting session during the event" className="w-full rounded-md object-cover" />
                 <figcaption className="text-xs text-zinc-500 mt-2">Cake cutting session during the event.</figcaption>
               </figure>
 
               <figure className="mt-4">
-                <img src="/lovable-uploads/event/tractor.jpg" alt="machinery showcased at launch" className="w-full rounded-md object-cover" />
+                <ResponsiveImage sizes="(min-width: 1024px) 33vw, calc(100vw - 2rem)" src="/lovable-uploads/event/tractor.jpg" alt="machinery showcased at launch" className="w-full rounded-md object-cover" />
                 <figcaption className="text-xs text-zinc-500 mt-2">Agricultural machinery displayed during launch.</figcaption>
               </figure>
 
               <figure className="mt-4">
-                <img src="/lovable-uploads/event/handover.jpg" alt="handover of machinery at the Jolu Group launch" className="w-full rounded-md object-cover" />
+                <ResponsiveImage sizes="(min-width: 1024px) 33vw, calc(100vw - 2rem)" src="/lovable-uploads/event/handover.jpg" alt="handover of machinery at the Jolu Group launch" className="w-full rounded-md object-cover" />
                 <figcaption className="text-xs text-zinc-500 mt-2">Handover of machinery at the Jolu Group launch.</figcaption>
               </figure>
             </aside>
@@ -414,7 +415,7 @@ useEffect(() => {
           "/lovable-uploads/event/technician.jpg",
         ]) // duplicate all images for seamless loop
         .map((img, idx) => (
-          <img
+          <ResponsiveImage sizes="240px"
             key={idx}
             src={img}
             alt={`Gallery image ${idx + 1}`}

@@ -1,0 +1,6 @@
+integ home {"lcp":3764,"cls":0.0004,"initialImgKB":73,"initialTotalKB":362,"fullImgKB":833,"fullTotalKB":1123,"fullImgCount":12,"settleSec":21}
+integ gallery {"lcp":2032,"cls":0,"initialImgKB":25,"initialTotalKB":295,"fullImgKB":1505,"fullTotalKB":1774,"fullImgCount":16,"settleSec":13}
+integ news {"lcp":3708,"cls":0.002,"initialImgKB":118,"initialTotalKB":354,"fullImgKB":1181,"fullTotalKB":1418,"fullImgCount":20,"settleSec":15}
+integ products {"lcp":3124,"cls":0.002,"initialImgKB":291,"initialTotalKB":532,"fullImgKB":905,"fullTotalKB":1147,"fullImgCount":19,"settleSec":14}
+integ product_detail {"lcp":2392,"cls":0.002,"initialImgKB":129,"initialTotalKB":370,"fullImgKB":129,"fullTotalKB":370,"fullImgCount":2,"settleSec":8}
+integ event_nakuru {"lcp":1684,"cls":0.002,"initialImgKB":0,"initialTotalKB":235,"fullImgKB":1692,"fullTotalKB":1927,"fullImgCount":14,"settleSec":15}
