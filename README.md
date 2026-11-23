@@ -108,6 +108,16 @@ The `render.yaml` Blueprint defines that single web service; it contains no secr
 *   **Shutdown.** SIGTERM stops new connections, lets in-flight requests (including an email send) finish, closes the database client, then exits (10 s hard deadline).
 *   **Tests.** `cd server && npm test` (mocked database and mailer; no network, no real email).
 
+### Unsent notification report (read-only)
+
+Quotations, contacts and schedules are always stored before any email is attempted. To see which ones staff have not been emailed about (pending, sending, failed, unknown, or exhausted, meaning 6 attempts used or older than 24 h), run from `server/` with `MONGO_URI` and `MONGO_DB_NAME` set:
+
+    npm run unsent                    # human-readable, oldest first, 50 records per collection
+    npm run unsent -- --json          # machine-readable
+    npm run unsent -- --limit 200     # 1 to 1000
+
+It only reads (`countDocuments` and `find` with a projection). It never updates records, never sends email and never prints names, emails, phone numbers or messages: only record ids, dates, states, attempt counts and failure kinds. Use the id in Atlas to look up the customer. If the database cannot be read it prints a short error (no connection string) and exits 1; missing configuration exits 2. Exhausted records are not retried automatically: contact the customer from the stored record, then correct its status manually. Run it from a machine whose IP is on the Atlas access list.
+
 ## Can I connect a custom domain to my Lovable project?
 
 Yes, you can!

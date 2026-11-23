@@ -63,7 +63,13 @@ function fakeDb(initial = {}) {
           c.rows.push(row); return { insertedId: row._id };
         },
         async findOne(f) { if (flags.failStore) throw new Error("db down"); const r = c.rows.find((x) => match(x, f)); return r ? { ...r } : null; },
-        find(f) { return { toArray: async () => c.rows.filter((x) => match(x, f)).map((x) => ({ ...x })) }; },
+        find(f) {
+          let rows = c.rows.filter((x) => match(x, f)).map((x) => ({ ...x })); const cur = {};
+          cur.sort = (s) => { const [k, d] = Object.entries(s)[0]; rows.sort((a, b) => (cmp(a[k]) > cmp(b[k]) ? 1 : cmp(a[k]) < cmp(b[k]) ? -1 : 0) * d); return cur; };
+          cur.limit = (n) => { rows = rows.slice(0, n); return cur; };
+          cur.toArray = async () => { if (flags.failStore) throw new Error("db down"); return rows; };
+          return cur;
+        },
         async countDocuments(f) { return c.rows.filter((x) => match(x, f)).length; },
         async updateOne(f, update, opts = {}) {
           if (flags.failStore) throw new Error("db down");
