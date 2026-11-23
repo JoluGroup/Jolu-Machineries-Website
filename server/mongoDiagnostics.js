@@ -5,7 +5,7 @@
 // four allowlisted facts, each validated so that no input can smuggle text through:
 //   name      - one of a fixed list of known driver error class names, otherwise "Other"
 //   code      - an integer (string codes such as "ECONNREFUSED" are dropped)
-//   codeName  - letters only, max 40 characters
+//   codeName  - a member of the finite CODE_NAMES set below, otherwise the constant "Unrecognized" (arbitrary text never passes)
 //   category  - one of the predefined CATEGORIES below
 // Every property access is guarded: a hostile or odd error object can never throw out of this module.
 
@@ -41,9 +41,21 @@ function pickCode(err) {
   return typeof c === "number" && Number.isSafeInteger(c) ? c : undefined;
 }
 
+// Canonical MongoDB server code names we recognise (error_codes.yml). Anything else is reported as "Unrecognized".
+const CODE_NAMES = new Set([
+  "AuthenticationFailed", "Unauthorized", "AtlasError", "APIVersionError", "APIStrictError", "APIDeprecationError",
+  "UserNotFound", "BadValue", "InvalidOptions", "InvalidNamespace", "IllegalOperation", "CommandNotFound", "NamespaceNotFound",
+  "HostUnreachable", "HostNotFound", "NetworkTimeout", "SocketException", "ExceededTimeLimit", "MaxTimeMSExpired",
+  "DuplicateKey", "IndexOptionsConflict", "IndexKeySpecsConflict", "CannotCreateIndex", "NotWritablePrimary", "NotPrimaryNoSecondaryOk",
+  "InterruptedAtShutdown", "ShutdownInProgress", "WriteConcernFailed", "WriteConcernError", "OperationFailed", "InternalError",
+  "ReauthenticationRequired", "AuthenticationRestrictionUnmet", "MechanismUnavailable", "ConflictingOperationInProgress", "NoSuchKey",
+]);
+const UNRECOGNIZED = "Unrecognized";
+
 function pickCodeName(err) {
   const c = safeGet(err, "codeName");
-  return typeof c === "string" && /^[A-Za-z]{1,40}$/.test(c) ? c : undefined;
+  if (typeof c !== "string") return undefined;
+  return CODE_NAMES.has(c) ? c : UNRECOGNIZED;
 }
 
 // Node DNS failures (e.g. a mistyped mongodb+srv host) are plain Errors with a STRING code. Only membership in this fixed
@@ -54,6 +66,8 @@ function categorize(name, code, rawCode) {
   if (name === "Other" && typeof rawCode === "string" && DNS_CODES.has(rawCode)) return "dns";
   if (name === "MongoServerError" || name === "MongoWriteConcernError" || name === "MongoClientBulkWriteError") {
     if (code === CODE_AUTHENTICATION_FAILED) return "authentication";
+    // 8000 is Atlas's generic rejection code. It is how Atlas reports bad credentials but is NOT proof of that, so it gets its
+    // own category instead of being folded into "authentication".
     if (code === CODE_ATLAS_ERROR) return "atlas_rejected";
     if (code === CODE_UNAUTHORIZED) return "authorization";
     if (code !== undefined && API_VERSION_CODES.has(code)) return "api_version";

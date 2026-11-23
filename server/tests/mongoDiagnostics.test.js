@@ -62,10 +62,20 @@ test("only allowlisted fields are returned, whatever the error contains", () => 
 test("hostile or malformed values are dropped, never copied", () => {
   const spoofName = Object.assign(new Error("x"), { name: `${URI}`, code: `ECONNREFUSED ${PASSWORD}`, codeName: `${USER}:${PASSWORD}` });
   const out = classifyMongoError(spoofName);
-  assert.deepEqual(out, { name: "Other", category: "unknown" }, "unknown name, string code and non-letter codeName are all dropped");
+  assert.deepEqual(out, { name: "Other", category: "unknown", codeName: "Unrecognized" }, "unknown name and string code are dropped; any non-canonical codeName becomes the constant");
   const longName = classifyMongoError(Object.assign(new Error("x"), { codeName: "A".repeat(41), code: 1.5 }));
-  assert.equal(longName.codeName, undefined); assert.equal(longName.code, undefined);
+  assert.equal(longName.codeName, "Unrecognized"); assert.equal(longName.code, undefined);
+  // letters-only text that merely LOOKS like a code name must not pass either
+  for (const t of [PASSWORD.replace(/\d/g, "x"), "jolumachineriesapp", "AuthenticationFailedForUser", "authenticationfailed"]) {
+    assert.equal(classifyMongoError(Object.assign(new Error("x"), { codeName: t })).codeName, "Unrecognized", t);
+  }
   assert.equal(classifyMongoError(Object.assign(new Error("x"), { code: Infinity })).code, undefined);
+});
+
+test("code 8000 is not treated as proof of bad credentials; only code 18 is 'authentication'", () => {
+  const atlas = classifyMongoError(new MongoServerError({ message: "x", code: 8000, codeName: "AtlasError" }));
+  assert.equal(atlas.category, "atlas_rejected"); assert.notEqual(atlas.category, "authentication");
+  assert.equal(classifyMongoError(new MongoServerError({ message: "x", code: 18, codeName: "AuthenticationFailed" })).category, "authentication");
 });
 
 test("DNS failures are categorised from a fixed code set without copying the string; subclasses keep server_error", () => {
