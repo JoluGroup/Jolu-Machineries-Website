@@ -1,47 +1,31 @@
+# Render Blueprint — JOLU Machineries API (Express backend ONLY).
+# The website itself is hosted on Vercel; there is deliberately no static-site service here.
+# Nothing in this file contains credentials. Secret values are entered in the Render dashboard (sync: false).
 services:
   - type: web
-    name: jolu-machinery-server
-    env: node
-    region: oregon
-    plan: free
+    name: jolu-machineries-api          # proposed name; the public hostname becomes https://<name>.onrender.com (not yet created)
+    runtime: node
+    region: frankfurt                   # OWNER DECISION: choose the region closest to the Atlas cluster and to Kenya
+    plan: free                          # OWNER DECISION: free instances sleep when idle (slow first request); a paid plan stays awake
     rootDir: server
-    buildCommand: npm install
+    buildCommand: npm ci
     startCommand: npm start
     healthCheckPath: /api/health
+    autoDeploy: false                   # deploy only when the owner chooses; pushes do not deploy automatically
     envVars:
       - key: NODE_VERSION
         value: 20.14.0
-      - key: CLIENT_ORIGIN
-        value: https://jolu-machinery.onrender.com
-      - key: MONGO_URI
+      - key: NODE_ENV
+        value: production
+      - key: ALLOWED_ORIGINS            # comma-separated exact origins; add the Vercel preview origin or a wildcard pattern here when needed
+        value: https://www.jolumachineries.com,https://jolumachineries.com
+      - key: MONGO_URI                  # MongoDB Atlas connection string (secret)
         sync: false
       - key: MONGO_DB_NAME
         sync: false
-      - key: SMTP_HOST
+      - key: RESEND_API_KEY             # Resend API key (secret)
         sync: false
-      - key: SMTP_PORT
+      - key: EMAIL_FROM                 # must be an address on a domain verified in Resend
         sync: false
-      - key: SMTP_USER
+      - key: EMAIL_TO                   # recipient(s) for quotation and contact notifications, comma-separated
         sync: false
-      - key: SMTP_PASS
-        sync: false
-      - key: EMAIL_TO
-        sync: false
-      - key: EMAIL_FROM
-        sync: false
-        
-  - type: web
-    name: jolu-machinery-client
-    env: static
-    region: oregon
-    plan: free
-    rootDir: client
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-    envVars:
-      - key: VITE_API_URL
-        value: https://jolu-machinery-server.onrender.com

@@ -48,7 +48,7 @@ The backend server requires environment variables to run correctly.
     ```sh
     cp .env.example .env
     ```
-3.  Open the `.env` file and fill in the required values for your MongoDB and SMTP configurations.
+3.  Open the `.env` file and fill in the required values for MongoDB, Resend and the allowed origins (see `.env.example`).
 
 
 **Edit a file directly in GitHub**
@@ -79,22 +79,19 @@ This project is built with:
 
 This project is configured for deployment on Render.
 
-### Render Deployment
+### Render Deployment (API only)
 
-The `render.yaml` file in this repository is configured to deploy both the client and server. To deploy this project to Render:
+The website is hosted on Vercel. Render hosts **only** the Express API in `server/` (Node 20).
+The `render.yaml` Blueprint defines that single web service; it contains no secrets.
 
-1.  Create a new "Blueprint" service on Render.
-2.  Connect your GitHub repository.
-3.  Render will automatically detect the `render.yaml` file and configure the services.
-4.  You will need to set the following environment variables for the `jolu-machinery-server` service in the Render dashboard:
-    *   `MONGO_URI`
-    *   `MONGO_DB_NAME`
-    *   `SMTP_HOST`
-    *   `SMTP_PORT`
-    *   `SMTP_USER`
-    *   `SMTP_PASS`
-    *   `EMAIL_TO`
-    *   `EMAIL_FROM`
+1.  Settings: root directory `server`, build `npm ci`, start `npm start`, health check `/api/health` (readiness: `/api/ready`).
+2.  Set these environment variables in the Render dashboard (names only here):
+    *   `MONGO_URI`, `MONGO_DB_NAME` (MongoDB Atlas)
+    *   `RESEND_API_KEY`, `EMAIL_FROM` (an address on a Resend-verified domain), `EMAIL_TO`
+    *   `ALLOWED_ORIGINS` (comma-separated exact origins that may call the API; `*` matches one DNS label)
+    *   `NODE_ENV=production`
+3.  In production the server refuses to start and prints which variable names are missing.
+4.  Point the website at the API by setting `VITE_API_BASE` (absolute `https://` URL, no trailing slash) in the Vercel project, then redeploy.
 
 ## Can I connect a custom domain to my Lovable project?
 
