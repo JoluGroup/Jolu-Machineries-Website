@@ -8,6 +8,7 @@ const { createResendMailer } = require("./mailer");
 const { createApp } = require("./app");
 const { ensureIndexes } = require("./indexes");
 const { createShutdown } = require("./shutdown");
+const { classifyMongoError } = require("./mongoDiagnostics");
 
 const logger = createLogger();
 const config = loadConfig(process.env);
@@ -46,7 +47,9 @@ const app = createApp({ config, getDb: () => db, mailer, logger, getIndexState: 
 async function connectToMongo() {
   if (!config.mongoUri || !config.mongoDbName) return;
   let delay = 2000;
+  let attempt = 0;
   while (!stopping) {
+    attempt += 1;
     let candidate = null;
     try {
       candidate = new MongoClient(config.mongoUri, { // a malformed URI throws here: log it and keep retrying instead of going silent
@@ -59,7 +62,7 @@ async function connectToMongo() {
       logger.info("mongo.connected");
       break;
     } catch (err) {
-      logger.error("mongo.connect_failed", { name: err && err.name ? String(err.name) : undefined });
+      logger.error("mongo.connect_failed", { attempt, ...classifyMongoError(err) }); // allowlisted name/code/codeName/category only: never the message, cause or URI
       try { if (candidate) await candidate.close(); } catch { /* ignore */ }
       await sleep(delay);
       delay = Math.min(delay * 2, 60 * 1000);

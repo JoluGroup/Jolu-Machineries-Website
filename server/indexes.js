@@ -4,6 +4,8 @@
 // quotes      unique partial index on the ACTIVE deduplication fingerprint (required: duplicate protection).
 // subscribers unique index on email (best effort: legacy data may contain duplicates; see auditSubscribers).
 
+const { classifyMongoError } = require("./mongoDiagnostics");
+
 const QUOTES_INDEX = [{ fingerprint: 1 }, { unique: true, partialFilterExpression: { dedupeActive: true }, name: "quotes_active_fingerprint" }];
 const SUBSCRIBERS_INDEX = [{ email: 1 }, { unique: true, name: "subscribers_email_unique" }];
 
@@ -30,12 +32,12 @@ async function auditSubscribers(coll) {
 async function ensureIndexes(db, logger) {
   const state = { quotes: false, subscribers: false };
   try { await db.collection("quotes").createIndex(...QUOTES_INDEX); state.quotes = true; }
-  catch (err) { logger.error("index.failed", { kind: "quotes", name: err && err.name ? String(err.name) : undefined, code: err && err.code ? String(err.code) : undefined }); }
+  catch (err) { logger.error("index.failed", { kind: "quotes", ...classifyMongoError(err) }); }
   try { await db.collection("subscribers").createIndex(...SUBSCRIBERS_INDEX); state.subscribers = true; }
   catch (err) {
     let count;
     try { count = (await auditSubscribers(db.collection("subscribers"))).duplicateGroups; } catch { /* audit is optional */ }
-    logger.error("index.failed", { kind: "subscribers", name: err && err.name ? String(err.name) : undefined, code: err && err.code ? String(err.code) : undefined, count });
+    logger.error("index.failed", { kind: "subscribers", ...classifyMongoError(err), count });
   }
   return state;
 }
