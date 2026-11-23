@@ -22,9 +22,27 @@ import Footer from "@/components/Footer";
 
 // Verified on the official JOLU Group channel (@jolugroupltd, Live tab):
 // "JOLU GROUP NAKURU REGIONAL OFFICE & SHOW ROOM---OFFICIAL LAUNCH",
-// streamed 21 Feb 2026, about 5 h 4 min. Individual speaker clips and speech
-// texts are NOT yet verified, so the per-speaker links below are left as-is.
+// streamed 21 Feb 2026, about 5 h 4 min.
 const FULL_EVENT_URL = "https://www.youtube.com/watch?v=Z2qy5pVIKiQ";
+
+// Owner-approved speaker start times, in whole seconds from the start of the recording.
+// A speaker set to `null` renders a pending, non-navigating button. Never copy one
+// speaker's value to another and never guess.
+const SPEAKER_START_SECONDS: Record<string, number | null> = {
+  "Pastor Carol": 2775,
+  "Lucy Ndung’u": 4970,
+  "Kelvin Macharia": 5540,
+  "Jackson Oduor": 7050,
+  "John Ndung’u": 11115,
+  "Catherine": 13710,
+};
+
+const speakerVideoUrl = (name: string): string | null => {
+  const t = SPEAKER_START_SECONDS[name];
+  return typeof t === "number" && Number.isInteger(t) && t >= 0
+    ? `${FULL_EVENT_URL}&t=${t}s`
+    : null;
+};
 
 const NakuruLaunch: React.FC = () => {
   const metaTitle = "Jolu Group Nakuru Regional Offices & Showroom Grand Launch";
@@ -59,43 +77,31 @@ const NakuruLaunch: React.FC = () => {
       name: "Pastor Carol",
       title: "Opening Prayer & Sermon",
       image: "/lovable-uploads/nakuru-launch/pastor-carol.jpg",
-      video: "#",
-      speech: "#",
     },
     {
       name: "Lucy Ndung’u",
       title: "Welcome & Opening Remarks",
       image: "/lovable-uploads/nakuru-launch/lucy.jpg",
-      video: "#",
-      speech: "#",
     },
     {
       name: "Kelvin Macharia",
       title: "Jolu Group Presentation",
       image: "/lovable-uploads/nakuru-launch/kelvin.jpg",
-      video: "#",
-      speech: "#",
     },
     {
       name: "Jackson Oduor",
       title: "Farm Mechanization Talk",
       image: "/lovable-uploads/nakuru-launch/jackson.jpg",
-      video: "#",
-      speech: "#",
     },
     {
       name: "John Ndung’u",
       title: "CEO Address",
       image: "/lovable-uploads/nakuru-launch/john.jpg",
-      video: "#",
-      speech: "#",
     },
     {
       name: "Catherine",
       title: "Vote of Thanks",
       image: "/lovable-uploads/nakuru-launch/catherine.jpg",
-      video: "#",
-      speech: "#",
     },
   ];
 
@@ -223,31 +229,31 @@ const NakuruLaunch: React.FC = () => {
                         </p>
 
                         <div className="flex flex-wrap gap-3">
-                          <a
-                            href={speaker.video}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <Button size="sm" className="btn-agricultural">
+                          {speakerVideoUrl(speaker.name) ? (
+                            <a
+                              href={speakerVideoUrl(speaker.name) as string}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              aria-label={`Watch ${speaker.name} on YouTube (opens in a new tab)`}
+                            >
+                              <Button size="sm" className="btn-agricultural">
+                                <PlayCircle className="w-4 h-4 mr-2" />
+                                Watch Video
+                              </Button>
+                            </a>
+                          ) : (
+                            <Button
+                              size="sm"
+                              className="btn-agricultural"
+                              disabled
+                              aria-disabled="true"
+                              title="Video link pending verification"
+                              data-pending-video="true"
+                            >
                               <PlayCircle className="w-4 h-4 mr-2" />
                               Watch Video
                             </Button>
-                          </a>
-
-                          <a
-                            href={speaker.speech}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="border-border text-primary hover:bg-accent hover:text-accent-foreground"
-                            >
-                              <Mic className="w-4 h-4 mr-2" />
-                              Read Speech
-                            </Button>
-                          </a>
+                          )}
                         </div>
                       </div>
                     </div>
