@@ -29,10 +29,10 @@ jobs:
         working-directory: server
         shell: bash
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -53,10 +53,10 @@ jobs:
         working-directory: client
         shell: bash
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -105,21 +105,14 @@ jobs:
         working-directory: ${{ matrix.package }}
         shell: bash
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: npm audit --omit=dev (fails on high or critical)
-        run: |
-          set +e
-          npm audit --omit=dev --audit-level=high > audit.txt 2>&1
-          status=$?
-          tail -n 25 audit.txt
-          summary=$(grep -Eo '[0-9]+ (low|moderate|high|critical)[^,]*vulnerabilit[a-z]*|found 0 vulnerabilities' audit.txt | head -n 3 | paste -sd ';' -)
-          echo "::notice title=${{ matrix.package }} audit::exit=${status} ${summary:-see log}"
-          exit $status
+        run: ../.github/scripts/audit.sh ${{ matrix.package }}
 
   summary:
     name: CI summary
