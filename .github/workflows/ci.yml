@@ -18,13 +18,14 @@ env:
   # Server: Render production pins Node 20.14.0. Client: tests import .ts sources directly, which needs
   # Node 22 type stripping (Node 20 fails those files at load); the client is built by Vercel, not Render.
   NODE_VERSION: "20.14.0"
-  CLIENT_NODE_VERSION: "22"
-  CI_SYNTHETIC: "1"
+  CLIENT_NODE_VERSION: "22"   # >= 22.18 required (type stripping on by default); setup-node resolves the latest 22.x
 
 jobs:
   server:
     name: server (install, tests)
     runs-on: ubuntu-latest
+    outputs:
+      tests: ${{ steps.tests.outputs.verdict }}
     timeout-minutes: 15
     defaults:
       run:
@@ -42,6 +43,7 @@ jobs:
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
       - name: Tests (synthetic configuration, no network services)
+        id: tests
         env:
           NODE_ENV: test
         run: ../.github/scripts/run-tests.sh server
@@ -49,6 +51,8 @@ jobs:
   client:
     name: client (install, tests, build)
     runs-on: ubuntu-latest
+    outputs:
+      tests: ${{ steps.tests.outputs.verdict }}
     timeout-minutes: 20
     defaults:
       run:
@@ -66,6 +70,7 @@ jobs:
       - name: Install locked dependencies
         run: npm ci --no-audit --no-fund
       - name: Tests
+        id: tests
         run: ../.github/scripts/run-tests.sh client
       - name: Production build
         env:
@@ -126,13 +131,18 @@ jobs:
       - name: Result table
         run: |
           r() { case "$1" in success) echo PASSED;; failure) echo FAILED;; skipped) echo SKIPPED;; *) echo "NOT EXECUTED ($1)";; esac; }
+          # A job can succeed while its test suite was NOT EXECUTED (no test script); that must never read as PASSED.
+          t() { if [ "$2" = "success" ] && [ "$1" = "NOT_EXECUTED" ]; then echo "NOT EXECUTED (no test suite)"; else r "$2"; fi; }
+          SERVER_TESTS='${{ needs.server.outputs.tests }}'; CLIENT_TESTS='${{ needs.client.outputs.tests }}'
           {
             echo "## CI result for ${GITHUB_SHA}"
             echo "| job | result |"
             echo "|---|---|"
-            echo "| server | $(r '${{ needs.server.result }}') |"
-            echo "| client | $(r '${{ needs.client.result }}') |"
+            echo "| server | $(t "$SERVER_TESTS" '${{ needs.server.result }}') |"
+            echo "| client | $(t "$CLIENT_TESTS" '${{ needs.client.result }}') |"
             echo "| audit | $(r '${{ needs.audit.result }}') |"
           } >> "$GITHUB_STEP_SUMMARY"
-          echo "::notice title=CI summary::sha=${GITHUB_SHA} server=${{ needs.server.result }} client=${{ needs.client.result }} audit=${{ needs.audit.result }}"
-          [ "${{ needs.server.result }}" = success ] && [ "${{ needs.client.result }}" = success ] && [ "${{ needs.audit.result }}" = success ]
+          HEAD_SHA='${{ github.event.pull_request.head.sha || github.sha }}'
+          echo "::notice title=CI summary::sha=${HEAD_SHA} server=${{ needs.server.result }}/${SERVER_TESTS:-?} client=${{ needs.client.result }}/${CLIENT_TESTS:-?} audit=${{ needs.audit.result }}"
+          [ "${{ needs.server.result }}" = success ] && [ "${{ needs.client.result }}" = success ] && [ "${{ needs.audit.result }}" = success ] \
+            && [ "$SERVER_TESTS" != NOT_EXECUTED ] && [ "$CLIENT_TESTS" != NOT_EXECUTED ]
