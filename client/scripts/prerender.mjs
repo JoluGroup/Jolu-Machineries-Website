@@ -38,7 +38,9 @@ export async function loadRenderer() {
   for (const [k, v] of Object.entries(process.env)) if (k.startsWith("VITE_")) env[k] = v
   await build({
     entryPoints: [path.join(ROOT, "src/entry-server.tsx")], outfile, bundle: true, format: "esm", platform: "node", jsx: "automatic",
-    external: ["react", "react-dom", "react-dom/server", "react-router-dom", "react-router-dom/server", "react/jsx-runtime"],
+    external: ["react", "react-dom", "react-dom/server", "react-router-dom", "react/jsx-runtime"],
+    // react-router-dom v6 has no "exports" map, so Node's ESM resolver needs the explicit file for the server entry.
+    plugins: [{ name: "rrd-server", setup(b) { b.onResolve({ filter: /^react-router-dom\/server$/ }, () => ({ path: "react-router-dom/server.js", external: true })) } }],
     alias: { "@": path.join(ROOT, "src") }, mainFields: ["module", "main"], conditions: ["module", "import"],
     loader: { ".png": "file", ".jpg": "file", ".jpeg": "file", ".webp": "file", ".svg": "file", ".json": "json", ".css": "empty" },
     define: { "import.meta.env": JSON.stringify(env) }, logLevel: "warning",
