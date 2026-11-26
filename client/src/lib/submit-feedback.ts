@@ -34,12 +34,12 @@ export const FIELD_LABELS: Record<FieldName, string> = {
   preferredTime: "preferred time", product: "product", notes: "notes",
 }
 
-function directContact(): string {
+function directContact(lead = " You can also"): string {
   const phone = visible(phones.primary)?.display
   const email = visible(emails.general)
-  if (phone && email) return ` You can also call ${phone} or email ${email}.`
-  if (phone) return ` You can also call ${phone}.`
-  if (email) return ` You can also email ${email}.`
+  if (phone && email) return `${lead} call ${phone} or email ${email}.`
+  if (phone) return `${lead} call ${phone}.`
+  if (email) return `${lead} email ${email}.`
   return ""
 }
 
@@ -59,7 +59,7 @@ export function describeOutcome(outcome: SubmitOutcome, success: SuccessCopy): F
       // Stored successfully; only the internal staff email failed. Never ask the customer to resend.
       return ok("Request received", `Your request has been saved and our team will follow up.${directContact()}`)
     case "invalid": {
-      const fields = outcome.fields.length ? outcome.fields : []
+      const fields = outcome.fields
       const fieldErrors = Object.fromEntries(fields.map((f) => [f, FIELD_MESSAGES[f]])) as Feedback["fieldErrors"]
       const list = fields.map((f) => FIELD_LABELS[f]).join(", ")
       return fail("Please check the form", list ? `Some details need attention: ${list}.` : "Some details need attention. Please review the form and try again.", fieldErrors)
@@ -67,18 +67,20 @@ export function describeOutcome(outcome: SubmitOutcome, success: SuccessCopy): F
     case "rate_limited":
       return fail("Too many attempts", "Please wait a minute, then try again.")
     case "in_progress":
-      return fail("Already sending", "Your request is being processed. Please wait a moment before trying again.")
+      // 409 only comes from /api/quotes: an identical request is already stored and being processed.
+      return ok("Already received", "We're already processing this request, so there is no need to send it again.")
     case "unavailable":
       return fail("Service temporarily unavailable", `Your request was not sent. Please try again shortly.${directContact()}`)
     case "rejected":
       return fail("We couldn't send your request", `Please try again later.${directContact()}`)
     case "network":
-      return fail("Connection problem", "We couldn't reach our server, so your request was not sent. Please check your connection and try again.")
+      // A failed fetch usually means nothing reached the server, but the client cannot be certain, so no claim is made.
+      return fail("Connection problem", "We couldn't reach our server. Please check your connection and try again.")
     case "timeout":
-      // The server may still have stored it; resending is safe because duplicates are detected server-side.
-      return fail("No confirmation received", `We didn't get a confirmation in time. Your request may still have arrived; if you try again, we will not create a duplicate.${directContact()}`)
+      // The server may have stored it. Only quotes are de-duplicated server-side, so no "no duplicate" promise is made.
+      return fail("No confirmation received", `We didn't get a confirmation in time, so your request may still have arrived.${directContact(" Before sending it again, you can check with us:")}`)
     case "misconfigured":
-      return fail("Online requests are unavailable", `Please contact us directly.${directContact()}`)
+      return fail("Online requests are unavailable", directContact("Please contact us directly:").trim() || "Please try again later.")
     default:
       return fail("Something went wrong", `Your request may not have been sent. Please try again later.${directContact()}`)
   }

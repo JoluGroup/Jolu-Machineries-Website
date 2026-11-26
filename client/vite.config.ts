@@ -1,16 +1,14 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { resolveApiBase } from "./src/lib/api";
+import { checkApiBaseForBuild } from "./src/lib/api-base-guard";
 
-// M2-QUOTE-01: a Vercel *production* build must never ship without a valid API origin, otherwise every enquiry
-// form would be dead. Preview/CI/local builds only warn (the forms then show a "contact us directly" message).
+// M2-QUOTE-01: fail Vercel production builds without a valid VITE_API_BASE; warn elsewhere.
 function assertApiBase(mode: string) {
-  const env = { ...loadEnv(mode, process.cwd(), "VITE_"), ...process.env };
-  if (resolveApiBase(env.VITE_API_BASE)) return;
-  const msg = "VITE_API_BASE is missing or invalid (expected an absolute https:// origin).";
-  if (process.env.VERCEL_ENV === "production") throw new Error(`[build] ${msg} Refusing to build production.`);
-  console.warn(`[build] warning: ${msg} Enquiry forms will show a 'contact us directly' message.`);
+  const env = { ...loadEnv(mode, __dirname, "VITE_"), ...process.env };
+  const check = checkApiBaseForBuild(env.VITE_API_BASE, process.env.VERCEL_ENV);
+  if (check.fatal) throw new Error(check.message);
+  if (!check.ok) console.warn(check.message);
 }
 
 export default defineConfig(({ command, mode }) => {

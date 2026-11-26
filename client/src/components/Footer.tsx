@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { FaTiktok, FaWhatsapp } from "react-icons/fa";
 import { useLocation, Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { api } from "@/lib/api";
 
 const footerLocations = [locations.nairobi, locations.nakuru, locations.migoriFooter].map((c) => visible(c)).filter((l): l is NonNullable<typeof l> => Boolean(l));
@@ -16,6 +16,7 @@ const Footer = () => {
   const isHomePage = location.pathname === "/";
 
   const [email, setEmail] = useState("");
+  const subscribing = useRef(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -37,10 +38,12 @@ const Footer = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) return setMessage("⚠️ Please enter a valid email.");
 
-    if (loading) return;
+    if (subscribing.current) return;
+    subscribing.current = true;
     setLoading(true);
     setMessage("");
     const outcome = await api.subscribe({ email });
+    subscribing.current = false;
     setLoading(false);
     switch (outcome.kind) {
       case "received":

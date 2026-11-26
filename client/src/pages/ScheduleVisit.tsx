@@ -189,9 +189,12 @@ export default function ScheduleVisit() {
               <Textarea
                 name="notes"
                 placeholder="Anything else we should know?"
+                maxLength={2000}
                 value={form.notes || ""}
                 onChange={onChange}
+                {...errorProps(fieldErrors, "notes", ID)}
               />
+              <FieldError errors={fieldErrors} name="notes" idPrefix={ID} />
             </div>
 
             {/* Submit */}

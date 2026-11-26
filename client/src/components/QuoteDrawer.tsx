@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Sheet,
   SheetContent,
@@ -63,10 +63,13 @@ const QuoteDrawer = ({ trigger, product }: QuoteDrawerProps) => {
   const { isSubmitting, fieldErrors, setFieldErrors, clearFieldError, submit } = useSubmission();
   const ID = "quote-drawer";
   const [form, setForm] = useState<Form>({ ...emptyForm });
+  // Incremented on every open, so a late result from an earlier opening cannot clear or close a newer one.
+  const openSession = useRef(0);
 
   // Reset + auto-fill Product Interest each time the drawer opens.
   useEffect(() => {
     if (!open) return;
+    openSession.current += 1;
     const productInterest = product
       ? product.interest || matchProductInterest(product)
       : "";
@@ -83,6 +86,7 @@ const QuoteDrawer = ({ trigger, product }: QuoteDrawerProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const session = openSession.current;
     await submit({
       precheck: () => missingSelections(form, ["county"]),
       run: () =>
@@ -93,6 +97,7 @@ const QuoteDrawer = ({ trigger, product }: QuoteDrawerProps) => {
         }),
       success: { title: "Quote request sent" },
       onStored: () => {
+        if (session !== openSession.current) return;
         setForm({ ...emptyForm });
         setOpen(false);
       },
