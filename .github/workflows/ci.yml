@@ -15,8 +15,10 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Production runs Node 20.14.0 on Render (server); keep CI on the same line for both packages.
+  # Server: Render production pins Node 20.14.0. Client: tests import .ts sources directly, which needs
+  # Node 22 type stripping (Node 20 fails those files at load); the client is built by Vercel, not Render.
   NODE_VERSION: "20.14.0"
+  CLIENT_NODE_VERSION: "22"
   CI_SYNTHETIC: "1"
 
 jobs:
@@ -58,7 +60,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v5
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ env.CLIENT_NODE_VERSION }}
           cache: npm
           cache-dependency-path: client/package-lock.json
       - name: Install locked dependencies
@@ -110,7 +112,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v5
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: ${{ matrix.package == 'client' && env.CLIENT_NODE_VERSION || env.NODE_VERSION }}
       - name: npm audit --omit=dev (fails on high or critical)
         run: ../.github/scripts/audit.sh ${{ matrix.package }}
 
