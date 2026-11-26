@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import QuoteDrawer from "@/components/QuoteDrawer";
 import { phones, visible, waHref } from "@/config/business";
+import RegistryLink from "@/components/RegistryLink";
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -99,7 +100,7 @@ const ProductDetail = () => {
                     </Button>
                   }
                 />
-                <a
+                <RegistryLink
                   href={waHref(visible(phones.primary))}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -107,7 +108,7 @@ const ProductDetail = () => {
                   <Button className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 transition-colors">
                     Chat on WhatsApp
                   </Button>
-                </a>
+                </RegistryLink>
               </div>
             </section>
           )}

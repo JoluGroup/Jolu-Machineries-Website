@@ -16,6 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { emails, mailHref, visible } from "@/config/business";
+import RegistryLink from "@/components/RegistryLink";
 
 const MotionResponsiveImage = motion.create(ResponsiveImage);
 
@@ -186,7 +187,7 @@ const Mud4Fun: React.FC = () => {
             className="flex flex-col sm:flex-row gap-4"
           >
             <Button asChild>
-              <a href={mailHref(visible(emails.group))}>Email Us</a>
+              <RegistryLink href={mailHref(visible(emails.group))}>Email Us</RegistryLink>
             </Button>
             <Button variant="outline" asChild>
               <Link to="/quote">Request a Quote</Link>

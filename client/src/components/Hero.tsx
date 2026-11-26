@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import ResponsiveImage from "@/components/ResponsiveImage";
 import { createSlideNavigator, wrapIndex } from "@/lib/slide-navigation";
 import { phones, stats, visible, waHref } from "@/config/business";
+import RegistryLink from "@/components/RegistryLink";
 
 const heroImage1 = "@/assets/hero/tractor1.jpg";
 const heroImage2 = "@/assets/hero/tractor2.png";
@@ -42,10 +43,10 @@ const Hero = () => {
       image: heroImage1,
     },
     {
-      title: "Trusted Agricultural Partner",
+      title: "Agricultural Machinery & Support",
       subtitle: "Quality Equipment Since Day One",
       description:
-        "Your reliable source for high-quality agricultural machinery with expert support and genuine spare parts.",
+        "Your reliable source for high-quality agricultural machinery with expert support and spare parts.",
       cta: "Learn More",
       image: heroImage2,
     },
@@ -265,13 +266,13 @@ const Hero = () => {
                 variant="outline"
                 className="bg-transparent text-white border-white/40 hover:bg-white/10 hover:text-white text-lg px-6 sm:px-8 py-3 sm:py-4"
               >
-                <a
-                  href={`${waHref(visible(phones.primary))}?text=Hello%20Jolu%20Machineries%2C%20I%20would%20like%20to%20inquire%20about%20your%20machinery%20fleet.`}
+                <RegistryLink
+                  href={waHref(visible(phones.primary), "Hello Jolu Machineries, I would like to inquire about your machinery fleet.")}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Quick WhatsApp Quote
-                </a>
+                </RegistryLink>
               </Button>
             </div>
           </Reveal>

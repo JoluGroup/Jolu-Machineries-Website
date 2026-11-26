@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Cog, Gauge, Weight, Tractor } from "lucide-react";
 import React, { useState, useEffect} from "react";
 import { phones, visible, waHref } from "@/config/business";
+import RegistryLink from "@/components/RegistryLink";
 
 const UsedTractors = () => {
   // Images for RX754A
@@ -62,7 +63,7 @@ const UsedTractors = () => {
             >
               Request a Quote
             </Button>
-            <a
+            <RegistryLink
               href={waHref(visible(phones.primary))}
               target="_blank"
               rel="noopener noreferrer"
@@ -74,7 +75,7 @@ const UsedTractors = () => {
               >
                 Chat on WhatsApp
               </Button>
-            </a>
+            </RegistryLink>
           </div>
         </div>
       </section>
@@ -225,7 +226,7 @@ const UsedTractors = () => {
           >
             Request a Quote
           </Button>
-          <a
+          <RegistryLink
             href={waHref(visible(phones.primary))}
             target="_blank"
             rel="noopener noreferrer"
@@ -237,7 +238,7 @@ const UsedTractors = () => {
             >
               Chat on WhatsApp
             </Button>
-          </a>
+          </RegistryLink>
         </div>
       </section>
 

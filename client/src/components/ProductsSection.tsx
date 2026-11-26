@@ -1,7 +1,7 @@
 import ResponsiveImage from "@/components/ResponsiveImage";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Filter, Grid, List, Search, Star, ArrowRight, X, Check, Scale } from "lucide-react";
+import { Filter, Grid, List, Search, ArrowRight, X, Check, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -67,8 +67,6 @@ type CompareProduct = {
   name: string;
   category: string;
   image: string;
-  rating: number;
-  reviews: number;
   features: string[];
   horsepower?: string;
   capacity?: string;
@@ -137,8 +135,6 @@ const ProductsSection = () => {
       category: "tractors",
       image: tractor6,
       horsepower: "90–110 HP",
-      rating: 4.6,
-      reviews: 8,
       features: [
         "16F+8R Gearbox for Versatile Speed Control",
         "Turbocharged Inter-cooling Engine with High Efficiency",
@@ -155,8 +151,6 @@ const ProductsSection = () => {
       category: "harvesters",
       image: harvester1,
       horsepower: "120 HP",
-      rating: 4.9,
-      reviews: 18,
       features: ["Weight 4080kg", "Cutting Width 2360mm", "Hydrostatic Drive"],
       badge: "Premium"
     },
@@ -168,8 +162,6 @@ const ProductsSection = () => {
   category: "implements",
   image: threeDiskPlough,
   horsepower: "70–90 HP",
-  rating: 4.8,
-  reviews: 20,
   features: [
     "Heavy-duty frame for durability",
     "Three sharp discs for effective soil cutting",
@@ -186,8 +178,6 @@ const ProductsSection = () => {
   category: "tractors",
   image: tractor5,
   horsepower: "50–70 HP",
-  rating: 4.7,
-  reviews: 11,
   features: [
     "12F+12R Shuttle Shift for Smooth Operation",
     "Reliable National II Engine with High Torque",
@@ -205,8 +195,6 @@ const ProductsSection = () => {
   category: "implements",
   image: diskHarrow18,
   horsepower: "Compatible with 80–120 HP",
-  rating: 4.8,
-  reviews: 27,
   features: [
     "Heavy-duty 18-disk configuration for efficient soil breaking",
     "Designed for deep tillage and seedbed preparation",
@@ -226,8 +214,6 @@ const ProductsSection = () => {
   category: "tractors",
   image: tractor7,
   horsepower: "130–160 HP",
-  rating: 4.9,
-  reviews: 7,
   features: [
     "16F+8R Gearbox with Creeper for Precision Tasks",
     "Powerful Turbocharged Engine for Heavy-Duty Work",
@@ -247,15 +233,12 @@ const ProductsSection = () => {
   category: "implements",
   image: twodiskplough,
   horsepower: "Compatible with 60 HP and Below Tractors",
-  rating: 4.8,
-  reviews: 45,
   features: [
     "2 heavy-duty heat-treated steel discs",
     "Working depth up to 25 cm",
     "Durable frame for tough soils",
     "Easy tractor attachment"
-  ],
-  badge: "Best Seller"
+  ]
 },
 
 
@@ -266,8 +249,6 @@ const ProductsSection = () => {
   category: "tractors",
   image: tractor4,
   horsepower: "50 HP",
-  rating: 4.8,
-  reviews: 9,
   features: [
     "8F+8R Shuttle Shift Transmission",
     "Strong Lifting Power for Efficient Soil Entry",
@@ -284,8 +265,6 @@ const ProductsSection = () => {
   category: "harvesters",
   image: harvester3,
   horsepower: "105 HP",
-  rating: 4.8,
-  reviews: 15,
   features: [
     "105hp engine with upgraded threshing system",
     "6.0 kg/s feeding capacity for efficient harvesting",
@@ -308,15 +287,12 @@ const ProductsSection = () => {
   category: "tractors",
   image: tractor2,
   horsepower: "230 HP",
-  rating: 4.9,
-  reviews: 15,
   features: [
     "4WD",
     "Smart Operation System",
     "Air Conditioning",
     "40F+40R Power Shift Transmission"
-  ],
-  badge: "New Arrival"
+  ]
 },
 
 {
@@ -326,10 +302,7 @@ const ProductsSection = () => {
       category: "tractors",
       image: tractor1,
       horsepower: "90-110 HP",
-      rating: 4.8,
-      reviews: 24,
-      features: ["4WD", "Power Steering", "Air Conditioning", "16F+8R Transmission"],
-      badge: "Best Seller"
+      features: ["4WD", "Power Steering", "Air Conditioning", "16F+8R Transmission"]
 },
 
 
@@ -340,8 +313,6 @@ const ProductsSection = () => {
   category: "implements",
   image: waterBowser,
   capacity: "2000–5000 Litres",
-  rating: 4.8,
-  reviews: 15,
   features: [
     "Durable steel tank construction for long service life",
     "Capacity range from 2000L to 5000L for various needs",
@@ -367,8 +338,6 @@ const ProductsSection = () => {
   category: "harvesters",
   image: harvester4,
   horsepower: "120 HP",
-  rating: 4.9,
-  reviews: 22,
   features: [
     "120hp turbocharged Xinchai engine for high fuel efficiency",
     "Large 1800L grain tank and 220L fuel tank for extended operation",
@@ -394,8 +363,6 @@ const ProductsSection = () => {
   category: "tractors",
   image: tractor3,
   horsepower: "200 HP",
-  rating: 4.9,
-  reviews: 12,
   features: [
     "48F+24R Power Shift Gears",
     "High-pressure Turbocharged Engine",
@@ -413,8 +380,6 @@ const ProductsSection = () => {
   category: "tractors",
   image: tractor8,
   horsepower: "180–200 HP",
-  rating: 4.8,
-  reviews: 9,
   features: [
     "16F+16R Gearbox with Dual Joysticks for Versatile Operation",
     "Bosch Electronically Controlled Injection for Fuel Efficiency",
@@ -431,8 +396,6 @@ const ProductsSection = () => {
   category: "harvesters",
   image: harvester5,
   horsepower: "190 HP",
-  rating: 4.8,
-  reviews: 17,
   features: [
     "190hp Yuchai high-pressure common rail engine with large torque reserve",
     "Hydrostatic drive system for smooth and flexible movement",
@@ -456,8 +419,6 @@ const ProductsSection = () => {
   category: "tractors",
   image: tractor9,
   horsepower: "350 HP",
-  rating: 4.9,
-  reviews: 11,
   features: [
     "350hp hybrid power with dual-motor power coupling for heavy-load performance",
     "CVT with AMT gearbox for seamless 0–40 km/h stepless speed changes",
@@ -481,8 +442,6 @@ const ProductsSection = () => {
   category: "harvesters",
   image: harvester2,
   horsepower: "300 HP",
-  rating: 4.9,
-  reviews: 18,
   features: [
     "300hp National III Yuchai engine with Bosch fuel system",
     "Light-load modes: 240hp and 185hp for fuel efficiency",
@@ -672,14 +631,6 @@ const ProductsSection = () => {
               </CardHeader>
 
               <CardContent className="p-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="flex items-center gap-1">
-                    <Star className="text-yellow-400 fill-current" size={16} />
-                    <span className="text-sm font-medium">{product.rating}</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">({product.reviews} reviews)</span>
-                </div>
-
                 <CardTitle className="text-xl mb-2 group-hover:text-primary transition-colors">
                   {product.name}
                 </CardTitle>
@@ -839,13 +790,6 @@ const ProductsSection = () => {
                         </dd>
                       </div>
                     )}
-                    <div className="flex justify-between gap-2">
-                      <dt className="text-muted-foreground">Rating</dt>
-                      <dd className="flex items-center gap-1 font-medium text-foreground">
-                        <Star className="fill-current text-yellow-400" size={14} />
-                        {p.rating}
-                      </dd>
-                    </div>
                   </dl>
 
                   <div className="mb-4 flex-1">

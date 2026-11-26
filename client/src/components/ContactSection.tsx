@@ -108,15 +108,17 @@ const ContactSection = () => {
                           </Button>
                         )}
                       </div>
-                      <div className="mt-2">
-                        <Button
-                          variant="secondary"
-                          className="w-full justify-start"
-                          onClick={() => { const href = waHref(visible(phones.secondary)); if (href) window.open(href, "_blank"); }}
-                        >
-                          <MessageCircle size={16} className="mr-2" /> WhatsApp Chat
-                        </Button>
-                      </div>
+                      {waHref(visible(phones.secondary)) && (
+                        <div className="mt-2">
+                          <Button
+                            variant="secondary"
+                            className="w-full justify-start"
+                            onClick={() => { const href = waHref(visible(phones.secondary)); if (href) window.open(href, "_blank"); }}
+                          >
+                            <MessageCircle size={16} className="mr-2" /> WhatsApp Chat
+                          </Button>
+                        </div>
+                      )}
                       <div className="mt-2">
                         <Button
                           variant="secondary"

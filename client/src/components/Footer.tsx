@@ -8,6 +8,7 @@ import { FaTiktok, FaWhatsapp } from "react-icons/fa";
 import { useLocation, Link } from "react-router-dom";
 import { useState, useRef } from "react";
 import { api } from "@/lib/api";
+import RegistryLink from "@/components/RegistryLink";
 
 const footerLocations = [locations.nairobi, locations.nakuru, locations.migoriFooter].map((c) => visible(c)).filter((l): l is NonNullable<typeof l> => Boolean(l));
 
@@ -269,7 +270,7 @@ const Footer = () => {
                       <Facebook size={18} />
                     </a>
                   )}
-                  <a
+                  <RegistryLink
                     href={visible(social.instagram)}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -277,8 +278,8 @@ const Footer = () => {
                     className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-glow transition-colors duration-200"
                   >
                     <Instagram size={18} />
-                  </a>
-                  <a
+                  </RegistryLink>
+                  <RegistryLink
                     href={visible(social.tiktok)}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -286,8 +287,8 @@ const Footer = () => {
                     className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-glow transition-colors duration-200"
                   >
                     <FaTiktok size={18} />
-                  </a>
-                  <a
+                  </RegistryLink>
+                  <RegistryLink
                     href={waHref(visible(phones.primary))}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -295,7 +296,7 @@ const Footer = () => {
                     className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-glow transition-colors duration-200"
                   >
                     <FaWhatsapp size={18} />
-                  </a>
+                  </RegistryLink>
                 </div>
               </div>
             </div>

@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import QuoteDrawer from "@/components/QuoteDrawer";
 import { cn } from "@/lib/utils";
 
+const headerPhones = [visible(phones.primary)?.display, visible(phones.secondaryLocalDisplay)].filter(Boolean).join(" | ");
+
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -65,14 +67,18 @@ const Header = () => {
       <div className="bg-primary text-primary-foreground text-xs py-2">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-2">
-              <Phone size={14} />
-              <span>{[visible(phones.primary)?.display, visible(phones.secondaryLocalDisplay)].filter(Boolean).join(" | ")}</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Mail size={14} />
-              <span>{visible(emails.general)}</span>
-            </div>
+            {headerPhones && (
+              <div className="flex items-center space-x-2">
+                <Phone size={14} />
+                <span>{headerPhones}</span>
+              </div>
+            )}
+            {visible(emails.general) && (
+              <div className="flex items-center space-x-2">
+                <Mail size={14} />
+                <span>{visible(emails.general)}</span>
+              </div>
+            )}
           </div>
           <div className="hidden md:flex items-center space-x-2">
             <MapPin size={14} />

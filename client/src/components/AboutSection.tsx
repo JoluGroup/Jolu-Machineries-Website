@@ -2,7 +2,7 @@ import { Award, Users, Wrench, ShieldCheck, Truck, Clock, Quote } from "lucide-r
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
-import { testimonials, visible } from "@/config/business";
+import { service, stats, testimonials, visible } from "@/config/business";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -15,44 +15,16 @@ const staggerContainer = {
 };
 
 const AboutSection = () => {
+  // Each card is a registry claim (C11/C13); a card disappears if its claim is withheld or hidden in strict mode.
+  const experience = visible(stats.experience);
   const features = [
-    {
-      icon: Award,
-      title: "5+ Years Experience",
-      description:
-        "Years of expertise in agricultural machinery sales and service"
-    },
-    {
-      icon: Users,
-      title: "Expert Team",
-      description:
-        "Certified technicians and agricultural specialists at your service"
-    },
-    {
-      icon: Wrench,
-      title: "Comprehensive Service",
-      description:
-        "Complete after-sales support including maintenance and repairs"
-    },
-    {
-      icon: ShieldCheck,
-      title: "Spare Parts",
-      description:
-        "Spare parts enquiries for the Zoomlion machinery we supply"
-    },
-    {
-      icon: Truck,
-      title: "Nationwide Delivery",
-      description:
-        "Reliable delivery and installation services across Kenya"
-    },
-    {
-      icon: Clock,
-      title: "24/7 Support",
-      description:
-        "Round-the-clock customer support for all your agricultural needs"
-    }
-  ];
+    { icon: Award, title: experience ? `${experience} Experience` : undefined, description: "Years of expertise in agricultural machinery sales and service" },
+    { icon: Users, title: "Expert Team", description: visible(service.certifiedTechnicians) },
+    { icon: Wrench, title: "Comprehensive Service", description: visible(service.afterSales) },
+    { icon: ShieldCheck, title: "Spare Parts", description: "Spare parts enquiries for the Zoomlion machinery we supply" },
+    { icon: Truck, title: "Nationwide Delivery", description: visible(service.nationwideDelivery) },
+    { icon: Clock, title: "24/7 Support", description: visible(service.support247) },
+  ].filter((f): f is { icon: typeof Award; title: string; description: string } => Boolean(f.title && f.description));
 
 // Named customer testimonials are withheld until verified with consent (registry C12).
 const shownTestimonials = visible(testimonials) ?? [];
@@ -73,7 +45,7 @@ const shownTestimonials = visible(testimonials) ?? [];
             About Jolu Machineries
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">
-            Your Trusted Agricultural Partner
+            Agricultural Machinery for Kenyan Farmers
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Jolu Machineries supplies Zoomlion tractors, harvesters and farm implements to

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Phone, MapPin, Plus, X } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
 import { locations, phones, telHref, visible, waHref } from "@/config/business";
+import RegistryLink from "@/components/RegistryLink";
 
 const WHATSAPP_URL = waHref(visible(phones.primary));
 const PHONE_TEL = telHref(visible(phones.primary));
@@ -81,20 +82,20 @@ const FloatingContact = () => {
             <span className="rounded-md bg-primary px-2.5 py-1 text-sm font-medium text-primary-foreground shadow-md">
               Call Now
             </span>
-            <a
+            <RegistryLink
               href={PHONE_TEL}
               aria-label="Call now"
               className="w-12 h-12 rounded-full bg-accent hover:bg-accent/90 text-accent-foreground shadow-xl flex items-center justify-center transition-all duration-300 hover:scale-110"
             >
               <Phone size={22} />
-            </a>
+            </RegistryLink>
           </div>
         </div>
       )}
 
       {/* Primary row: WhatsApp (default) + toggle */}
       <div className="flex items-center gap-3">
-        <a
+        <RegistryLink
           href={WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
@@ -102,7 +103,7 @@ const FloatingContact = () => {
           className="w-14 h-14 rounded-full bg-green-500 hover:bg-green-600 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 flex items-center justify-center"
         >
           <FaWhatsapp className="w-7 h-7 text-white" />
-        </a>
+        </RegistryLink>
         <button
           onClick={() => (expanded ? collapseAll() : setExpanded(true))}
           aria-label={expanded ? "Close contact options" : "Open contact options"}
