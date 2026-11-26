@@ -1,4 +1,9 @@
-// Routing and cache-header contract for client/vercel.json (R-01 + M2-R03).
+// Routing and cache-header contract for client/vercel.json (R-01 + M2-R03 + M2-SEO-01).
+//
+// M2-SEO-01: pages are prerendered to flat files (dist/products.html, dist/products/<slug>.html, dist/404.html).
+// After the filesystem phase, a clean URL is rewritten to "/$1.html" with `check: true` (used only if that file exists;
+// otherwise routing continues), then every remaining non-/_img/ path gets /404.html with status 404. Missing /_img/*
+// files still fall through to the platform's plain 404 (no rule matches them), so R-01 is unchanged.
 //
 // Why `routes` and not `headers`/`rewrites`: a vercel.json `headers` rule runs before the filesystem phase and matches the
 // request path only, so it also stamped `Cache-Control: immutable` on the 404 for a missing /_img/* file (observed live).
@@ -24,22 +29,40 @@ const phase = { filesystem: [], hit: [] }
 const re = (src) => new RegExp(`^${src}$`) // Vercel anchors route sources
 const exists = (p) => { try { return fs.statSync(path.join(ROOT, "public", p)).isFile() } catch { return false } }
 
-/** Model of the documented phases: existing file -> hit-phase routes; miss -> filesystem-phase routes; else 404. */
+// Files produced by the build: public/ assets plus the prerendered pages (M2-SEO-01).
+const SLUGS = [...fs.readFileSync(path.join(ROOT, "src/data/products.ts"), "utf8").matchAll(/slug:\s*"([^"]+)"/g)].map((x) => x[1])
+const STATIC_PAGES = [...fs.readFileSync(path.join(ROOT, "src/seo/routes.ts"), "utf8").matchAll(/path:\s*"(\/[^"]*)",\s*kind:/g)].map((x) => x[1]).filter((p) => p !== "/404")
+const PRERENDERED = new Set(["/index.html", "/404.html", ...STATIC_PAGES.filter((p) => p !== "/").map((p) => `${p}.html`), ...SLUGS.map((s) => `/products/${s}.html`)])
+const built = (p) => PRERENDERED.has(p) || exists(p) || (p === "/" && PRERENDERED.has("/index.html"))
+
+/** Model of the documented phases: existing file -> hit-phase routes; miss -> filesystem-phase routes in order
+ *  (a `check: true` rewrite applies only if its destination exists, otherwise routing continues); else 404. */
 function respond(p) {
-  if (exists(p)) {
+  if (built(p)) {
     const headers = {}
     for (const r of phase.hit) if (re(r.src).test(p)) Object.assign(headers, r.headers)
-    return { status: 200, kind: "file", headers }
+    return { status: 200, kind: p === "/" || p.endsWith(".html") ? "page" : "file", file: p === "/" ? "/index.html" : p, headers }
   }
-  for (const r of phase.filesystem) if (re(r.src).test(p)) return { status: 200, kind: "spa-html", headers: {} }
+  for (const r of phase.filesystem) {
+    const m = p.match(re(r.src))
+    if (!m) continue
+    const dest = r.dest.replace(/\$(\d)/g, (_, i) => m[Number(i)] ?? "")
+    if (r.check && !built(dest)) continue
+    if (r.status === 404) return { status: 404, kind: "404-page", file: dest, headers: {} }
+    return { status: 200, kind: "page", file: dest, headers: {} }
+  }
   return { status: 404, kind: "404", headers: {} }
 }
 
 test("config shape: routes only (no headers/rewrites keys that would run before the filesystem phase)", () => {
   assert.deepEqual(Object.keys(cfg), ["routes"])
   assert.deepEqual(cfg.routes.filter((r) => r.handle).map((r) => r.handle), ["filesystem", "hit"], "phase order")
-  assert.equal(phase.filesystem.length, 1)
-  assert.equal(phase.filesystem[0].dest, "/index.html")
+  assert.equal(phase.filesystem.length, 2)
+  assert.equal(phase.filesystem[0].dest, "/$1.html")
+  assert.equal(phase.filesystem[0].check, true, "clean-URL rewrite must only apply when the prerendered file exists")
+  assert.equal(phase.filesystem[1].dest, "/404.html")
+  assert.equal(phase.filesystem[1].status, 404)
+  for (const r of phase.filesystem) assert.ok(r.src.includes("(?!_img/)"), "never rewrite /_img/* (R-01)")
   assert.equal(phase.hit.length, 1)
   assert.equal(phase.hit[0].continue, true, "hit-phase header rules must continue")
   assert.equal(phase.hit[0].dest, undefined)
@@ -73,15 +96,24 @@ test("defence in depth: the immutable rule only matches content-addressed names"
   for (const p of ["/_img/x.webp", "/_img/nonexistent.webp", "/_img/a-480.XYZ.webp", "/_img/a-480.0123456789abcde.webp", "/lovable-uploads/a-480.0123456789abcdef.webp"]) assert.equal(rule.test(p), false, p)
 })
 
-test("invariant 7: SPA deep links, product-detail routes and unknown routes still get index.html", () => {
-  const slugs = [...fs.readFileSync(path.join(ROOT, "src/data/products.ts"), "utf8").matchAll(/slug:\s*"([^"]+)"/g)].map((x) => x[1])
-  assert.ok(slugs.length >= 18)
-  for (const p of ["/", "/products", "/gallery", "/news", "/showroom-launch", "/some/unknown/route", "/_imgs", ...slugs.map((s) => `/products/${s}`)]) {
+test("invariant 7 (M2-SEO-01): every route serves its own prerendered page; unknown routes get the 404 page with status 404", () => {
+  assert.ok(SLUGS.length >= 18)
+  assert.ok(STATIC_PAGES.length >= 13, `static pages found: ${STATIC_PAGES.length}`)
+  const expectations = [["/", "/index.html"], ...STATIC_PAGES.filter((p) => p !== "/").map((p) => [p, `${p}.html`]), ...SLUGS.map((s) => [`/products/${s}`, `/products/${s}.html`])]
+  for (const [p, file] of expectations) {
+    for (const variant of p === "/" ? [p] : [p, `${p}/`]) {
+      const r = respond(variant)
+      assert.equal(r.status, 200, variant)
+      assert.equal(r.file, file, `${variant} -> ${r.file}`)
+      assert.equal(r.headers["Cache-Control"], undefined, `${variant} must not be immutable`)
+    }
+  }
+  for (const p of ["/some/unknown/route", "/_imgs", "/products/not-a-product", "/assets/missing-chunk.js", "/index"]) {
     const r = respond(p)
-    // "/" resolves to the built index.html, either way it is the SPA shell
-    assert.ok(r.kind === "spa-html" || r.kind === "file", `${p} -> ${r.kind}`)
-    assert.notEqual(r.status, 404, p)
-    assert.equal(r.headers["Cache-Control"], undefined, `${p} must not be immutable`)
+    if (p === "/index") { assert.equal(r.status, 200); continue } // /index.html exists, as before
+    assert.equal(r.status, 404, p)
+    assert.equal(r.kind, "404-page", p)
+    assert.equal(r.headers["Cache-Control"], undefined, p)
   }
 })
 

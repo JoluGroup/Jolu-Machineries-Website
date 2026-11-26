@@ -8,13 +8,14 @@
     "predev": "npm run images",
     "dev": "vite",
     "prebuild": "npm run images",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender.mjs",
     "prebuild:dev": "npm run images",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "pretest": "npm run images",
     "test": "node --test tests/*.test.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "verify:seo": "node scripts/verify-seo.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
