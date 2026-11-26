@@ -44,7 +44,8 @@ test("<YouTubeEmbed> renders a local placeholder: no iframe, no third-party requ
   const html = render(mod.default, { videoId: "-jVldmfO1j8", title: "Farm Mechanization" })
   assert.ok(!/<iframe/i.test(html))
   assert.deepEqual(thirdPartyFetches(html), [])
-  assert.ok(!/youtube|ytimg/i.test(html))
+  // The visible label may mention YouTube; what must not appear is any YouTube host (no URL, no request).
+  assert.ok(!/youtube\.com|youtube-nocookie|ytimg|youtu\.be/i.test(html))
   assert.match(html, /<button[^>]*aria-label="Play video: Farm Mechanization \(loads YouTube\)"/)
   assert.equal(mod.youtubeNoCookieUrl("-jVldmfO1j8"), "https://www.youtube-nocookie.com/embed/-jVldmfO1j8")
   assert.throws(() => mod.youtubeNoCookieUrl("x\"><script>"))
