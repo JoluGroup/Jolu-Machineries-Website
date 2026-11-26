@@ -15,6 +15,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { emails, mailHref, visible } from "@/config/business";
+import RegistryLink from "@/components/RegistryLink";
 
 const Careers: React.FC = () => {
   const metaTitle = "Careers at Jolu Group of Companies — Join Our Team";
@@ -65,7 +66,7 @@ const Careers: React.FC = () => {
       ],
       deadline: "31st May 2026",
       image: "/lovable-uploads/careers/manager.png",
-      link: `${mailHref(visible(emails.general))}?subject=Application%20for%20Director%20-%20Operations%20%26%20Head%20of%20Operations`,
+      link: mailHref(visible(emails.general), "Application for Director - Operations & Head of Operations"),
     },
   ];
 
@@ -152,12 +153,12 @@ const Careers: React.FC = () => {
               <p className="text-center text-[#3F6F35]">
                 We&apos;re not hiring right now, but we&apos;d still love to hear from you — send
                 your CV to{" "}
-                <a
+                <RegistryLink
                   href={mailHref(visible(emails.general))}
                   className="text-[#0B3D24] font-medium underline"
                 >
                   {visible(emails.general)}
-                </a>{" "}
+                </RegistryLink>{" "}
                 and we&apos;ll keep you in mind for future roles.
               </p>
             ) : (
@@ -252,7 +253,7 @@ const Careers: React.FC = () => {
 
                       {/* CTA pinned to bottom */}
                       <div className="mt-auto pt-2">
-                        <a
+                        <RegistryLink
                           href={job.link}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -264,7 +265,7 @@ const Careers: React.FC = () => {
                           >
                             Apply Now
                           </Button>
-                        </a>
+                        </RegistryLink>
                       </div>
                     </div>
                   </motion.article>
@@ -317,8 +318,8 @@ const Careers: React.FC = () => {
               We’re always looking for talented, passionate individuals to join our growing team.
             </p>
 
-            <a
-              href={`${mailHref(visible(emails.general))}?subject=Career%20Opportunities%20at%20Jolu`}
+            <RegistryLink
+              href={mailHref(visible(emails.general), "Career Opportunities at Jolu")}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -328,7 +329,7 @@ const Careers: React.FC = () => {
               >
                 Send Your CV
               </Button>
-            </a>
+            </RegistryLink>
           </section>
         </div>
 

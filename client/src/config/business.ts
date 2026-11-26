@@ -7,8 +7,9 @@
 //                 VITE_CLAIMS_STRICT=true. It NEVER appears in metadata or structured data (`forStructuredData`).
 //   unsupported - not substantiated (or demonstrably wrong). Never rendered anywhere; components use neutral fallbacks.
 //
-// Nothing here was invented: every value is copied from the site as it stood at b4dc32d, and conflicting values are
-// kept side by side (`variants`) so no surface silently changes until the owner chooses. `ownerItem` refers to the
+// Nothing here was invented: every value is copied from the site as it stood at b4dc32d. Conflicting values are kept
+// as separate claims (e.g. migoriFooter / migoriFloating, emails.*) so no surface silently changes until the owner
+// chooses. Unsupported claims carry an empty value: the withheld wording is not shipped in the client bundle. `ownerItem` refers to the
 // consolidated owner-verification table (C1-C19).
 
 export type ClaimStatus = "verified" | "pending" | "unsupported"
@@ -74,6 +75,7 @@ export const locations = {
   nakuru: claim<Location>({ id: "location.nakuru", ownerItem: "C7", status: "pending", value: { name: "Nakuru", label: "Regional Office & Showroom", address: "Along West Road, Opposite Nakuru Athletics, Next to Evans Hospital, Nakuru, Kenya" }, source: "Footer:138-144, FloatingContact, NakuruLaunch" }),
   migoriFooter: claim<Location>({ id: "location.migori.footer", ownerItem: "C7", status: "pending", value: { name: "Migori", label: "Branch Office", address: "Near KENGAS Rongo, Migori, Kenya" }, source: "Footer:148-151", note: "CONFLICT with FloatingContact: 'Quickfill Rongo Station, Migori, Kenya'." }),
   migoriFloating: claim<Location>({ id: "location.migori.floating", ownerItem: "C7", status: "pending", value: { name: "Rongo", label: "Branch Office", address: "Quickfill Rongo Station, Migori, Kenya" }, source: "FloatingContact.tsx branches[2]", note: "CONFLICT with Footer address." }),
+  nakuruKfa: claim<Location>({ id: "location.nakuru.kfa", ownerItem: "C7", status: "pending", value: { name: "Nakuru", label: "Jolu Office (Machineries & Security)", address: "KFA Building, Nakuru" }, source: "ContactSection map 3 heading", note: "A second Nakuru location shared with Jolu Security; not listed in the footer or floating contact. Not wired (map hunk owned by the privacy lane)." }),
   contactSummary: claim<readonly string[]>({ id: "location.contactSummary", ownerItem: "C7", status: "pending", value: ["Nairobi, Kenya", "Nakuru, Kenya", "Rongo, Migori"], source: "ContactSection:66" }),
   hours: claim<readonly string[]>({ id: "location.hours", ownerItem: "C7", status: "pending", value: ["Mon–Fri: 9:00–18:00", "Sat: 9:00-13:00", "Sun: Closed"], source: "ContactSection:67", note: "Conflicts with the '24/7 Support' service claim." }),
 } as const
@@ -82,20 +84,20 @@ export const locations = {
 export const social = {
   instagram: claim({ id: "social.instagram", ownerItem: "C8", status: "pending", value: "https://www.instagram.com/jolu_machineries/", source: "Footer" }),
   tiktok: claim({ id: "social.tiktok", ownerItem: "C8", status: "pending", value: "https://www.tiktok.com/@jolumachineries", source: "Footer" }),
-  facebook: claim({ id: "social.facebook", ownerItem: "C8", status: "unsupported", value: "https://www.facebook.com/search/top?q=jolu%20group", source: "Footer:265", note: "A Facebook search-results URL, not a profile. Withheld until the official page URL is supplied." }),
+  facebook: claim({ id: "social.facebook", ownerItem: "C8", status: "unsupported", value: "", source: "Footer:265 (search-results URL, not a profile)", note: "Withheld until the official page URL is supplied." }),
 } as const
 
 // ---------------------------------------------------------------- commercial claims (C9-C19)
 export const manufacturer = {
-  relationship: claim({ id: "manufacturer.relationship", ownerItem: "C9", status: "unsupported", value: "one of Kenya's leading distributors / premier dealer / trusted partner of Zoomlion", source: "AboutSection:102-121, Footer:110, index.html meta description", note: "Unverified relationship and superlative wording. Replaced by neutral wording until the agreed wording is approved." }),
-  partnership: claim({ id: "manufacturer.partnership", ownerItem: "C9", status: "unsupported", value: "Partnering with Zoomlion, a global leader in agricultural technology", source: "AboutSection story paragraph 2" }),
+  relationship: claim({ id: "manufacturer.relationship", ownerItem: "C9", status: "unsupported", value: "", source: "AboutSection:76/102/121, Footer:110, Hero slide 2 title, index.html meta descriptions", note: "Superlative distributor/dealer/partner wording withheld; neutral wording used until the agreed relationship wording is approved." }),
+  partnership: claim({ id: "manufacturer.partnership", ownerItem: "C9", status: "unsupported", value: "", source: "AboutSection story paragraph 2 (partnership wording)" }),
   /** Neutral, factual description used while the relationship wording is unapproved (the catalogue lists Zoomlion machinery). */
   neutralDescription: "Zoomlion tractors, harvesters and farm implements for Kenyan farmers.",
 } as const
 
 export const stats = {
   homepage: claim<readonly Stat[]>({ id: "stats.homepage", ownerItem: "C10", status: "pending", value: [{ target: 500, label: "Tractors Sold" }, { target: 5, label: "Years Experience" }, { target: 480, label: "Happy Customers" }], source: "Hero.tsx:31-33 (owner-supplied in PR #15, never factually confirmed)" }),
-  experience: claim({ id: "stats.experience", ownerItem: "C11", status: "pending", value: "5+ years", source: "AboutSection:20/102, Footer:111" }),
+  experience: claim({ id: "stats.experience", ownerItem: "C11", status: "pending", value: "5+ Years", source: "AboutSection:20/102, Footer:111" }),
 } as const
 
 export const testimonials = claim<readonly Testimonial[]>({
@@ -104,16 +106,24 @@ export const testimonials = claim<readonly Testimonial[]>({
   source: "AboutSection:58-90", note: "Withheld. Re-add only real testimonials with recorded consent, status 'verified'.",
 })
 
+/** Named customer testimonials on the News page (with video links). Shown as today; owner to confirm consent. */
+export const newsTestimonials = claim<readonly string[]>({ id: "testimonials.news", ownerItem: "C12", status: "pending", value: ["Richard Nyango", "Faith Cherotich"], source: "News.tsx:120-133, 220-262 (video testimonials), News.tsx:301 (key client quote)", note: "Not gated in code; confirm recorded consent or request removal." })
+
+/** Product star ratings and review counts on the homepage catalogue: removed (no source). */
+export const productRatings = claim({ id: "products.ratings", ownerItem: "C12", status: "unsupported", value: "", source: "ProductsSection.tsx (hard-coded ratings and review counts on 19 products, removed)" })
+/** Sales/stock badges on the homepage catalogue: removed. Descriptive badges (e.g. 'Durable') remain as product copy. */
+export const productSalesBadges = claim({ id: "products.salesBadges", ownerItem: "C10/C14", status: "unsupported", value: "", source: "ProductsSection.tsx (best-seller and new-arrival badges, removed)" })
+
 export const service = {
   certifiedTechnicians: claim({ id: "service.certified", ownerItem: "C13", status: "pending", value: "Certified technicians and agricultural specialists at your service", source: "AboutSection:28" }),
   afterSales: claim({ id: "service.afterSales", ownerItem: "C13", status: "pending", value: "Complete after-sales support including maintenance and repairs", source: "AboutSection:34" }),
   nationwideDelivery: claim({ id: "service.delivery", ownerItem: "C13", status: "pending", value: "Reliable delivery and installation services across Kenya", source: "AboutSection:44" }),
   support247: claim({ id: "service.247", ownerItem: "C13", status: "pending", value: "Round-the-clock customer support for all your agricultural needs", source: "AboutSection:50", note: "Conflicts with published business hours (Sun: Closed)." }),
-  genuineParts: claim({ id: "service.genuineParts", ownerItem: "C13/C14", status: "unsupported", value: "Only authentic Zoomlion parts and accessories / Genuine OEM parts", source: "AboutSection:38-40, SparePartsSection:224-230", note: "Manufacturer/OEM claim; neutral wording until confirmed." }),
+  genuineParts: claim({ id: "service.genuineParts", ownerItem: "C13/C14", status: "unsupported", value: "", source: "AboutSection:38-40, SparePartsSection:224-230, Hero slide 2 description", note: "Genuine/OEM/authentic-parts wording withheld; neutral wording until confirmed." }),
 } as const
 
 export const spareParts = {
-  stockBadges: claim({ id: "spareParts.stock", ownerItem: "C14", status: "unsupported", value: "Hard-coded In Stock / Low Stock per part", source: "SparePartsSection:27-176", note: "Static data cannot reflect live inventory. Replaced by 'Ask for availability'." }),
+  stockBadges: claim({ id: "spareParts.stock", ownerItem: "C14", status: "unsupported", value: "", source: "SparePartsSection:27-176 (static per-part stock levels, removed)", note: "Static data cannot reflect live inventory. Replaced by 'Ask for availability'." }),
   availabilityFallback: "Ask for availability",
 } as const
 
@@ -133,13 +143,17 @@ export const media = {
 export const ALL_CLAIMS: readonly Claim<unknown>[] = [
   ...Object.values(identity), ...Object.values(phones), ...Object.values(emails), ...Object.values(locations),
   ...Object.values(social), manufacturer.relationship, manufacturer.partnership, ...Object.values(stats), testimonials,
+  newsTestimonials, productRatings, productSalesBadges,
   ...Object.values(service), spareParts.stockBadges, responseTime, productSpecs, warranty, prices, ...Object.values(media),
 ]
 
 /** helpers for links built from phone claims */
 export const telHref = (p?: Phone) => (p ? `tel:${p.e164}` : undefined)
-export const waHref = (p?: Phone) => (p && p.whatsapp ? `https://wa.me/${p.whatsapp}` : undefined)
-export const mailHref = (...addresses: (string | undefined)[]) => {
-  const list = addresses.filter(Boolean)
-  return list.length ? `mailto:${list.join(",")}` : undefined
+export const waHref = (p?: Phone, text?: string) =>
+  p && p.whatsapp ? `https://wa.me/${p.whatsapp}${text ? `?text=${encodeURIComponent(text)}` : ""}` : undefined
+/** mailto: for the visible addresses (undefined when none), with an optional subject. */
+export const mailHref = (addresses: string | undefined | (string | undefined)[], subject?: string) => {
+  const list = (Array.isArray(addresses) ? addresses : [addresses]).filter(Boolean)
+  if (!list.length) return undefined
+  return `mailto:${list.join(",")}${subject ? `?subject=${encodeURIComponent(subject)}` : ""}`
 }
