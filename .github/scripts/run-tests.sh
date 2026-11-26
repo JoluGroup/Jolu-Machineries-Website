@@ -11,6 +11,7 @@ if ! node -e "process.exit(require('./package.json').scripts && require('./packa
   exit 0
 fi
 
+export PKG="$pkg"
 npm test 2>&1 | tee test-output.txt
 status=${PIPESTATUS[0]}
 
@@ -21,6 +22,22 @@ if [ "$status" -eq 0 ]; then verdict=PASSED; else verdict=FAILED; fi
 echo "| ${pkg} tests | ${verdict}: tests=${tests} pass=${pass} fail=${fail} skipped=${skipped} todo=${todo} cancelled=${cancelled} |" >> "$summary"
 echo "::notice title=${pkg} tests::${verdict} tests=${tests} pass=${pass} fail=${fail} skipped=${skipped} todo=${todo} cancelled=${cancelled}"
 if [ "$status" -ne 0 ]; then
-  grep -E "^not ok|✖" test-output.txt | head -n 20 | while IFS= read -r line; do echo "::error title=${pkg} failing test::${line}"; done
+  # One annotation per failing (sub)test with its TAP diagnostic block (name, error, expected/actual, location).
+  node - <<'JS'
+const lines = require("fs").readFileSync("test-output.txt", "utf8").split("\n")
+let n = 0
+for (let i = 0; i < lines.length && n < 25; i++) {
+  const m = lines[i].match(/^(\s*)not ok \d+ - (.*)$/)
+  if (!m) continue
+  const block = []
+  for (let j = i + 1; j < lines.length && j < i + 40; j++) {
+    if (/^\s*\.\.\.\s*$/.test(lines[j]) || /^\s*(not )?ok \d+/.test(lines[j])) break
+    if (/(error|expected|actual|operator|location|code|failureType|stack)/.test(lines[j]) || /^\s{6,}\S/.test(lines[j])) block.push(lines[j].trim())
+  }
+  const msg = `${m[2]} | ${block.join(" | ")}`.slice(0, 1500).replace(/%/g, "%25").replace(/\r/g, "").replace(/\n/g, "%0A")
+  console.log(`::error title=${process.env.PKG || "tests"} failing (depth ${m[1].length / 4})::${msg}`)
+  n++
+}
+JS
 fi
 exit "$status"
