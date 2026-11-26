@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Sheet,
   SheetContent,
@@ -17,7 +17,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
+import FieldError from "@/components/FieldError";
+import { errorProps, useSubmission } from "@/hooks/use-submission";
+import { missingSelections } from "@/lib/submit-feedback";
 import { api } from "@/lib/api";
 import { countyOptions } from "@/data/options";
 import { matchProductInterest, productOptions } from "@/lib/quote-match";
@@ -57,48 +59,49 @@ const emptyForm: Form = {
 };
 
 const QuoteDrawer = ({ trigger, product }: QuoteDrawerProps) => {
-  const { toast } = useToast();
   const [open, setOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isSubmitting, fieldErrors, setFieldErrors, clearFieldError, submit } = useSubmission();
+  const ID = "quote-drawer";
   const [form, setForm] = useState<Form>({ ...emptyForm });
+  // Incremented on every open, so a late result from an earlier opening cannot clear or close a newer one.
+  const openSession = useRef(0);
 
   // Reset + auto-fill Product Interest each time the drawer opens.
   useEffect(() => {
     if (!open) return;
+    openSession.current += 1;
     const productInterest = product
       ? product.interest || matchProductInterest(product)
       : "";
     setForm({ ...emptyForm, productInterest });
-  }, [open, product]);
+    setFieldErrors({});
+  }, [open, product, setFieldErrors]);
 
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => setForm((s) => ({ ...s, [e.target.name]: e.target.value }));
+  ) => {
+    setForm((s) => ({ ...s, [e.target.name]: e.target.value }));
+    clearFieldError(e.target.name);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      await api.quote({
-        ...form,
-        message: product ? `[Product: ${product.name}] ${form.message}` : form.message,
-        productInterest: form.productInterest || null,
-      });
-      toast({
-        title: "Quote request sent",
-        description: "We'll get back to you within 24 hours.",
-      });
-      setForm({ ...emptyForm });
-      setOpen(false);
-    } catch (err: any) {
-      toast({
-        title: "Failed to send",
-        description: err?.message || "Please check the fields.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    const session = openSession.current;
+    await submit({
+      precheck: () => missingSelections(form, ["county"]),
+      run: () =>
+        api.quote({
+          ...form,
+          message: product ? `[Product: ${product.name}] ${form.message}` : form.message,
+          productInterest: form.productInterest || null,
+        }),
+      success: { title: "Quote request sent" },
+      onStored: () => {
+        if (session !== openSession.current) return;
+        setForm({ ...emptyForm });
+        setOpen(false);
+      },
+    });
   };
 
   return (
@@ -124,7 +127,7 @@ const QuoteDrawer = ({ trigger, product }: QuoteDrawerProps) => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-4 grid gap-3 text-left">
+        <form onSubmit={handleSubmit} className="mt-4 grid gap-3 text-left" aria-busy={isSubmitting}>
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
               <label className="block mb-1 text-sm font-medium">Full Name *</label>
@@ -134,7 +137,9 @@ const QuoteDrawer = ({ trigger, product }: QuoteDrawerProps) => {
                 required
                 value={form.name}
                 onChange={onChange}
+                {...errorProps(fieldErrors, "name", ID)}
               />
+              <FieldError errors={fieldErrors} name="name" idPrefix={ID} />
             </div>
             <div>
               <label className="block mb-1 text-sm font-medium">Email *</label>
@@ -145,7 +150,9 @@ const QuoteDrawer = ({ trigger, product }: QuoteDrawerProps) => {
                 required
                 value={form.email}
                 onChange={onChange}
+                {...errorProps(fieldErrors, "email", ID)}
               />
+              <FieldError errors={fieldErrors} name="email" idPrefix={ID} />
             </div>
           </div>
 
@@ -159,15 +166,20 @@ const QuoteDrawer = ({ trigger, product }: QuoteDrawerProps) => {
                 required
                 value={form.phone}
                 onChange={onChange}
+                {...errorProps(fieldErrors, "phone", ID)}
               />
+              <FieldError errors={fieldErrors} name="phone" idPrefix={ID} />
             </div>
             <div>
               <label className="block mb-1 text-sm font-medium">County *</label>
               <Select
                 value={form.county || undefined}
-                onValueChange={(v) => setForm((s) => ({ ...s, county: v }))}
+                onValueChange={(v) => {
+                  setForm((s) => ({ ...s, county: v }));
+                  clearFieldError("county");
+                }}
               >
-                <SelectTrigger aria-label="County">
+                <SelectTrigger aria-label="County" aria-required="true" {...errorProps(fieldErrors, "county", ID)}>
                   <SelectValue placeholder="Select County" />
                 </SelectTrigger>
                 <SelectContent className="max-h-60 overflow-y-auto">
@@ -178,6 +190,7 @@ const QuoteDrawer = ({ trigger, product }: QuoteDrawerProps) => {
                   ))}
                 </SelectContent>
               </Select>
+              <FieldError errors={fieldErrors} name="county" idPrefix={ID} />
             </div>
           </div>
 
@@ -189,7 +202,9 @@ const QuoteDrawer = ({ trigger, product }: QuoteDrawerProps) => {
               required
               value={form.area}
               onChange={onChange}
+              {...errorProps(fieldErrors, "area", ID)}
             />
+            <FieldError errors={fieldErrors} name="area" idPrefix={ID} />
           </div>
 
           <div>
@@ -221,7 +236,9 @@ const QuoteDrawer = ({ trigger, product }: QuoteDrawerProps) => {
               rows={4}
               value={form.message}
               onChange={onChange}
+              {...errorProps(fieldErrors, "message", ID)}
             />
+            <FieldError errors={fieldErrors} name="message" idPrefix={ID} />
           </div>
 
           <Button type="submit" className="btn-agricultural w-full" disabled={isSubmitting}>
