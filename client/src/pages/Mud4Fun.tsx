@@ -16,6 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { emails, mailHref, visible } from "@/config/business";
+import { youtubeNoCookieUrl } from "@/components/YouTubeEmbed";
 
 const MotionResponsiveImage = motion.create(ResponsiveImage);
 
@@ -46,7 +47,7 @@ const Mud4Fun: React.FC = () => {
   const highlights = [
     { type: "image", src: "/lovable-uploads/mud4fun/security1.jpg", alt: "Security team at the event" },
     { type: "image", src: "/lovable-uploads/mud4fun/tractor1.jpg", alt: "Tractor helping a vehicle" },
-    { type: "video", src: "https://www.youtube.com/embed/CXWhcNIrnFw", alt: "Mud4Fun 4x4 highlight" },
+    { type: "video", src: youtubeNoCookieUrl("CXWhcNIrnFw"), alt: "Mud4Fun 4x4 highlight" },
     { type: "image", src: "/lovable-uploads/mud4fun/prize.jpg", alt: "Partnership prize" },
   ];
 
@@ -131,12 +132,8 @@ const Mud4Fun: React.FC = () => {
                         whileHover={{ scale: 1.05 }}
                         className="relative rounded-2xl shadow-xl overflow-hidden cursor-pointer"
                       >
-                        <img
-                          loading="lazy"
-                          src="https://img.youtube.com/vi/CXWhcNIrnFw/hqdefault.jpg"
-                          alt={item.alt}
-                          className="h-64 w-full object-cover"
-                        />
+                        {/* Local placeholder: no third-party thumbnail request before the visitor opens the video. */}
+                        <div role="img" aria-label={item.alt} className="h-64 w-full bg-gradient-hero" />
                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                           <Youtube className="w-16 h-16 text-white" />
                         </div>
@@ -147,10 +144,14 @@ const Mud4Fun: React.FC = () => {
                       <DialogHeader>
                         <DialogTitle>Mud4Fun Highlight</DialogTitle>
                       </DialogHeader>
+                      {/* Mounted only after the visitor opens the dialog; privacy-enhanced YouTube host. */}
                       <iframe
                         width="315"
                         height="576"
                         src={item.src}
+                        title={item.alt}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerPolicy="strict-origin-when-cross-origin"
                         allowFullScreen
                         className="rounded-xl mx-auto"
                       />

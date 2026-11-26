@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import YouTubeEmbed from "@/components/YouTubeEmbed";
 
 const KTNInterview = () => {
   return (
@@ -53,15 +54,11 @@ const KTNInterview = () => {
             transition={{ duration: 0.8 }}
             className="relative w-full pb-[56.25%] mb-12 rounded-2xl overflow-hidden"
           >
-            <iframe
+            <YouTubeEmbed
               className="absolute top-0 left-0 w-full h-full"
-              src="https://www.youtube.com/embed/-jVldmfO1j8"
+              videoId="-jVldmfO1j8"
               title="Farm Mechanization || Farm Kenya"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            ></iframe>
+            />
           </motion.div>
 
           <motion.p
