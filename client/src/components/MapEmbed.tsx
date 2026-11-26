@@ -21,7 +21,7 @@ const MapEmbed = ({ title, label, embedSrc, query, height = 250 }: Props) => {
         style={{ border: 0 }}
         allowFullScreen={true}
         loading="lazy"
-        referrerPolicy="no-referrer-when-downgrade"
+        referrerPolicy="strict-origin-when-cross-origin"
         className="rounded-lg"
       />
     )

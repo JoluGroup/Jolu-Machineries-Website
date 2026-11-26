@@ -39,7 +39,9 @@ What to expect:
 | Footer newsletter `POST /api/subscribe` | email | `subscribers` (`{email, createdAt}`) | — | A "new subscriber" notice containing the email address (new subscribers only) |
 
 Other processing:
-- **IP addresses:** the rate limiter (`express-rate-limit`, default in-memory store) keys on the client IP address for a 60-second window and keeps it in process memory only. Nothing writes IP addresses to the database or to logs.
+- **IP addresses:** the rate limiter (`express-rate-limit`, default in-memory store) keys on the client IP address for a 60-second window and keeps it in process memory only. The application writes no IP addresses to the database or to its own logs. The hosting platforms (Render for the API, Vercel for the website) very likely record client IP addresses in their own request logs; retention is set by those providers. **[OWNER]** confirm.
+- **De-duplication fingerprint:** quotes store a SHA-256 hash of email, phone, name and message to detect resubmissions. This is pseudonymous personal data (it can be recomputed from the same details), not anonymous data.
+- **Staff mailbox and email provider copies:** every quote, contact and schedule request is emailed in full to the staff address(es) in `EMAIL_TO`, so copies also live in those mailboxes and in Resend's sending logs. These copies need their own retention rule. **[OWNER][LEGAL]**
 - **Logs:** structured logs contain request IDs, route names and sanitised error categories. Form field values, connection strings and error messages are not logged. Render log retention is not documented here. **[OWNER]**
 - **Retention:** none implemented. Quotes, contacts, schedules and subscribers are kept indefinitely. **[OWNER][LEGAL]** decide periods.
 - **Deletion:** no deletion routine and no data-subject request process implemented. **[OWNER][LEGAL]**
@@ -94,6 +96,10 @@ Other processing:
 | `jolu-consent-v1` (localStorage, not a cookie) | This website | Remembers your analytics choice | Only after you choose, and only when analytics is enabled on the site | Until you clear site data |
 | `_ga`, `_ga_<ID>` | Google Analytics (first-party cookie) | Distinguish visitors and sessions for usage statistics | **Only after you click "Accept analytics"**; removed when you withdraw | Set by Google (currently up to 2 years per Google's documentation; verify at publication) |
 | YouTube / Google Maps cookies | Google (third party) | Video playback / map display | Only after you click to play a video or show a map | Set by Google |
+| Google Drive cookies | Google (third party) | Plays the customer testimonial and event videos on the News page (Drive player) | Only after you open a video dialog | Set by Google |
+
+If analytics is enabled, Google Analytics receives the page path (no query string or fragment), page title, device and
+browser information and the visitor's IP address (used by Google for approximate location).
 
 The website uses no advertising cookies. Advertising storage, ad personalisation and Google signals are switched off in
 the analytics configuration. You can change your analytics choice at any time with "Cookie settings" in the footer. That
@@ -102,6 +108,7 @@ control appears only when analytics is enabled.
 ## 6. Matters requiring owner or legal decision (no assurances given)
 
 1. Whether the GA4 property `G-R80L7FBXQS` is owned and controlled by JOLU, and whether to use it (O-4). Until then `VITE_GA_MEASUREMENT_ID` stays unset.
+   **Prerequisite before setting the ID [OWNER]:** in GA Admin → Data streams → Enhanced measurement, turn off "Page changes based on browser history events", "Site search" and "Form interactions" (and review "Outbound clicks"). Enhanced measurement runs inside gtag.js independently of this site's code and can send the full page URL, query terms and link URLs, which would bypass the site's URL clean-up. Google signals and ads personalisation must also stay off in the property.
 2. Lawful basis for each processing purpose, including analytics consent and newsletter direct-marketing consent.
 3. Whether JOLU must register with the Office of the Data Protection Commissioner as controller and/or processor.
 4. Cross-border transfer basis and safeguards (EU, US).

@@ -32,7 +32,7 @@ const YouTubeEmbed = ({ videoId, title, className = "" }: Props) => {
       type="button"
       onClick={() => setLoaded(true)}
       aria-label={`Play video: ${title} (loads YouTube)`}
-      className={`${className} group flex flex-col items-center justify-center gap-3 bg-gradient-hero text-white`}
+      className={`${className} group flex flex-col items-center justify-center gap-3 bg-primary text-white`}
     >
       <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/15 transition-colors group-hover:bg-white/25">
         <Play className="h-8 w-8" aria-hidden="true" />

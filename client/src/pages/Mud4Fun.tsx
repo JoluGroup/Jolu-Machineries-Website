@@ -133,7 +133,7 @@ const Mud4Fun: React.FC = () => {
                         className="relative rounded-2xl shadow-xl overflow-hidden cursor-pointer"
                       >
                         {/* Local placeholder: no third-party thumbnail request before the visitor opens the video. */}
-                        <div role="img" aria-label={item.alt} className="h-64 w-full bg-gradient-hero" />
+                        <div role="img" aria-label={item.alt} className="h-64 w-full bg-primary" />
                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                           <Youtube className="w-16 h-16 text-white" />
                         </div>
