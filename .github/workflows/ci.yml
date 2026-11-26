@@ -1,0 +1,143 @@
+# M2-CI-01: verification only. No deployment, no secrets, no privileged pull_request_target execution.
+# Each result is reported as PASSED / FAILED / SKIPPED / NOT EXECUTED in the run summary and as a check annotation.
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Production runs Node 20.14.0 on Render (server); keep CI on the same line for both packages.
+  NODE_VERSION: "20.14.0"
+  CI_SYNTHETIC: "1"
+
+jobs:
+  server:
+    name: server (install, tests)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: server
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Tests (synthetic configuration, no network services)
+        env:
+          NODE_ENV: test
+        run: ../.github/scripts/run-tests.sh server
+
+  client:
+    name: client (install, tests, build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: client
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Tests
+        run: ../.github/scripts/run-tests.sh client
+      - name: Production build
+        env:
+          # Synthetic, non-routable API origin: CI never talks to a real backend.
+          VITE_API_BASE: https://api.ci.invalid
+        run: |
+          npm run build
+          echo "| client build | PASSED |" >> "$GITHUB_STEP_SUMMARY"
+      - name: SEO / prerender verification
+        env:
+          VITE_API_BASE: https://api.ci.invalid
+        run: ../.github/scripts/run-optional.sh client "verify:seo" "SEO/prerender verification"
+      - name: Type check (report-only, pre-existing errors)
+        id: typecheck
+        continue-on-error: true
+        run: npx --no-install tsc --noEmit -p tsconfig.app.json
+      - name: Lint (report-only, pre-existing errors)
+        id: lint
+        continue-on-error: true
+        run: npm run lint
+      - name: Report-only results
+        if: always()
+        run: |
+          r() { case "$1" in success) echo PASSED;; failure) echo "FAILED (report-only)";; skipped) echo SKIPPED;; *) echo "NOT EXECUTED";; esac; }
+          echo "| client typecheck | $(r '${{ steps.typecheck.outcome }}') |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| client lint | $(r '${{ steps.lint.outcome }}') |" >> "$GITHUB_STEP_SUMMARY"
+          echo "::notice title=client report-only::typecheck=${{ steps.typecheck.outcome }} lint=${{ steps.lint.outcome }}"
+
+  audit:
+    name: production dependency audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [server, client]
+    defaults:
+      run:
+        working-directory: ${{ matrix.package }}
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: npm audit --omit=dev (fails on high or critical)
+        run: |
+          set +e
+          npm audit --omit=dev --audit-level=high > audit.txt 2>&1
+          status=$?
+          tail -n 25 audit.txt
+          summary=$(grep -Eo '[0-9]+ (low|moderate|high|critical)[^,]*vulnerabilit[a-z]*|found 0 vulnerabilities' audit.txt | head -n 3 | paste -sd ';' -)
+          echo "::notice title=${{ matrix.package }} audit::exit=${status} ${summary:-see log}"
+          exit $status
+
+  summary:
+    name: CI summary
+    if: always()
+    needs: [server, client, audit]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Result table
+        run: |
+          r() { case "$1" in success) echo PASSED;; failure) echo FAILED;; skipped) echo SKIPPED;; *) echo "NOT EXECUTED ($1)";; esac; }
+          {
+            echo "## CI result for ${GITHUB_SHA}"
+            echo "| job | result |"
+            echo "|---|---|"
+            echo "| server | $(r '${{ needs.server.result }}') |"
+            echo "| client | $(r '${{ needs.client.result }}') |"
+            echo "| audit | $(r '${{ needs.audit.result }}') |"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::notice title=CI summary::sha=${GITHUB_SHA} server=${{ needs.server.result }} client=${{ needs.client.result }} audit=${{ needs.audit.result }}"
+          [ "${{ needs.server.result }}" = success ] && [ "${{ needs.client.result }}" = success ] && [ "${{ needs.audit.result }}" = success ]
