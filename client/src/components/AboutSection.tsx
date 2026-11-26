@@ -2,6 +2,7 @@ import { Award, Users, Wrench, ShieldCheck, Truck, Clock, Quote } from "lucide-r
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
+import { testimonials, visible } from "@/config/business";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
@@ -35,9 +36,9 @@ const AboutSection = () => {
     },
     {
       icon: ShieldCheck,
-      title: "Genuine Parts",
+      title: "Spare Parts",
       description:
-        "Only authentic Zoomlion parts and accessories for your equipment"
+        "Spare parts enquiries for the Zoomlion machinery we supply"
     },
     {
       icon: Truck,
@@ -53,32 +54,8 @@ const AboutSection = () => {
     }
   ];
 
-const testimonials = [
-  {
-    name: "Faith Yegon",
-    role: "Large Scale Maize Farmer",
-    location: "Eldoret",
-    comment:
-      "Jolu Machineries delivered my tractor on time and gave me hands-on training. It has completely transformed my farm’s efficiency.",
-    rating: 5
-  },
-  {
-    name: "Geoffrey Bosire",
-    role: "Large Scale Farmer",
-    location: "Awasi",
-    comment:
-      "My tractor has been running perfectly for over 3 years with minimal downtime thanks to their excellent maintenance support.",
-    rating: 5
-  },
-  {
-    name: "John Ouma",
-    role: "Tea Plantation Owner",
-    location: "Nandi Hills",
-    comment:
-      "The equipment is reliable and the after-sales service is outstanding. I recommend Jolu Machineries to every serious farmer.",
-    rating: 5
-  }
-];
+// Named customer testimonials are withheld until verified with consent (registry C12).
+const shownTestimonials = visible(testimonials) ?? [];
 
 
   return (
@@ -99,8 +76,8 @@ const testimonials = [
             Your Trusted Agricultural Partner
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            For over 5 years, Jolu Machineries has been Kenya's
-            premier dealer for Zoomlion agricultural equipment. We combine industry expertise
+            Jolu Machineries supplies Zoomlion tractors, harvesters and farm implements to
+            farmers in Kenya. We combine industry expertise
             with unwavering commitment to help farmers achieve greater productivity and success.
           </p>
         </motion.div>
@@ -117,14 +94,14 @@ const testimonials = [
             <div className="space-y-4 text-muted-foreground leading-relaxed">
               <p>
                 Founded with a vision to revolutionize Kenyan agriculture, Jolu Machineries
-                began as a small agricultural equipment dealer with big dreams. Today, we're
-                proud to be one of Kenya's leading distributors of Zoomlion agricultural machinery.
+                began as a small agricultural equipment dealer with big dreams. Today, we supply
+                Zoomlion agricultural machinery to Kenyan farmers.
               </p>
               <p>
                 Our journey started when we recognized the need for reliable, high-quality
                 agricultural equipment that could withstand Kenya's diverse farming conditions.
-                Partnering with Zoomlion, a global leader in agricultural technology, we've been
-                able to provide farmers with world-class equipment at competitive prices.
+                Through the Zoomlion range of tractors, harvesters and implements, we help
+                farmers find machinery suited to their land and workload.
               </p>
               <p>
                 What sets us apart is our commitment to building lasting relationships with our
@@ -203,7 +180,8 @@ const testimonials = [
           </motion.div>
         </motion.div>
 
-{/* Testimonials */}
+{/* Testimonials (only owner-verified entries are ever rendered) */}
+{shownTestimonials.length > 0 && (
 <motion.div
   className="grid md:grid-cols-3 gap-8"
   variants={staggerContainer}
@@ -211,7 +189,7 @@ const testimonials = [
   whileInView="visible"
   viewport={{ once: true }}
 >
-  {testimonials.map((testimonial, index) => (
+  {shownTestimonials.map((testimonial, index) => (
     <motion.div key={index} variants={fadeUp}>
       <Card className="product-card h-full hover:shadow-lg transition-shadow duration-300">
         <CardContent className="flex h-full flex-col p-8">
@@ -245,6 +223,7 @@ const testimonials = [
     </motion.div>
   ))}
 </motion.div>
+)}
       </div>
     </section>
   );

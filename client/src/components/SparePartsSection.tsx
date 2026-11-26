@@ -8,6 +8,7 @@ import {
   Disc3,
   PackageSearch,
   CheckCircle2,
+  HelpCircle,
   Clock,
   XCircle,
 } from "lucide-react";
@@ -23,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import QuoteDrawer from "@/components/QuoteDrawer";
+import { spareParts, visible } from "@/config/business";
 
 type Stock = "in-stock" | "low-stock" | "order";
 
@@ -168,6 +170,12 @@ const parts: SparePart[] = [
   },
 ];
 
+const availabilityMeta = {
+  label: spareParts.availabilityFallback,
+  icon: HelpCircle,
+  className: "bg-muted text-muted-foreground border-border",
+};
+
 const stockMeta: Record<
   Stock,
   { label: string; icon: typeof CheckCircle2; className: string }
@@ -221,13 +229,13 @@ const SparePartsSection = () => {
         {/* Heading */}
         <div className="text-center mb-12">
           <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
-            Genuine Spare Parts
+            Spare Parts
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
             Spare Parts &amp; Components
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Genuine OEM parts for your ZOOMLION machinery. Search by part number or filter by
+            Spare parts for your ZOOMLION machinery. Search by part number or filter by
             your tractor model to find the exact fit.
           </p>
         </div>
@@ -305,7 +313,8 @@ const SparePartsSection = () => {
         {filteredParts.length > 0 ? (
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {filteredParts.map((part) => {
-              const stock = stockMeta[part.stock];
+              // Static stock levels are never shown (registry C14): availability is confirmed on enquiry.
+              const stock = visible(spareParts.stockBadges) ? stockMeta[part.stock] : availabilityMeta;
               const StockIcon = stock.icon;
               return (
                 <Card key={part.id} className="product-card group flex flex-col">

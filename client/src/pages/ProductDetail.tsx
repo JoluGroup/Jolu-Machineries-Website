@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import QuoteDrawer from "@/components/QuoteDrawer";
+import { phones, visible, waHref } from "@/config/business";
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -99,7 +100,7 @@ const ProductDetail = () => {
                   }
                 />
                 <a
-                  href="https://wa.me/254705038679"
+                  href={waHref(visible(phones.primary))}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { emails, mailHref, visible } from "@/config/business";
 
 const MotionResponsiveImage = motion.create(ResponsiveImage);
 
@@ -185,7 +186,7 @@ const Mud4Fun: React.FC = () => {
             className="flex flex-col sm:flex-row gap-4"
           >
             <Button asChild>
-              <a href="mailto:info@jolugroup.com">Email Us</a>
+              <a href={mailHref(visible(emails.group))}>Email Us</a>
             </Button>
             <Button variant="outline" asChild>
               <Link to="/quote">Request a Quote</Link>

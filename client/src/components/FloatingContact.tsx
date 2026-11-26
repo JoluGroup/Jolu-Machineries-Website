@@ -1,28 +1,18 @@
 import { useState } from "react";
 import { Phone, MapPin, Plus, X } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
+import { locations, phones, telHref, visible, waHref } from "@/config/business";
 
-const WHATSAPP_URL = "https://wa.me/254705038679";
-const PHONE_TEL = "tel:+254705038679";
+const WHATSAPP_URL = waHref(visible(phones.primary));
+const PHONE_TEL = telHref(visible(phones.primary));
 
+// Labels/addresses kept exactly as previously published here; the Nairobi label and the Migori address conflict with
+// the footer and are recorded in the registry (C7) for the owner to resolve.
 const branches = [
-  {
-    city: "Nairobi",
-    label: "Main Office",
-    address: "Main Office - Thome, Nairobi, Kenya",
-  },
-  {
-    city: "Nakuru",
-    label: "Regional Office & Showroom",
-    address:
-      "Along West Road, Opposite Nakuru Athletics, Next to Evans Hospital, Nakuru, Kenya",
-  },
-  {
-    city: "Rongo",
-    label: "Branch Office",
-    address: "Quickfill Rongo Station, Migori, Kenya",
-  },
-];
+  { claim: locations.nairobi, city: "Nairobi", label: "Main Office", address: (a: string) => `Main Office - ${a}` },
+  { claim: locations.nakuru, city: "Nakuru", label: "Regional Office & Showroom", address: (a: string) => a },
+  { claim: locations.migoriFloating, city: "Rongo", label: "Branch Office", address: (a: string) => a },
+].flatMap((b) => { const loc = visible(b.claim); return loc ? [{ city: b.city, label: b.label, address: b.address(loc.address) }] : []; });
 
 const FloatingContact = () => {
   const [expanded, setExpanded] = useState(false);

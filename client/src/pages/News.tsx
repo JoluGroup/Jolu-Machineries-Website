@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { emails, mailHref, visible } from "@/config/business";
 
 const News: React.FC = () => {
   // SEO metadata
@@ -317,7 +318,7 @@ useEffect(() => {
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 gap-3">
-                <a href="mailto:info@jolumachineries.com,jolumachineries@gmail.com?subject=%20Inquiry%20-%20Jolu%20Machineries" aria-label="Contact jolu machineries">
+                <a href={`${mailHref(visible(emails.general), visible(emails.gmail))}?subject=%20Inquiry%20-%20Jolu%20Machineries`} aria-label="Contact jolu machineries">
                   <Button size="sm">Email Us</Button>
                 </a>
                 <Link to="/quote" aria-label="Request a demo or quote">

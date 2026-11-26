@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { emails, phones, visible } from "@/config/business";
 import { Menu, X, Phone, Mail, MapPin, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -66,11 +67,11 @@ const Header = () => {
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-2">
               <Phone size={14} />
-              <span>+254 705 038 679 | 0743 682 700</span>
+              <span>{[visible(phones.primary)?.display, visible(phones.secondaryLocalDisplay)].filter(Boolean).join(" | ")}</span>
             </div>
             <div className="flex items-center space-x-2">
               <Mail size={14} />
-              <span>info@jolumachineries.com</span>
+              <span>{visible(emails.general)}</span>
             </div>
           </div>
           <div className="hidden md:flex items-center space-x-2">

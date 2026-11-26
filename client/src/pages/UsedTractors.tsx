@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Cog, Gauge, Weight, Tractor } from "lucide-react";
 import React, { useState, useEffect} from "react";
+import { phones, visible, waHref } from "@/config/business";
 
 const UsedTractors = () => {
   // Images for RX754A
@@ -62,7 +63,7 @@ const UsedTractors = () => {
               Request a Quote
             </Button>
             <a
-              href="https://wa.me/254705038679"
+              href={waHref(visible(phones.primary))}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -225,7 +226,7 @@ const UsedTractors = () => {
             Request a Quote
           </Button>
           <a
-            href="https://wa.me/254705038679"
+            href={waHref(visible(phones.primary))}
             target="_blank"
             rel="noopener noreferrer"
           >

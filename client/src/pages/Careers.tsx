@@ -14,6 +14,7 @@ import {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
+import { emails, mailHref, visible } from "@/config/business";
 
 const Careers: React.FC = () => {
   const metaTitle = "Careers at Jolu Group of Companies — Join Our Team";
@@ -64,7 +65,7 @@ const Careers: React.FC = () => {
       ],
       deadline: "31st May 2026",
       image: "/lovable-uploads/careers/manager.png",
-      link: "mailto:info@jolumachineries.com?subject=Application%20for%20Director%20-%20Operations%20%26%20Head%20of%20Operations",
+      link: `${mailHref(visible(emails.general))}?subject=Application%20for%20Director%20-%20Operations%20%26%20Head%20of%20Operations`,
     },
   ];
 
@@ -152,10 +153,10 @@ const Careers: React.FC = () => {
                 We&apos;re not hiring right now, but we&apos;d still love to hear from you — send
                 your CV to{" "}
                 <a
-                  href="mailto:info@jolumachineries.com"
+                  href={mailHref(visible(emails.general))}
                   className="text-[#0B3D24] font-medium underline"
                 >
-                  info@jolumachineries.com
+                  {visible(emails.general)}
                 </a>{" "}
                 and we&apos;ll keep you in mind for future roles.
               </p>
@@ -317,7 +318,7 @@ const Careers: React.FC = () => {
             </p>
 
             <a
-              href="mailto:info@jolumachineries.com?subject=Career%20Opportunities%20at%20Jolu"
+              href={`${mailHref(visible(emails.general))}?subject=Career%20Opportunities%20at%20Jolu`}
               target="_blank"
               rel="noopener noreferrer"
             >

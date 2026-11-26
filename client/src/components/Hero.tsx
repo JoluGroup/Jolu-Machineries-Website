@@ -15,6 +15,7 @@ import { useInView } from "@/hooks/use-in-view";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "@/components/ResponsiveImage";
 import { createSlideNavigator, wrapIndex } from "@/lib/slide-navigation";
+import { phones, stats, visible, waHref } from "@/config/business";
 
 const heroImage1 = "@/assets/hero/tractor1.jpg";
 const heroImage2 = "@/assets/hero/tractor2.png";
@@ -27,11 +28,9 @@ const Hero = () => {
 
   // Count-up metrics fire once when the stats block scrolls into view.
   const { ref: statsRef, inView: statsInView } = useInView<HTMLDivElement>({ once: true });
-  const heroStats = [
-    { target: 500, label: "Tractors Sold", icon: Tractor },
-    { target: 5, label: "Years Experience", icon: Award },
-    { target: 480, label: "Happy Customers", icon: Users },
-  ];
+  // Owner-supplied figures (registry C10, pending verification); hidden entirely if withheld.
+  const statIcons = [Tractor, Award, Users];
+  const heroStats = (visible(stats.homepage) ?? []).map((s, i) => ({ ...s, icon: statIcons[i % statIcons.length] }));
 
   const heroSlides = [
     {
@@ -267,7 +266,7 @@ const Hero = () => {
                 className="bg-transparent text-white border-white/40 hover:bg-white/10 hover:text-white text-lg px-6 sm:px-8 py-3 sm:py-4"
               >
                 <a
-                  href="https://wa.me/254705038679?text=Hello%20Jolu%20Machineries%2C%20I%20would%20like%20to%20inquire%20about%20your%20machinery%20fleet."
+                  href={`${waHref(visible(phones.primary))}?text=Hello%20Jolu%20Machineries%2C%20I%20would%20like%20to%20inquire%20about%20your%20machinery%20fleet.`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
