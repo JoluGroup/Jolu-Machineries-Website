@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 
 import ScrollToTop from "./components/ScrollToTop";
+import ConsentBanner from "@/privacy/ConsentBanner";
 
 // Lazy load pages (better performance)
 const Index = lazy(() => import("./pages/Index"));
@@ -33,6 +34,7 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <ConsentBanner />
 
         <BrowserRouter>
           <ScrollToTop />
