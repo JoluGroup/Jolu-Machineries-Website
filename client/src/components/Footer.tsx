@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { FaTiktok, FaWhatsapp } from "react-icons/fa";
 import { useLocation, Link } from "react-router-dom";
 import { useState } from "react";
+import { api } from "@/lib/api";
 
 const footerLocations = [locations.nairobi, locations.nakuru, locations.migoriFooter].map((c) => visible(c)).filter((l): l is NonNullable<typeof l> => Boolean(l));
 
@@ -36,35 +37,31 @@ const Footer = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) return setMessage("⚠️ Please enter a valid email.");
 
-    try {
-      setLoading(true);
-      setMessage("");
-
-      const API_BASE = import.meta.env.VITE_API_BASE;
-
-      const res = await fetch(`${API_BASE}/api/subscribe`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await res.json().catch(() => {
-        throw new Error("Invalid JSON response from server");
-      });
-
-      if (!res.ok || !data.ok) throw new Error(data?.message || "Subscription failed");
-
-      if (data.status === "already_subscribed") {
-        setMessage("ℹ️ You’re already subscribed with this email.");
-      } else {
+    if (loading) return;
+    setLoading(true);
+    setMessage("");
+    const outcome = await api.subscribe({ email });
+    setLoading(false);
+    switch (outcome.kind) {
+      case "received":
         setMessage("✅ Thank you for subscribing!");
-      }
-      setEmail("");
-    } catch (err) {
-      console.error(err);
-      setMessage("⚠️ Could not subscribe right now. Please try again later.");
-    } finally {
-      setLoading(false);
+        setEmail("");
+        break;
+      case "duplicate":
+        setMessage("ℹ️ You’re already subscribed with this email.");
+        setEmail("");
+        break;
+      case "invalid":
+        setMessage("⚠️ Please enter a valid email.");
+        break;
+      case "rate_limited":
+        setMessage("⚠️ Too many attempts. Please wait a minute and try again.");
+        break;
+      case "network":
+        setMessage("⚠️ We couldn't reach our server. Please check your connection and try again.");
+        break;
+      default:
+        setMessage("⚠️ Could not subscribe right now. Please try again later.");
     }
   };
 

@@ -8,7 +8,9 @@ import Footer from "@/components/Footer";
 import { useState } from "react";
 import { api } from "@/lib/api";
 import { productOptions } from "@/data/options";
-import { useToast } from "@/hooks/use-toast";
+import FieldError from "@/components/FieldError";
+import { errorProps, useSubmission } from "@/hooks/use-submission";
+import { missingSelections } from "@/lib/submit-feedback";
 
 type Form = {
   name: string;
@@ -21,8 +23,8 @@ type Form = {
 };
 
 export default function ScheduleVisit() {
-  const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isSubmitting, fieldErrors, clearFieldError, submit } = useSubmission();
+  const ID = "schedule";
   const [form, setForm] = useState<Form>({
     name: "",
     email: "",
@@ -37,35 +39,26 @@ export default function ScheduleVisit() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setForm((s) => ({ ...s, [e.target.name]: e.target.value }));
+    clearFieldError(e.target.name);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      await api.schedule({ ...form, notes: form.notes || null });
-      toast({
-        title: "Visit scheduled!",
-        description: "We will confirm shortly.",
-      });
-      setForm({
-        name: "",
-        email: "",
-        phone: "",
-        preferredDate: "",
-        preferredTime: "",
-        product: "",
-        notes: "",
-      });
-    } catch (err: any) {
-      toast({
-        title: "Failed to schedule",
-        description: err?.message || "Please check the fields.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    await submit({
+      precheck: () => missingSelections(form, ["product"]),
+      run: () => api.schedule({ ...form, notes: form.notes || null }),
+      success: { title: "Visit request received", description: "We will contact you to confirm the date and time." },
+      onStored: () =>
+        setForm({
+          name: "",
+          email: "",
+          phone: "",
+          preferredDate: "",
+          preferredTime: "",
+          product: "",
+          notes: "",
+        }),
+    });
   };
 
   return (
@@ -83,6 +76,7 @@ export default function ScheduleVisit() {
           <form
             className="space-y-6 bg-zinc-100 dark:bg-zinc-800 p-6 rounded-2xl shadow-xl border border-zinc-200 dark:border-zinc-700"
             onSubmit={handleSubmit}
+            aria-busy={isSubmitting}
           >
             {/* Contact Info */}
             <div className="grid sm:grid-cols-2 gap-4">
@@ -95,7 +89,9 @@ export default function ScheduleVisit() {
                   onChange={onChange}
                   icon={<UserIcon className="w-4 h-4" />}
                   required
+                  {...errorProps(fieldErrors, "name", ID)}
                 />
+                <FieldError errors={fieldErrors} name="name" idPrefix={ID} />
               </div>
               <div>
                 <label className="block text-sm font-medium">Email *</label>
@@ -107,7 +103,9 @@ export default function ScheduleVisit() {
                   onChange={onChange}
                   icon={<MailIcon className="w-4 h-4" />}
                   required
+                  {...errorProps(fieldErrors, "email", ID)}
                 />
+                <FieldError errors={fieldErrors} name="email" idPrefix={ID} />
               </div>
               <div>
                 <label className="block text-sm font-medium">Phone *</label>
@@ -119,7 +117,9 @@ export default function ScheduleVisit() {
                   onChange={onChange}
                   icon={<PhoneIcon className="w-4 h-4" />}
                   required
+                  {...errorProps(fieldErrors, "phone", ID)}
                 />
+                <FieldError errors={fieldErrors} name="phone" idPrefix={ID} />
               </div>
 
               {/* Date + Time */}
@@ -135,7 +135,9 @@ export default function ScheduleVisit() {
                     onChange={onChange}
                     icon={<CalendarIcon className="w-4 h-4" />}
                     required
+                    {...errorProps(fieldErrors, "preferredDate", ID)}
                   />
+                  <FieldError errors={fieldErrors} name="preferredDate" idPrefix={ID} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium">
@@ -148,7 +150,9 @@ export default function ScheduleVisit() {
                     onChange={onChange}
                     icon={<ClockIcon className="w-4 h-4" />}
                     required
+                    {...errorProps(fieldErrors, "preferredTime", ID)}
                   />
+                  <FieldError errors={fieldErrors} name="preferredTime" idPrefix={ID} />
                 </div>
               </div>
             </div>
@@ -158,9 +162,12 @@ export default function ScheduleVisit() {
               <label className="block text-sm font-medium">Product *</label>
               <Select
                 value={form.product}
-                onValueChange={(v) => setForm((s) => ({ ...s, product: v }))}
+                onValueChange={(v) => {
+                  setForm((s) => ({ ...s, product: v }));
+                  clearFieldError("product");
+                }}
               >
-                <SelectTrigger>
+                <SelectTrigger aria-label="Product" aria-required="true" {...errorProps(fieldErrors, "product", ID)}>
                   <SelectValue placeholder="Select a product" />
                 </SelectTrigger>
                 <SelectContent>
@@ -171,6 +178,7 @@ export default function ScheduleVisit() {
                   ))}
                 </SelectContent>
               </Select>
+              <FieldError errors={fieldErrors} name="product" idPrefix={ID} />
             </div>
 
             {/* Notes */}
