@@ -41,8 +41,8 @@ test("registry: 13 static routes + 18 products, unique paths, titles and descrip
   }
 })
 
-test("registry covers every route in App.tsx ROUTE_TABLE", () => {
-  const app = fs.readFileSync(path.join(ROOT, "src/App.tsx"), "utf8")
+test("registry covers every route in the router ROUTE_TABLE", () => {
+  const app = fs.readFileSync(path.join(ROOT, "src/routeTable.tsx"), "utf8")
   const appPaths = [...app.matchAll(/\{ path: "([^"]+)", page:/g)].map((m) => m[1])
   assert.ok(appPaths.length >= 14)
   const registered = new Set(routes.allRoutes().map((r) => r.path))

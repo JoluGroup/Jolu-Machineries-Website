@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client'
-import App, { preloadRoute } from './App.tsx'
+import App from './App.tsx'
+import { preloadRoute } from './routeTable'
 import './index.css'
 
 // The page HTML is prerendered at build time (M2-SEO-01). Load the current route's code first so the first client

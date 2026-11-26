@@ -66,8 +66,8 @@ test("no singular /product/<slug> links remain anywhere in the client source", (
 })
 
 test("routes exist for the catalogue and every product slug resolves through /products/:slug", () => {
-  const app = read("src/App.tsx")
-  // App.tsx declares routes in ROUTE_TABLE (M2-SEO-01) as { path: "/products", page: ... }.
+  const app = read("src/routeTable.tsx")
+  // Routes are declared in src/routeTable.tsx (M2-SEO-01) as { path: "/products", page: ... }.
   assert.match(app, /path(=|:\s*)"\/products"/)
   assert.match(app, /path(=|:\s*)"\/products\/:slug"/)
   assert.match(read("src/pages/ProductDetail.tsx"), /\.slug\s*===/)

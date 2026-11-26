@@ -2,7 +2,8 @@
 // bundle. Renders a route with StaticRouter inside the same providers and route table as the browser app.
 import { renderToStaticMarkup } from "react-dom/server";
 import { StaticRouter } from "react-router-dom/server";
-import { AppProviders, AppRoutes, ROUTE_TABLE, preloadAllRoutes } from "./App";
+import { AppProviders, AppRoutes } from "./App";
+import { ROUTE_TABLE, preloadAllRoutes } from "./routeTable";
 
 export { allRoutes, NOT_FOUND_ROUTE, routeForPath } from "./seo/routes";
 export { buildHead, renderHeadHtml } from "./seo/head";
