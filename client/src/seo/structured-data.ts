@@ -15,7 +15,7 @@ export const ALLOWED_TYPES = ["Organization", "WebSite", "BreadcrumbList", "List
 
 type Json = Record<string, unknown>
 
-/** Absolute URL for an image key ("@/assets/x.png", "/lovable-uploads/x.jpg") using the generated WebP variant if any. */
+/** Absolute URL for an image key (an "@/assets" key or a public "lovable-uploads" path), using the generated WebP variant if any. */
 export function imageUrl(src?: string): string {
   if (!src) return absoluteUrl(DEFAULT_OG_IMAGE)
   const resolved = resolveImage(manifest as ImageManifest, src, "/")
