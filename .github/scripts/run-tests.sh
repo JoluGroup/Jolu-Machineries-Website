@@ -4,20 +4,25 @@
 set -uo pipefail
 pkg="$1"
 summary="${GITHUB_STEP_SUMMARY:-/dev/null}"
+out="${GITHUB_OUTPUT:-/dev/null}"
 
 if ! node -e "process.exit(require('./package.json').scripts && require('./package.json').scripts.test ? 0 : 1)"; then
   echo "| ${pkg} tests | NOT EXECUTED (no test script on this commit) |" >> "$summary"
   echo "::warning title=${pkg} tests::NOT EXECUTED - package.json has no test script on this commit"
+  echo "verdict=NOT_EXECUTED" >> "$out"
   exit 0
 fi
 
 export PKG="$pkg"
+# The parsers below read node:test's TAP output, which Node 20/22 emit when stdout is not a TTY (as in CI).
+# If a future Node changes that default, the counts fall back to "?" and the verdict still follows the exit code.
 npm test 2>&1 | tee test-output.txt
 status=${PIPESTATUS[0]}
 
 count() { grep -E "^(# |ℹ )$1 [0-9]+" test-output.txt | tail -n 1 | grep -Eo '[0-9]+$' || echo "?"; }
 tests=$(count tests); pass=$(count pass); fail=$(count fail); skipped=$(count skipped); todo=$(count todo); cancelled=$(count cancelled)
 if [ "$status" -eq 0 ]; then verdict=PASSED; else verdict=FAILED; fi
+echo "verdict=${verdict}" >> "$out"
 
 echo "| ${pkg} tests | ${verdict}: tests=${tests} pass=${pass} fail=${fail} skipped=${skipped} todo=${todo} cancelled=${cancelled} |" >> "$summary"
 echo "::notice title=${pkg} tests::${verdict} tests=${tests} pass=${pass} fail=${fail} skipped=${skipped} todo=${todo} cancelled=${cancelled}"
