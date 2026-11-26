@@ -26,7 +26,12 @@ test("invalid submissions return 400 with field names and store/send nothing", a
 test("Resend RETURNED error: no success claim, record preserved, 502 with safe message", async () => {
   const s = await start({ mailer: fakeMailer("rejected") });
   const r = await s.post("/api/quotes", FORM);
-  assert.equal(r.status, 502); assert.equal(r.json.ok, false); assert.equal(r.json.code, "notification_failed"); assert.doesNotMatch(JSON.stringify(r.json), /validation_error|403|resend/i);
+  assert.equal(r.status, 502); assert.equal(r.json.ok, false); assert.equal(r.json.code, "notification_failed");
+  // requestId is a random UUID and may legitimately contain "403"; check it separately, then ensure no provider
+  // detail (error name, status code, provider name) leaks anywhere else in the body.
+  const { requestId, ...rest } = r.json;
+  assert.match(requestId, /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+  assert.doesNotMatch(JSON.stringify(rest), /validation_error|403|resend/i);
   assert.equal(s.db.store.quotes.rows.length, 1); assert.equal(s.db.store.quotes.rows[0].emailStatus, "failed");
   s.close();
 });
