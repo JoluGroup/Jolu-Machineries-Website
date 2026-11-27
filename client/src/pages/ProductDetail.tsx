@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import QuoteDrawer from "@/components/QuoteDrawer";
 import { phones, visible, waHref } from "@/config/business";
 import RegistryLink from "@/components/RegistryLink";
-import { shownSpecs } from "@/data/spec-verification";
+import { gateCopy, gateList, shownSpecs } from "@/data/spec-verification";
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -17,6 +17,7 @@ const ProductDetail = () => {
     return <div className="text-center text-red-600 mt-20">Product not found</div>;
   }
   const specs = shownSpecs(product);
+  const advantages = gateList(product.advantages, product);
 
 
   const hpSpec = specs.keySpecs.find((s) => /power/i.test(s.label));
@@ -35,7 +36,7 @@ const ProductDetail = () => {
             />
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-primary mb-4">{product.name}</h1>
-              <p className="text-lg mb-6">{product.longDescription}</p>
+              <p className="text-lg mb-6">{gateCopy(product.longDescription, product)}</p>
               {specs.keySpecs.length > 0 && (
                 <ul className="space-y-2 text-muted-foreground">
                   {specs.keySpecs.map((spec, i) => (
@@ -51,11 +52,11 @@ const ProductDetail = () => {
           </div>
 
           {/* Advantages */}
-          {product.advantages && (
+          {advantages.length > 0 && (
             <>
               <h3 className="text-xl font-semibold mb-4 mt-10 text-primary">Advantages</h3>
               <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-                {product.advantages.map((adv, i) => (
+                {advantages.map((adv, i) => (
                   <li key={i}>{adv}</li>
                 ))}
               </ul>

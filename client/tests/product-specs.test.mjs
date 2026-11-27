@@ -65,3 +65,32 @@ test("production product page and homepage cards render no withheld value", asyn
   assert.equal(cards[0].horsepower, undefined, "unverified RC904 power hidden on the card")
   assert.deepEqual(cards[0].features, ["Full Hydraulic Steering"], "numeric feature hidden, qualitative kept")
 })
+
+test("strict mode also gates product copy: descriptions, advantages and the catalogue list", async () => {
+  const { default: ProductDetail } = await bundle("src/pages/ProductDetail.tsx", "specs-detail-prod2", "production")
+  const page = (slug) => renderToStaticMarkup(React.createElement(MemoryRouter, { initialEntries: [`/products/${slug}`] },
+    React.createElement(Routes, null, React.createElement(Route, { path: "/products/:slug", element: React.createElement(ProductDetail) }))))
+  const rs = page("zoomlion-rs1304-1604")
+  for (const v of ["28200", "100L/min", "37%", "920", "partially synchronized"]) assert.ok(!rs.includes(v), `RS1304 copy leaks ${v}`)
+  const zc = page("zc123s-combine-harvester")
+  assert.ok(!zc.includes("220L") && !/Xinchai/i.test(zc), "ZC123S conflicting fuel tank / unsupported engine claim")
+  for (const [slug, v] of [["zl105-combine-harvester", "660"], ["3-disk-plough", "70–90"], ["zoomlion-pl2304", "European standards"]]) assert.ok(!page(slug).includes(v), `${slug} copy leaks ${v}`)
+  const { default: ProductList } = await bundle("src/pages/ProductList.tsx", "specs-list-prod", "production")
+  const list = renderToStaticMarkup(React.createElement(MemoryRouter, null, React.createElement(ProductList)))
+  for (const v of ["300hp", "70–90", "World's top", "World&#x27;s top"]) assert.ok(!list.includes(v), `catalogue list leaks ${v}`)
+  const { default: PreviewDetail } = await bundle("src/pages/ProductDetail.tsx", "specs-detail-preview", "preview")
+  const pv = renderToStaticMarkup(React.createElement(MemoryRouter, { initialEntries: ["/products/zoomlion-rs1304-1604"] },
+    React.createElement(Routes, null, React.createElement(Route, { path: "/products/:slug", element: React.createElement(PreviewDetail) }))))
+  assert.ok(pv.includes("28200"), "previews keep the published copy for owner review")
+})
+
+test("publishable statuses rest on manufacturer sources (official Zoomlion domains or the listed manufacturer brochure)", () => {
+  const OFFICIAL = /^https:\/\/(en-product\.zoomlion\.com|en\.zoomlion-ag\.com|www\.zoomlion\.com)\//
+  // Zoomlion-authored PG Series brochure (© 2023) hosted by a dealer: accepted pending owner sign-off (see report).
+  const BROCHURE = "https://www.titanmachinery.ua/images/media/6152/PG-EN.pdf"
+  for (const r of evidence.filter((r) => r.status === "VERIFIED" || r.status === "CONFIGURATION-DEPENDENT")) {
+    assert.ok(OFFICIAL.test(r.source_url ?? "") || r.source_url === BROCHURE, `${r.slug} ${r.spec_label}: ${r.source_url}`)
+  }
+  assert.equal(prod.SPEC_STATUS["zoomlion-dv3504-wheeled-tractor"].keySpecs["Horse Power"], "SOURCE UNAVAILABLE")
+  assert.equal(prod.SPEC_STATUS["zoomlion-pg2004"].keySpecs["Weight"], "CONFIGURATION-DEPENDENT")
+})

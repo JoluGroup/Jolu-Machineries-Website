@@ -111,7 +111,7 @@ export const SPEC_STATUS: Record<string, { keySpecs: Record<string, SpecStatus>;
     "keySpecs": {
       "Horse Power": "VERIFIED",
       "Number of gears": "VERIFIED",
-      "Weight": "VERIFIED"
+      "Weight": "CONFIGURATION-DEPENDENT"
     },
     "table": {
       "Overall dimension (L×W × H)": "VERIFIED",
@@ -331,7 +331,7 @@ export const SPEC_STATUS: Record<string, { keySpecs: Record<string, SpecStatus>;
   },
   "zoomlion-dv3504-wheeled-tractor": {
     "keySpecs": {
-      "Horse Power": "VERIFIED",
+      "Horse Power": "SOURCE UNAVAILABLE",
       "Number of gears": "SOURCE UNAVAILABLE",
       "Weight": "SOURCE UNAVAILABLE"
     },
@@ -431,18 +431,39 @@ export function shownSpecs(p: Pick<Product, "slug" | "keySpecs" | "specTable">, 
   }
 }
 
+/** Wording that is a manufacturer/compliance claim without a verified source (M2-PRODUCT-VERIFY-01 review). */
+const UNSUPPORTED_COPY = /European standards|World'?s top|imported friction clutch|Xinchai/i
+
+/** Product copy (descriptions, advantages): in strict mode a sentence is kept only if every number in it is a whole token of
+ *  a shown (verified) specification of the same product and it makes no unsupported manufacturer claim. */
+export function gateCopy(text: string | undefined, p: Pick<Product, "slug" | "keySpecs" | "specTable">, strict: boolean = STRICT): string {
+  if (!text || !strict) return text ?? ""
+  const ok = copyCheck(p)
+  return text.split(/(?<=[.!?])\s+/).filter(ok).join(" ").trim()
+}
+export function gateList(items: string[] | undefined, p: Pick<Product, "slug" | "keySpecs" | "specTable">, strict: boolean = STRICT): string[] {
+  if (!items) return []
+  return strict ? items.filter(copyCheck(p)) : items
+}
+const NORM = (s: string) => s.toLowerCase().replace(/[^0-9a-z+]/g, "")
+const TOKEN = /\d+\s*[fF]\s*\+\s*\d+\s*[rR]|\d+(?:[.,]\d+)?/g
+const tokensOf = (t: string) => (t.match(TOKEN) ?? []).map(NORM)
+function copyCheck(p: Pick<Product, "slug" | "keySpecs" | "specTable">) {
+  const s = shownSpecs(p, true)
+  const known = new Set(tokensOf([...s.keySpecs.map((k) => k.value), ...(s.specTable?.rows.flat() ?? [])].join(" ")))
+  return (t: string) => !UNSUPPORTED_COPY.test(t) && tokensOf(t).every((n) => known.has(n))
+}
+
 /** Homepage card/comparison gating: a numeric value is shown only if it appears in a publishable spec of the product. */
 export function gateCardSpecs<T extends { slug: string; horsepower?: string; capacity?: string; features: string[] }>(cards: T[], products: Product[], strict: boolean = STRICT): T[] {
   if (!strict) return cards
-  const norm = (s: string) => s.toLowerCase().replace(/[^0-9a-z+]/g, "")
   return cards.map((c) => {
     const p = products.find((x) => x.slug === c.slug)
     const s = p ? shownSpecs(p, true) : { keySpecs: [], specTable: null }
-    const TOKEN = /\d+\s*[fF]\s*\+\s*\d+\s*[rR]|\d+(?:[.,]\d+)?/g
-    const tokens = (t: string) => (t.match(TOKEN) ?? []).map(norm)
-    const known = new Set(tokens([...s.keySpecs.map((k) => k.value), ...(s.specTable?.rows.flat() ?? [])].join(" ")))
-    // Every number (and gear ratio such as 16F+8R) in the card text must appear as a whole token in a shown spec.
-    const supported = (text?: string) => !!text && tokens(text).every((n) => known.has(n))
+    const known = new Set(tokensOf([...s.keySpecs.map((k) => k.value), ...(s.specTable?.rows.flat() ?? [])].join(" ")))
+    // Every number (and gear ratio such as 16F+8R) in the card text must appear as a whole token in a shown spec, and the
+    // text makes no unsupported manufacturer claim.
+    const supported = (text?: string) => !!text && !UNSUPPORTED_COPY.test(text) && tokensOf(text).every((n) => known.has(n))
     return {
       ...c,
       horsepower: supported(c.horsepower) ? c.horsepower : undefined,
