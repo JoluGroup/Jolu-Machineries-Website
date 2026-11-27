@@ -432,7 +432,7 @@ export function shownSpecs(p: Pick<Product, "slug" | "keySpecs" | "specTable">, 
 }
 
 /** Wording that is a manufacturer/compliance claim without a verified source (M2-PRODUCT-VERIFY-01 review). */
-const UNSUPPORTED_COPY = /European standards|World'?s top|imported friction clutch|Xinchai/i
+const UNSUPPORTED_COPY = /European standards|World'?s top|imported friction clutch|Xinchai|partially synchroni[sz]ed/i
 
 /** Product copy (descriptions, advantages): in strict mode a sentence is kept only if every number in it is a whole token of
  *  a shown (verified) specification of the same product and it makes no unsupported manufacturer claim. */

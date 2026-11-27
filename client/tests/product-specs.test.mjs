@@ -71,7 +71,7 @@ test("strict mode also gates product copy: descriptions, advantages and the cata
   const page = (slug) => renderToStaticMarkup(React.createElement(MemoryRouter, { initialEntries: [`/products/${slug}`] },
     React.createElement(Routes, null, React.createElement(Route, { path: "/products/:slug", element: React.createElement(ProductDetail) }))))
   const rs = page("zoomlion-rs1304-1604")
-  for (const v of ["28200", "100L/min", "37%", "920", "partially synchronized"]) assert.ok(!rs.includes(v), `RS1304 copy leaks ${v}`)
+  for (const v of ["28200", "100L/min", "37%", "920", "partially synchronized"]) assert.ok(!rs.toLowerCase().includes(v.toLowerCase()), `RS1304 copy leaks ${v}`)
   const zc = page("zc123s-combine-harvester")
   assert.ok(!zc.includes("220L") && !/Xinchai/i.test(zc), "ZC123S conflicting fuel tank / unsupported engine claim")
   for (const [slug, v] of [["zl105-combine-harvester", "660"], ["3-disk-plough", "70–90"], ["zoomlion-pl2304", "European standards"]]) assert.ok(!page(slug).includes(v), `${slug} copy leaks ${v}`)
