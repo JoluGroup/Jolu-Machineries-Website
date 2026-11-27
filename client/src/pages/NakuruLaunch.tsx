@@ -19,6 +19,8 @@ import {
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { emails, mailHref, visible } from "@/config/business";
+import RegistryLink from "@/components/RegistryLink";
 
 // Verified on the official JOLU Group channel (@jolugroupltd, Live tab):
 // "JOLU GROUP NAKURU REGIONAL OFFICE & SHOW ROOM---OFFICIAL LAUNCH",
@@ -435,14 +437,14 @@ const NakuruLaunch: React.FC = () => {
                 <Button className="btn-quote">Request a Quote</Button>
               </Link>
 
-              <a href="mailto:info@jolumachineries.com">
+              <RegistryLink href={mailHref(visible(emails.general))}>
                 <Button
                   variant="outline"
                   className="border-primary-foreground text-primary-foreground bg-primary-foreground text-primary"
                 >
                   Email Us
                 </Button>
-              </a>
+              </RegistryLink>
             </div>
           </div>
         </section>

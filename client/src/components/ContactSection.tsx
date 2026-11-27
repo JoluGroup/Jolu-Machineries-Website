@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { api } from "@/lib/api";
 import { productOptions, countyOptions } from "@/data/options";
+import { emails, locations, mailHref, phones, telHref, visible, waHref } from "@/config/business";
 
 type Form = {
   name: string;
@@ -61,11 +62,11 @@ const ContactSection = () => {
   };
 
   const contactInfo = [
-    { icon: Mail, title: "Email", details: ["info@jolumachineries.com"], action: "Send Email" },
-    { icon: Phone, title: "Phone", details: ["+254 705 038 679 | +254 743 682 700"], action: "Call Now" },
-    { icon: MapPin, title: "Locations", details: ["Nairobi, Kenya", "Nakuru, Kenya", "Rongo, Migori"], action: "Get Directions" },
-    { icon: Clock, title: "Business Hours", details: ["Mon–Fri: 9:00–18:00", "Sat: 9:00-13:00", "Sun: Closed"], action: "Schedule Visit" },
-  ];
+    { icon: Mail, title: "Email", details: [visible(emails.general)].filter(Boolean) as string[], action: "Send Email" },
+    { icon: Phone, title: "Phone", details: [[visible(phones.primary)?.display, visible(phones.secondary)?.display].filter(Boolean).join(" | ")].filter(Boolean), action: "Call Now" },
+    { icon: MapPin, title: "Locations", details: [...(visible(locations.contactSummary) ?? [])], action: "Get Directions" },
+    { icon: Clock, title: "Business Hours", details: [...(visible(locations.hours) ?? [])], action: "Schedule Visit" },
+  ].filter((info) => info.details.length > 0);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -101,7 +102,7 @@ const ContactSection = () => {
                           <Button
                             variant="secondary"
                             className="w-full justify-start"
-                            onClick={() => window.open("tel:+254705038679")}
+                            onClick={() => { const href = telHref(visible(phones.primary)); if (href) window.open(href); }}
                           >
                             <Phone size={16} className="mr-2" /> Call Now
                           </Button>
@@ -110,21 +111,23 @@ const ContactSection = () => {
                           <Button
                             variant="secondary"
                             className="w-full justify-start"
-                            onClick={() => window.open("mailto:info@jolumachineries.com")}
+                            onClick={() => { const href = mailHref(visible(emails.general)); if (href) window.open(href); }}
                           >
                             <Mail size={16} className="mr-2" /> Email Us
                           </Button>
                         )}
                       </div>
-                      <div className="mt-2">
-                        <Button
-                          variant="secondary"
-                          className="w-full justify-start"
-                          onClick={() => window.open("https://wa.me/254743682700", "_blank")}
-                        >
-                          <MessageCircle size={16} className="mr-2" /> WhatsApp Chat
-                        </Button>
-                      </div>
+                      {waHref(visible(phones.secondary)) && (
+                        <div className="mt-2">
+                          <Button
+                            variant="secondary"
+                            className="w-full justify-start"
+                            onClick={() => { const href = waHref(visible(phones.secondary)); if (href) window.open(href, "_blank"); }}
+                          >
+                            <MessageCircle size={16} className="mr-2" /> WhatsApp Chat
+                          </Button>
+                        </div>
+                      )}
                       <div className="mt-2">
                         <Button
                           variant="secondary"

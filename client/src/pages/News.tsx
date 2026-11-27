@@ -14,6 +14,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { emails, mailHref, visible } from "@/config/business";
+import RegistryLink from "@/components/RegistryLink";
 
 const News: React.FC = () => {
   // SEO metadata
@@ -111,7 +113,7 @@ useEffect(() => {
       name: "Pastor Caroline",
       title: "Opening Prayer & Dedication Service",
       image: "/lovable-uploads/event/caroline.jpg",
-      video: "https://drive.google.com/file/d/FILE_ID_CAROLINE_VIDEO/view?usp=sharing",
+      // Video link withheld: the published URL contained an unfilled placeholder file id. Owner to supply the real link.
     },
   ];
 
@@ -317,9 +319,9 @@ useEffect(() => {
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 gap-3">
-                <a href="mailto:info@jolumachineries.com,jolumachineries@gmail.com?subject=%20Inquiry%20-%20Jolu%20Machineries" aria-label="Contact jolu machineries">
+                <RegistryLink href={mailHref([visible(emails.general), visible(emails.gmail)], " Inquiry - Jolu Machineries")} aria-label="Contact jolu machineries">
                   <Button size="sm">Email Us</Button>
-                </a>
+                </RegistryLink>
                 <Link to="/quote" aria-label="Request a demo or quote">
                   <Button variant="outline" size="sm">Request a Quote</Button>
                 </Link>
