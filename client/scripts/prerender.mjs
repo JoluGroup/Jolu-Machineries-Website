@@ -57,8 +57,8 @@ export async function loadRenderer(deployEnv = process.env.VERCEL_ENV ?? "") {
   await build({
     entryPoints: [path.join(ROOT, "src/entry-server.tsx")], outfile, bundle: true, format: "esm", platform: "node", jsx: "automatic",
     external: ["react", "react-dom", "react-dom/server", "react-router-dom", "react/jsx-runtime"],
-    // react-router-dom v6 has no "exports" map, so Node's ESM resolver needs the explicit file for the server entry.
-    plugins: [{ name: "rrd-server", setup(b) { b.onResolve({ filter: /^react-router-dom\/server$/ }, () => ({ path: "react-router-dom/server.js", external: true })) } }],
+    // M2-SEC-ROUTER-01: react-router-dom v7 ships an "exports" map and exports StaticRouter from its main entry, so the
+    // v6 "react-router-dom/server" resolver shim is no longer needed.
     alias: { "@": path.join(ROOT, "src") }, mainFields: ["module", "main"], conditions: ["module", "import"],
     loader: { ".png": "file", ".jpg": "file", ".jpeg": "file", ".webp": "file", ".svg": "file", ".json": "json", ".css": "empty" },
     define: { "import.meta.env": JSON.stringify(env) }, logLevel: "warning",

@@ -1,7 +1,7 @@
 // M2-SEO-01: build-time renderer (bundled by scripts/prerender.mjs with esbuild, run in Node). Not part of the client
 // bundle. Renders a route with StaticRouter inside the same providers and route table as the browser app.
 import { renderToStaticMarkup } from "react-dom/server";
-import { StaticRouter } from "react-router-dom/server";
+import { StaticRouter } from "react-router-dom"; // v7: StaticRouter is a main export (no "/server" subpath)
 import { AppProviders, AppRoutes } from "./App";
 import { ROUTE_TABLE, preloadAllRoutes } from "./routeTable";
 
