@@ -436,6 +436,14 @@ export function shownSpecs(p: Pick<Product, "slug" | "keySpecs" | "specTable">, 
 /** Wording that is a manufacturer/compliance claim without a verified source (M2-PRODUCT-VERIFY-01 review). */
 const UNSUPPORTED_COPY = /European standards|World'?s top|imported friction clutch|Xinchai|partially synchroni[sz]ed/i
 
+/** Per-product descriptive claims with no accepted source (M2-CLOSEOUT-05 §3). PG2004: features absent from Zoomlion's
+ *  official page (en-product.zoomlion.com pro-detail-82) and so resting only on the unapproved dealer-hosted brochure.
+ *  Evidence: docs/m2-products/pg2004-descriptive-claims.json. */
+const UNSUPPORTED_COPY_BY_PRODUCT: Record<string, RegExp> = {
+  "zoomlion-pg2004": /Power-Beyond|brand-new design|top global components|without clutch pedal|self-diagnosis|automatic PTO|load sensing|GPS|unmanned/i,
+}
+const unsupportedFor = (slug: string, t: string) => UNSUPPORTED_COPY.test(t) || !!UNSUPPORTED_COPY_BY_PRODUCT[slug]?.test(t)
+
 /** Product copy (descriptions, advantages): in strict mode a sentence is kept only if every number in it is a whole token of
  *  a shown (verified) specification of the same product and it makes no unsupported manufacturer claim. */
 export function gateCopy(text: string | undefined, p: Pick<Product, "slug" | "keySpecs" | "specTable">, strict: boolean = STRICT): string {
@@ -453,7 +461,7 @@ const tokensOf = (t: string) => (t.match(TOKEN) ?? []).map(NORM)
 function copyCheck(p: Pick<Product, "slug" | "keySpecs" | "specTable">) {
   const s = shownSpecs(p, true)
   const known = new Set(tokensOf([...s.keySpecs.map((k) => k.value), ...(s.specTable?.rows.flat() ?? [])].join(" ")))
-  return (t: string) => !UNSUPPORTED_COPY.test(t) && tokensOf(t).every((n) => known.has(n))
+  return (t: string) => !unsupportedFor(p.slug, t) && tokensOf(t).every((n) => known.has(n))
 }
 
 /** Homepage card/comparison gating: a numeric value is shown only if it appears in a publishable spec of the product. */
@@ -465,7 +473,7 @@ export function gateCardSpecs<T extends { slug: string; horsepower?: string; cap
     const known = new Set(tokensOf([...s.keySpecs.map((k) => k.value), ...(s.specTable?.rows.flat() ?? [])].join(" ")))
     // Every number (and gear ratio such as 16F+8R) in the card text must appear as a whole token in a shown spec, and the
     // text makes no unsupported manufacturer claim.
-    const supported = (text?: string) => !!text && !UNSUPPORTED_COPY.test(text) && tokensOf(text).every((n) => known.has(n))
+    const supported = (text?: string) => !!text && !unsupportedFor(c.slug, text) && tokensOf(text).every((n) => known.has(n))
     return {
       ...c,
       horsepower: supported(c.horsepower) ? c.horsepower : undefined,

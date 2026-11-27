@@ -119,3 +119,21 @@ test("M2-RC-FINAL-04: PG2004 brochure-only values never render in production (pa
   const [card] = prod.gateCardSpecs([{ slug: "zoomlion-pg2004", horsepower: hp, features }], products, true)
   assert.ok(!card.features.some((f) => /48F\+24R/.test(f)), "card drops the brochure-only gear ratio")
 })
+
+test("M2-CLOSEOUT-05: PG2004 descriptive claims resting only on the unapproved brochure are withheld in production", async () => {
+  const render = async (env) => {
+    const { default: ProductDetail } = await bundle("src/pages/ProductDetail.tsx", `specs-pg-desc-${env}`, env)
+    return renderToStaticMarkup(React.createElement(MemoryRouter, { initialEntries: ["/products/zoomlion-pg2004"] },
+      React.createElement(Routes, null, React.createElement(Route, { path: "/products/:slug", element: React.createElement(ProductDetail) }))))
+  }
+  const html = await render("production")
+  for (const v of ["Power-Beyond", "GPS", "unmanned", "Automatic PTO", "load sensing", "self-diagnosis", "without clutch pedal", "top global", "Brand-new"]) assert.ok(!html.includes(v), `PG2004 unsupported claim "${v}" in production`)
+  for (const v of ["High-pressure common rail turbocharged engine", "Its modern gearbox and electro-hydraulic integration"]) assert.ok(html.includes(v), `independently supported "${v}" kept`)
+  const pv = await render("preview")
+  assert.ok(pv.includes("Optional GPS navigation and unmanned driving"), "previews keep the published copy for owner review")
+  const [card] = prod.gateCardSpecs([{ slug: "zoomlion-pg2004", horsepower: "200 HP", features: ["48F+24R Power Shift Gears", "High-pressure Turbocharged Engine", "Smart Electro-Hydraulic Control", "Automatic PTO & GPS Option"] }], products, true)
+  assert.deepEqual(card.features, ["High-pressure Turbocharged Engine", "Smart Electro-Hydraulic Control"])
+  assert.equal(card.horsepower, "200 HP")
+  const [rs] = prod.gateCardSpecs([{ slug: "zoomlion-rs1304-1604", features: ["Optional GPS-ready cab"] }], products, true)
+  assert.deepEqual(rs.features, ["Optional GPS-ready cab"], "the PG2004 rule is product-scoped")
+})
