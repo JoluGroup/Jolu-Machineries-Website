@@ -5,7 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
+import FieldError from "@/components/FieldError";
+import { errorProps, useSubmission } from "@/hooks/use-submission";
+import { missingSelections } from "@/lib/submit-feedback";
 import { useNavigate } from "react-router-dom";
 import { api } from "@/lib/api";
 import { productOptions, countyOptions } from "@/data/options";
@@ -22,9 +24,9 @@ type Form = {
 };
 
 const ContactSection = () => {
-  const { toast } = useToast();
   const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isSubmitting, fieldErrors, clearFieldError, submit } = useSubmission();
+  const ID = "contact";
   const [formData, setFormData] = useState<Form>({
     name: "",
     email: "",
@@ -37,28 +39,17 @@ const ContactSection = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((s) => ({ ...s, [e.target.name]: e.target.value }));
+    clearFieldError(e.target.name);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      const payload = {
-        ...formData,
-        productInterest: formData.productInterest || null,
-      };
-      await api.contact(payload);
-      toast({ title: "Message sent!", description: "We'll get back to you within 24 hours." });
-      setFormData({ name: "", email: "", phone: "", county: "", area: "", productInterest: "", message: "" });
-    } catch (err: any) {
-      toast({
-        title: "Failed to send",
-        description: err?.message || "Please check the fields and try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    await submit({
+      precheck: () => missingSelections(formData, ["county"]),
+      run: () => api.contact({ ...formData, productInterest: formData.productInterest || null }),
+      success: { title: "Message sent!" },
+      onStored: () => setFormData({ name: "", email: "", phone: "", county: "", area: "", productInterest: "", message: "" }),
+    });
   };
 
   const contactInfo = [
@@ -149,7 +140,7 @@ const ContactSection = () => {
                     <CardTitle>Send us a message</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-6" aria-busy={isSubmitting}>
                       <div className="grid md:grid-cols-2 gap-4">
                         <div>
                           <label className="block mb-2 font-medium">Full Name *</label>
@@ -159,7 +150,9 @@ const ContactSection = () => {
                             onChange={handleInputChange}
                             required
                             placeholder="Enter your full name"
+                            {...errorProps(fieldErrors, "name", ID)}
                           />
+                          <FieldError errors={fieldErrors} name="name" idPrefix={ID} />
                         </div>
                         <div>
                           <label className="block mb-2 font-medium">Email Address *</label>
@@ -170,7 +163,9 @@ const ContactSection = () => {
                             onChange={handleInputChange}
                             required
                             placeholder="Enter your email"
+                            {...errorProps(fieldErrors, "email", ID)}
                           />
+                          <FieldError errors={fieldErrors} name="email" idPrefix={ID} />
                         </div>
                         <div>
                           <label className="block mb-2 font-medium">Phone Number *</label>
@@ -180,15 +175,17 @@ const ContactSection = () => {
                             onChange={handleInputChange}
                             required
                             placeholder="+254 XXX XXX XXX"
+                            {...errorProps(fieldErrors, "phone", ID)}
                           />
+                          <FieldError errors={fieldErrors} name="phone" idPrefix={ID} />
                         </div>
                         <div>
                           <label className="block mb-2 font-medium">County *</label>
                           <Select
                             value={formData.county}
-                            onValueChange={(value) => setFormData((s) => ({ ...s, county: value }))}
+                            onValueChange={(value) => { setFormData((s) => ({ ...s, county: value })); clearFieldError("county"); }}
                           >
-                            <SelectTrigger aria-label="County">
+                            <SelectTrigger aria-label="County" aria-required="true" {...errorProps(fieldErrors, "county", ID)}>
                               <SelectValue placeholder="Select County" />
                             </SelectTrigger>
                             <SelectContent className="max-h-60 overflow-y-auto">
@@ -199,6 +196,7 @@ const ContactSection = () => {
                               ))}
                             </SelectContent>
                           </Select>
+                          <FieldError errors={fieldErrors} name="county" idPrefix={ID} />
                         </div>
                         <div className="md:col-span-2">
                           <label className="block mb-2 font-medium">Area/Town *</label>
@@ -208,7 +206,9 @@ const ContactSection = () => {
                             onChange={handleInputChange}
                             required
                             placeholder="e.g., Kilimani, Ruaka"
+                            {...errorProps(fieldErrors, "area", ID)}
                           />
+                          <FieldError errors={fieldErrors} name="area" idPrefix={ID} />
                         </div>
                         <div className="md:col-span-2">
                           <label className="block mb-2 font-medium">Product Interest</label>
@@ -239,7 +239,9 @@ const ContactSection = () => {
                           required
                           minLength={10}
                           placeholder="Tell us what you need..."
+                          {...errorProps(fieldErrors, "message", ID)}
                         />
+                        <FieldError errors={fieldErrors} name="message" idPrefix={ID} />
                       </div>
 
                       <Button type="submit" disabled={isSubmitting}>
