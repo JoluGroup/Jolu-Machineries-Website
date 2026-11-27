@@ -9,6 +9,7 @@ import { useLocation, Link } from "react-router-dom";
 import { useState, useRef } from "react";
 import { api } from "@/lib/api";
 import RegistryLink from "@/components/RegistryLink";
+import { CookieSettingsButton } from "@/privacy/ConsentBanner";
 
 const footerLocations = [locations.nairobi, locations.nakuru, locations.migoriFooter].map((c) => visible(c)).filter((l): l is NonNullable<typeof l> => Boolean(l));
 
@@ -309,6 +310,7 @@ const Footer = () => {
           <div className="text-white/60 text-sm">
             © {new Date().getFullYear()} Jolu Machineries. All rights reserved.
           </div>
+          <CookieSettingsButton className="md:ml-6 text-white/60 text-sm underline-offset-4 hover:text-white hover:underline" />
         </div>
       </div>
     </footer>
