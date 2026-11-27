@@ -1,13 +1,15 @@
 // M2-PRODUCT-VERIFY-01: per-specification verification status against manufacturer sources.
 // Generated from docs/m2-products/tractors.json and docs/m2-products/harvesters-implements.json (the evidence, with
 // source URLs) by matching each published keySpecs label and specTable row label in data/products.ts.
-// Statuses: VERIFIED | CONFIGURATION-DEPENDENT | CONFLICTING | UNSUPPORTED | SOURCE UNAVAILABLE.
+// Statuses: VERIFIED | CONFIGURATION-DEPENDENT | CONFLICTING | UNSUPPORTED | SOURCE UNAVAILABLE | SOURCE PENDING ACCEPTANCE.
+// SOURCE PENDING ACCEPTANCE (M2-RC-FINAL-04 §5): the value matches a source the owner has not yet accepted (the Zoomlion PG
+// Series brochure hosted by a dealer). Withheld from production until the owner accepts the source; previews show it.
 // Production (strict claims mode) shows only VERIFIED and CONFIGURATION-DEPENDENT values; previews show everything so the
 // owner can review. To publish a value, correct it to the manufacturer source and set its status here.
 import { STRICT } from "@/config/business"
 import type { Product } from "@/data/products"
 
-export type SpecStatus = "VERIFIED" | "CONFIGURATION-DEPENDENT" | "CONFLICTING" | "UNSUPPORTED" | "SOURCE UNAVAILABLE"
+export type SpecStatus = "VERIFIED" | "CONFIGURATION-DEPENDENT" | "CONFLICTING" | "UNSUPPORTED" | "SOURCE UNAVAILABLE" | "SOURCE PENDING ACCEPTANCE"
 
 export const SPEC_STATUS: Record<string, { keySpecs: Record<string, SpecStatus>; table: Record<string, SpecStatus> }> = {
   "zoomlion-rn904": {
@@ -110,28 +112,28 @@ export const SPEC_STATUS: Record<string, { keySpecs: Record<string, SpecStatus>;
   "zoomlion-pg2004": {
     "keySpecs": {
       "Horse Power": "VERIFIED",
-      "Number of gears": "VERIFIED",
-      "Weight": "CONFIGURATION-DEPENDENT"
+      "Number of gears": "SOURCE PENDING ACCEPTANCE",
+      "Weight": "SOURCE PENDING ACCEPTANCE"
     },
     "table": {
-      "Overall dimension (L×W × H)": "VERIFIED",
-      "Wheelbase": "VERIFIED",
-      "Min. operating mass": "VERIFIED",
-      "Ground clearance": "VERIFIED",
-      "Engine emission": "VERIFIED",
-      "Rated power": "VERIFIED",
-      "Clutch type": "VERIFIED",
-      "Gearbox": "VERIFIED",
-      "Tyre size (front/rear)": "VERIFIED",
-      "Lifting system": "VERIFIED",
-      "Max lifting capacity": "VERIFIED",
-      "Tillage control": "VERIFIED",
-      "Hydraulic output valve": "VERIFIED",
-      "Hydraulic hitch": "VERIFIED",
+      "Overall dimension (L×W × H)": "SOURCE PENDING ACCEPTANCE",
+      "Wheelbase": "SOURCE PENDING ACCEPTANCE",
+      "Min. operating mass": "SOURCE PENDING ACCEPTANCE",
+      "Ground clearance": "SOURCE PENDING ACCEPTANCE",
+      "Engine emission": "SOURCE PENDING ACCEPTANCE",
+      "Rated power": "SOURCE PENDING ACCEPTANCE",
+      "Clutch type": "SOURCE PENDING ACCEPTANCE",
+      "Gearbox": "SOURCE PENDING ACCEPTANCE",
+      "Tyre size (front/rear)": "SOURCE PENDING ACCEPTANCE",
+      "Lifting system": "SOURCE PENDING ACCEPTANCE",
+      "Max lifting capacity": "SOURCE PENDING ACCEPTANCE",
+      "Tillage control": "SOURCE PENDING ACCEPTANCE",
+      "Hydraulic output valve": "SOURCE PENDING ACCEPTANCE",
+      "Hydraulic hitch": "SOURCE PENDING ACCEPTANCE",
       "Output flow rate": "VERIFIED",
-      "Traction force": "VERIFIED",
-      "PTO output": "VERIFIED",
-      "Cab": "VERIFIED"
+      "Traction force": "SOURCE PENDING ACCEPTANCE",
+      "PTO output": "SOURCE PENDING ACCEPTANCE",
+      "Cab": "SOURCE PENDING ACCEPTANCE"
     }
   },
   "zoomlion-rd504": {

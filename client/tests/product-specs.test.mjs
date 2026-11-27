@@ -51,7 +51,11 @@ test("strict mode withholds every non-publishable value; previews keep everythin
   assert.equal(prod.shownSpecs(rn, true).keySpecs.length, 0, "RN904/1104 has no manufacturer source yet")
   assert.equal(prod.shownSpecs(rn, true).withheld, true)
   const pg = products.find((p) => p.slug === "zoomlion-pg2004")
-  assert.equal(prod.shownSpecs(pg, true).withheld, false, "PG2004 is fully verified")
+  // M2-RC-FINAL-04: values resting only on the dealer-hosted PG brochure stay withheld until the owner accepts the source.
+  const pgShown = prod.shownSpecs(pg, true)
+  assert.equal(pgShown.withheld, true)
+  assert.deepEqual(pgShown.keySpecs.map((k) => k.label), ["Horse Power"], "only the official-page horsepower is shown")
+  assert.ok(!JSON.stringify(pgShown).includes("7272"), "brochure-only weight withheld")
 })
 
 test("production product page and homepage cards render no withheld value", async () => {
@@ -84,13 +88,20 @@ test("strict mode also gates product copy: descriptions, advantages and the cata
   assert.ok(pv.includes("28200"), "previews keep the published copy for owner review")
 })
 
-test("publishable statuses rest on manufacturer sources (official Zoomlion domains or the listed manufacturer brochure)", () => {
+test("publishable statuses rest on official Zoomlion sources; sources awaiting owner acceptance are withheld", () => {
   const OFFICIAL = /^https:\/\/(en-product\.zoomlion\.com|en\.zoomlion-ag\.com|www\.zoomlion\.com)\//
-  // Zoomlion-authored PG Series brochure (© 2023) hosted by a dealer: accepted pending owner sign-off (see report).
-  const BROCHURE = "https://www.titanmachinery.ua/images/media/6152/PG-EN.pdf"
   for (const r of evidence.filter((r) => r.status === "VERIFIED" || r.status === "CONFIGURATION-DEPENDENT")) {
-    assert.ok(OFFICIAL.test(r.source_url ?? "") || r.source_url === BROCHURE, `${r.slug} ${r.spec_label}: ${r.source_url}`)
+    if (r.source_acceptance === "pending-owner") {
+      const st = prod.SPEC_STATUS[r.slug]
+      const s = st.keySpecs[r.spec_label] ?? st.table[r.spec_label]
+      assert.equal(s, "SOURCE PENDING ACCEPTANCE", `${r.slug} ${r.spec_label} must be withheld until the source is accepted`)
+      continue
+    }
+    assert.ok(OFFICIAL.test(r.source_url ?? ""), `${r.slug} ${r.spec_label}: ${r.source_url}`)
+  }
+  for (const [slug, st] of Object.entries(prod.SPEC_STATUS)) for (const v of [...Object.values(st.keySpecs), ...Object.values(st.table)]) {
+    if (v === "SOURCE PENDING ACCEPTANCE") assert.equal(prod.isPublishable(v), false, slug)
   }
   assert.equal(prod.SPEC_STATUS["zoomlion-dv3504-wheeled-tractor"].keySpecs["Horse Power"], "SOURCE UNAVAILABLE")
-  assert.equal(prod.SPEC_STATUS["zoomlion-pg2004"].keySpecs["Weight"], "CONFIGURATION-DEPENDENT")
+  assert.equal(prod.SPEC_STATUS["zoomlion-pg2004"].keySpecs["Weight"], "SOURCE PENDING ACCEPTANCE")
 })
