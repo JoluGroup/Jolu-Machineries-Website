@@ -156,7 +156,7 @@ export const media = {
 // not registry claims. "Expert Team" is a factual claim: its card shows only with service.certifiedTechnicians (C13).
 // "Exclusive offers" may be promised only while genuine offers exist.
 export const marketing = {
-  newsletterOffers: claim({ id: "marketing.newsletterOffers", ownerItem: "C20", status: "unsupported", value: "exclusive offers", source: "Footer newsletter copy", note: "Shown only while genuine subscriber offers exist; the owner marks it verified when an offer programme runs." }),
+  newsletterOffers: claim({ id: "marketing.newsletterOffers", ownerItem: "C20", status: "unsupported", value: "", source: "Footer newsletter copy (previously promised exclusive offers)", note: "Withheld until a genuine subscriber offer programme exists; then re-add the wording with status verified." }),
 } as const
 
 /** Every claim, for tests and the owner-verification report. */

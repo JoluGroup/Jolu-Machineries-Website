@@ -1,5 +1,5 @@
 import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin, ArrowUp } from "lucide-react";
-import { emails, locations, manufacturer, marketing, phones, social, visible, waHref } from "@/config/business";
+import { emails, locations, manufacturer, phones, social, visible, waHref } from "@/config/business";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -226,7 +226,7 @@ const Footer = () => {
             <h4 className="text-xl font-semibold mb-6">Stay Updated</h4>
             <p className="text-white/80 mb-4">
               Subscribe to our newsletter for the latest agricultural machinery updates
-              {visible(marketing.newsletterOffers) ? ", farming tips, and exclusive offers." : " and farming tips."}
+              and farming tips.
             </p>
 
             <div className="space-y-3">

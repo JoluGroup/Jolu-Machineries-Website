@@ -230,7 +230,7 @@ test("KTN wording is registry-governed and neutral: no 'exclusive', shown only w
   assert.ok(render(Ktn).includes("Watch our feature on KTN"))
 })
 
-test("M2-CLAIMS-FINAL-01: newsletter promises offers only while the offers claim is verified", async () => {
+test("M2-CLAIMS-FINAL-01: newsletter does not promise offers while no offer programme is verified", async () => {
   assert.equal(reg.marketing.newsletterOffers.status, "unsupported")
   const { default: Footer } = await bundle("src/components/Footer.tsx", "footer-offers-preview", { "import.meta.env.VITE_DEPLOY_ENV": '"preview"' })
   const html = render(Footer)
