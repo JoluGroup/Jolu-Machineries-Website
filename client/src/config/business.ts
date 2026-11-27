@@ -151,12 +151,21 @@ export const media = {
   ktnFeature: claim({ id: "media.ktnFeature", ownerItem: "C19", status: "pending", value: "Watch our feature on KTN, where we shared insights about modern agricultural solutions for farmers in Kenya.", source: "KTNInterview:43 (previously 'exclusive feature')" }),
 } as const
 
+// ---------------------------------------------------------------- marketing positioning (M2-CLAIMS-FINAL-01)
+// Owner guidance M2-FINAL-03 §5: "Premium" and "Quality Equipment Since Day One" are permissible brand positioning and are
+// not registry claims. "Expert Team" is a factual claim: its card shows only with service.certifiedTechnicians (C13).
+// "Exclusive offers" may be promised only while genuine offers exist.
+export const marketing = {
+  newsletterOffers: claim({ id: "marketing.newsletterOffers", ownerItem: "C20", status: "unsupported", value: "", source: "Footer newsletter copy (previously promised exclusive offers)", note: "Withheld until a genuine subscriber offer programme exists; then re-add the wording with status verified." }),
+} as const
+
 /** Every claim, for tests and the owner-verification report. */
 export const ALL_CLAIMS: readonly Claim<unknown>[] = [
   ...Object.values(identity), ...Object.values(phones), ...Object.values(emails), ...Object.values(locations),
   ...Object.values(social), manufacturer.relationship, manufacturer.partnership, ...Object.values(stats), testimonials,
   newsTestimonials, productRatings, productSalesBadges,
   ...Object.values(service), spareParts.stockBadges, responseTime, productSpecs, warranty, prices, ...Object.values(media),
+  ...Object.values(marketing),
 ]
 
 /** helpers for links built from phone claims */

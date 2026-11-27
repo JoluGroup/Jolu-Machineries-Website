@@ -225,8 +225,8 @@ const Footer = () => {
           <div>
             <h4 className="text-xl font-semibold mb-6">Stay Updated</h4>
             <p className="text-white/80 mb-4">
-              Subscribe to our newsletter for the latest agricultural machinery updates,
-              farming tips, and exclusive offers.
+              Subscribe to our newsletter for the latest agricultural machinery updates
+              and farming tips.
             </p>
 
             <div className="space-y-3">
