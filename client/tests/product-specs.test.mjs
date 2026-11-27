@@ -105,3 +105,17 @@ test("publishable statuses rest on official Zoomlion sources; sources awaiting o
   assert.equal(prod.SPEC_STATUS["zoomlion-dv3504-wheeled-tractor"].keySpecs["Horse Power"], "SOURCE UNAVAILABLE")
   assert.equal(prod.SPEC_STATUS["zoomlion-pg2004"].keySpecs["Weight"], "SOURCE PENDING ACCEPTANCE")
 })
+
+test("M2-RC-FINAL-04: PG2004 brochure-only values never render in production (page and homepage card)", async () => {
+  const { default: ProductDetail } = await bundle("src/pages/ProductDetail.tsx", "specs-detail-pg-prod", "production")
+  const html = renderToStaticMarkup(React.createElement(MemoryRouter, { initialEntries: ["/products/zoomlion-pg2004"] },
+    React.createElement(Routes, null, React.createElement(Route, { path: "/products/:slug", element: React.createElement(ProductDetail) }))))
+  assert.ok(html.includes("Zoomlion PG2004"), "page rendered")
+  for (const v of ["7272", "147.5", "48F+24R", "5482", "2858", "420/85R30", "90 kN", "25%"]) assert.ok(!html.includes(v), `PG2004 brochure-only value ${v} in production`)
+  const src = fs.readFileSync(path.join(ROOT, "src/components/ProductsSection.tsx"), "utf8")
+  const block = src.slice(src.indexOf('slug: "zoomlion-pg2004"'), src.indexOf("badge:", src.indexOf('slug: "zoomlion-pg2004"')))
+  const features = [...block.matchAll(/"([^"]+)"/g)].map((m) => m[1]).filter((f) => f !== "zoomlion-pg2004" && !/^(tractors|PG2004|ZOOMLION)/.test(f))
+  const hp = block.match(/horsepower:\s*"([^"]+)"/)?.[1]
+  const [card] = prod.gateCardSpecs([{ slug: "zoomlion-pg2004", horsepower: hp, features }], products, true)
+  assert.ok(!card.features.some((f) => /48F\+24R/.test(f)), "card drops the brochure-only gear ratio")
+})
