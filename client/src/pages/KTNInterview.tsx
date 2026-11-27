@@ -97,7 +97,7 @@ const KTNInterview = () => {
                 },
                 {
                   src: "/lovable-uploads/ktn/interview2.jpeg",
-                  alt: "Group photo after the KTN feature",
+                  alt: "Group photo after the KTN interview",
                 },
                 {
                   src: "/lovable-uploads/ktn/interview4.jpeg",
