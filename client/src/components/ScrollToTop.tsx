@@ -1,10 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
+  const first = useRef(true);
 
   useEffect(() => {
+    // Skip the initial mount: the prerendered page is already shown and the visitor may have started scrolling.
+    if (first.current) {
+      first.current = false;
+      if (!hash) return;
+    }
     if (hash) {
       const element = document.querySelector(hash);
       if (element) {

@@ -46,6 +46,8 @@ const ProductList = () => {
     <>
       <Header />
       <main>
+        {/* One h1 per route (M2-SEO-01); visually hidden so the established design is unchanged. */}
+        <h1 className="sr-only">Zoomlion Tractors, Harvesters &amp; Farm Implements</h1>
         <section className="p-8 space-y-12">
           {groups.map((group) => (
             <div key={group.category}>
