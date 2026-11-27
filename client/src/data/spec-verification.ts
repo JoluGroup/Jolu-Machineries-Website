@@ -478,7 +478,7 @@ export function gateCardSpecs<T extends { slug: string; horsepower?: string; cap
       ...c,
       horsepower: supported(c.horsepower) ? c.horsepower : undefined,
       capacity: supported(c.capacity) ? c.capacity : undefined,
-      features: c.features.filter((f) => !/\d/.test(f) || supported(f)),
+      features: c.features.filter((f) => !unsupportedFor(c.slug, f) && (!/\d/.test(f) || supported(f))),
     }
   })
 }
