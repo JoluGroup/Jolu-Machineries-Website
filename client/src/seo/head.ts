@@ -18,7 +18,7 @@ export function buildHead(r: RouteMeta, opts: { indexable: boolean }): HeadModel
   const metas: HeadModel["metas"] = [
     { key: "name", id: "description", content: r.description },
     { key: "property", id: "og:type", content: r.kind === "product" ? "product" : r.kind === "article" ? "article" : "website" },
-    { key: "property", id: "og:url", content: url },
+    ...(r.kind === "notfound" ? [] : [{ key: "property" as const, id: "og:url", content: url }]),
     { key: "property", id: "og:title", content: title },
     { key: "property", id: "og:description", content: r.description },
     { key: "property", id: "og:image", content: image },

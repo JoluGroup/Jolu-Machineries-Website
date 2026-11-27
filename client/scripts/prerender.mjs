@@ -20,14 +20,30 @@ import { build } from "esbuild"
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 const arg = (name, fallback) => { const i = process.argv.indexOf(`--${name}`); return i > -1 ? process.argv[i + 1] : fallback }
 
-export function resolveIndexable(env = process.env, override) {
+/** True when the build runs on Vercel, even if system environment variables are not exposed. */
+export function onVercel(env = process.env, cwd = process.cwd()) {
+  return env.VERCEL === "1" || Boolean(env.VERCEL_URL || env.VERCEL_GIT_COMMIT_SHA || env.NOW_BUILDER) || cwd.startsWith("/vercel/")
+}
+
+export function resolveIndexable(env = process.env, override, cwd = process.cwd()) {
   if (override === "production") return true
   if (override === "preview") return false
-  if (env.SEO_INDEXABLE === "true") return true
-  if (env.VERCEL === "1" && !env.VERCEL_ENV) {
-    throw new Error("prerender: VERCEL=1 but VERCEL_ENV is not set. Enable 'Automatically expose System Environment Variables' in Vercel; refusing to guess indexability.")
+  if (onVercel(env, cwd)) {
+    if (!env.VERCEL_ENV) {
+      throw new Error("prerender: running on Vercel but VERCEL_ENV is not set. Enable 'Automatically expose System Environment Variables' in Vercel; refusing to guess indexability.")
+    }
+    // On Vercel only the production environment is ever indexable; SEO_INDEXABLE cannot open a preview to crawlers.
+    return env.VERCEL_ENV === "production"
   }
-  return env.VERCEL_ENV === "production"
+  return env.SEO_INDEXABLE === "true"
+}
+
+/**
+ * Until the client mounts, prerendered forms must not submit natively: a default GET submit would put names, emails
+ * and phone numbers in the URL (logs, history, referrers). React replaces this markup on mount.
+ */
+export function neutraliseForms(html) {
+  return html.replace(/<form(?![^>]*\sonsubmit=)/g, '<form method="post" action="#" onsubmit="return false"')
 }
 
 export async function loadRenderer() {
@@ -57,7 +73,8 @@ function inject(template, headHtml, bodyHtml) {
   const lineStart = template.lastIndexOf("\n", start) + 1
   let html = template.slice(0, lineStart) + headHtml + "\n" + template.slice(end + "<!-- seo:end -->".length).replace(/^[^\S\n]*\n/, "")
   if (!html.includes('<div id="root"></div>')) throw new Error("prerender: template has no empty #root")
-  return html.replace('<div id="root"></div>', `<div id="root">${bodyHtml}</div>`)
+  const body = neutraliseForms(bodyHtml)
+  return html.replace('<div id="root"></div>', () => `<div id="root">${body}</div>`)
 }
 
 export function buildSitemap(urls) {

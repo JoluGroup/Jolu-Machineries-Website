@@ -1,9 +1,9 @@
 // M2-SEO-01: single registry of route metadata used by the build-time prerender, sitemap, robots and the client
 // <RouteSeo/> component. Titles/descriptions describe visible page content only; no unsupported claims
 // (manufacturer superlatives, stock, prices, testimonials) may appear here. Business identity comes from the claims
-// registry: visible() for the title suffix (customer-facing, same rule as on-page text), forStructuredData() for
-// og:site_name and JSON-LD.
-import { identity, manufacturer, visible } from "@/config/business"
+// registry through forStructuredData() only: a pending (unverified) business name never reaches <title>, og:title,
+// og:site_name or JSON-LD. Product metadata does not repeat specifications or superlatives (registry C16 pending).
+import { forStructuredData, identity, manufacturer } from "@/config/business"
 import { products, type Product } from "@/data/products"
 import { productPath } from "@/data/catalogue"
 
@@ -36,7 +36,7 @@ const HOME: Breadcrumb = { name: "Home", path: "/" }
 const PRODUCTS: Breadcrumb = { name: "Products", path: "/products" }
 
 export const brandSuffix = (): string => {
-  const name = visible(identity.displayName)
+  const name = forStructuredData(identity.displayName)
   return name ? ` | ${name}` : ""
 }
 
@@ -49,12 +49,11 @@ const clamp = (s: string, n = 158) => {
   return `${cut.slice(0, Math.max(cut.lastIndexOf(" "), n - 20))}…`
 }
 
-const firstSentence = (s?: string) => (s ? (s.match(/^[^.!?]+[.!?]/)?.[0] ?? s) : "")
 
 export const STATIC_ROUTES: readonly RouteMeta[] = [
   {
     path: "/", kind: "home",
-    title: `Zoomlion Tractors, Harvesters & Farm Implements in Kenya${brandSuffix()}`,
+    title: `Zoomlion Tractors, Harvesters & Farm Implements in Kenya${brandSuffix()}`, // suffix empty until C1 verified
     description: `${manufacturer.neutralDescription} Browse the range, request a quote or schedule a visit.`,
     indexable: true, breadcrumbs: [],
   },
@@ -84,8 +83,8 @@ export const STATIC_ROUTES: readonly RouteMeta[] = [
   },
   {
     path: "/careers", kind: "page",
-    title: "Careers at Jolu Group of Companies — Join Our Team",
-    description: "Discover career opportunities at Jolu Group of Companies and how to apply for current openings.",
+    title: "Careers — Current Openings",
+    description: "Current job openings, role requirements and how to apply by email for positions in our team.",
     indexable: true, breadcrumbs: [HOME, { name: "Careers", path: "/careers" }],
   },
   {
@@ -96,11 +95,11 @@ export const STATIC_ROUTES: readonly RouteMeta[] = [
   },
   {
     path: "/news", kind: "article",
-    title: "Jolu Group of Companies Launch — Aug. 23, 2025",
-    description: "The Jolu Group of Companies officially launched on Aug. 23, 2025 at Lowland Estate, Thome, Nairobi — unveiling Jolu Machineries, Jolu Group Security, and partnerships with Equity Bank, Kingdom Bank, and Britam Insurance.",
+    title: "Official Launch Event — Aug. 23, 2025",
+    description: "Photos, speeches and videos from the official launch event held on Aug. 23, 2025 at Lowland Estate, Thome, Nairobi.",
     indexable: true, breadcrumbs: [HOME, { name: "News", path: "/news" }],
     // The page visibly prints "Aug. 23, 2025".
-    article: { headline: "Jolu Group of Companies Official Launch", datePublished: "2025-08-23" },
+    article: { headline: "Official Launch Event", datePublished: "2025-08-23" },
   },
   {
     path: "/ktn-interview", kind: "article",
@@ -112,16 +111,16 @@ export const STATIC_ROUTES: readonly RouteMeta[] = [
   {
     path: "/mud4fun", kind: "article",
     title: "Mud4Fun 4x4 Challenge Highlights — Dec 2025",
-    description: "Jolu Group proudly partnered in the Mud4Fun 4x4 Challenge in Naivasha, providing security and equipment support.",
+    description: "Highlights, photos and videos from the Mud4Fun 4x4 Challenge in Naivasha.",
     indexable: true, breadcrumbs: [HOME, { name: "Mud4Fun 4x4 Challenge", path: "/mud4fun" }],
     article: { headline: "Mud4Fun 4x4 Challenge" },
   },
   {
     path: "/showroom-launch", kind: "article",
-    title: "Jolu Group Nakuru Regional Offices & Showroom Grand Launch",
-    description: "Jolu Group officially launches its Nakuru Regional Offices and Showroom in Nakuru, marking a major milestone in regional expansion.",
+    title: "Nakuru Regional Offices & Showroom Launch",
+    description: "Details of the launch event for the Nakuru regional offices and machinery showroom, with directions and contact options.",
     indexable: true, breadcrumbs: [HOME, { name: "Nakuru Showroom Launch", path: "/showroom-launch" }],
-    article: { headline: "Jolu Group Nakuru Regional Offices & Showroom Grand Launch" },
+    article: { headline: "Nakuru Regional Offices & Showroom Launch" },
   },
   {
     path: "/quote", kind: "form",
@@ -137,12 +136,21 @@ export const STATIC_ROUTES: readonly RouteMeta[] = [
   },
 ]
 
+// The brand is not repeated here: implements are not named as Zoomlion products in the catalogue.
+const CATEGORY_NOUN: Record<Product["category"], string> = { tractors: "tractor", harvesters: "harvester", implements: "farm implement" }
+
+/**
+ * Neutral, claim-free product description for metadata. Product copy in data/products.ts contains specifications and
+ * superlatives that are not yet verified (C16), so it is shown on the page but not repeated in metadata/JSON-LD.
+ */
+export const productSeoDescription = (p: Product): string =>
+  clamp(`${p.name} — a ${CATEGORY_NOUN[p.category]} from our machinery range in Kenya. View photos and details, request a quote or schedule a visit.`)
+
 export function productRoute(p: Product): RouteMeta {
-  const lead = firstSentence(p.longDescription)
   return {
     path: productPath(p.slug), kind: "product", product: p,
     title: p.name,
-    description: clamp(lead && lead !== p.description ? `${p.description} ${lead}` : `${p.description} ${p.name}.`),
+    description: productSeoDescription(p),
     image: p.image, imageAlt: p.name,
     indexable: true, breadcrumbs: [HOME, PRODUCTS, { name: p.name, path: productPath(p.slug) }],
   }

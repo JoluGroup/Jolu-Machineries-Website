@@ -45,7 +45,7 @@ export function product(r: RouteMeta): Json | null {
   return {
     "@context": "https://schema.org", "@type": "Product",
     name: p.name,
-    description: (p.longDescription || p.description).replace(/\s+/g, " ").trim(),
+    // No description: product copy carries unverified specifications/superlatives (registry C16 pending).
     image: imageUrl(p.image),
     url: canonicalUrl(r.path),
   }

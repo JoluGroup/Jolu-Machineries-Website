@@ -6,7 +6,7 @@ import path from "node:path"
 import test from "node:test"
 import { fileURLToPath, pathToFileURL } from "node:url"
 import { build } from "esbuild"
-import { buildSitemap, resolveIndexable } from "../scripts/prerender.mjs"
+import { buildSitemap, neutraliseForms, onVercel, resolveIndexable } from "../scripts/prerender.mjs"
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 const ORIGIN = "https://www.jolumachineries.com"
@@ -88,7 +88,7 @@ test("renderHeadHtml escapes attributes and keeps JSON-LD inside its <script>", 
 test("structured data: Product carries only name/description/image/url (no offers, price, availability, brand, ratings)", () => {
   for (const r of routes.allRoutes().filter((x) => x.kind === "product")) {
     const j = sd.product(r)
-    assert.deepEqual(Object.keys(j).sort(), ["@context", "@type", "description", "image", "name", "url"])
+    assert.deepEqual(Object.keys(j).sort(), ["@context", "@type", "image", "name", "url"], "no description while specs are unverified (C16)")
     assert.equal(j.url, `${ORIGIN}${r.path}`)
     assert.match(j.image, /^https:\/\/www\.jolumachineries\.com\/(_img|lovable-uploads|og-image)/)
   }
@@ -122,12 +122,48 @@ test("robots.txt: production policy allows search/answer crawlers, disallows tra
 })
 
 test("indexability is production-only and refuses to guess on Vercel without VERCEL_ENV", () => {
-  assert.equal(resolveIndexable({ VERCEL: "1", VERCEL_ENV: "production" }), true)
-  assert.equal(resolveIndexable({ VERCEL: "1", VERCEL_ENV: "preview" }), false)
-  assert.equal(resolveIndexable({}), false)
-  assert.equal(resolveIndexable({ SEO_INDEXABLE: "true" }), true)
-  assert.throws(() => resolveIndexable({ VERCEL: "1" }), /VERCEL_ENV/)
-  assert.equal(resolveIndexable({}, "production"), true)
+  const local = "/home/runner/work"
+  assert.equal(resolveIndexable({ VERCEL: "1", VERCEL_ENV: "production" }, undefined, local), true)
+  assert.equal(resolveIndexable({ VERCEL: "1", VERCEL_ENV: "preview" }, undefined, local), false)
+  assert.equal(resolveIndexable({}, undefined, local), false)
+  assert.equal(resolveIndexable({ SEO_INDEXABLE: "true" }, undefined, local), true, "local verification override")
+  assert.equal(resolveIndexable({ VERCEL: "1", VERCEL_ENV: "preview", SEO_INDEXABLE: "true" }, undefined, local), false, "override cannot index a preview")
+  assert.throws(() => resolveIndexable({ VERCEL: "1" }, undefined, local), /VERCEL_ENV/)
+  // Vercel detected without VERCEL=1 (system env vars not exposed): still refuses to guess.
+  assert.throws(() => resolveIndexable({ VERCEL_URL: "x.vercel.app" }, undefined, local), /VERCEL_ENV/)
+  assert.throws(() => resolveIndexable({}, undefined, "/vercel/path0/client"), /VERCEL_ENV/)
+  assert.equal(onVercel({}, local), false)
+  assert.equal(resolveIndexable({}, "production", local), true)
+})
+
+test("prerendered forms cannot submit natively before the app mounts (no personal data in URLs)", () => {
+  const out = neutraliseForms('<div><form class="grid"><input name="email"/></form><form onsubmit="x"></form></div>')
+  assert.equal(out, '<div><form method="post" action="#" onsubmit="return false" class="grid"><input name="email"/></form><form onsubmit="x"></form></div>')
+  const src = fs.readFileSync(path.join(ROOT, "scripts/prerender.mjs"), "utf8")
+  assert.match(src, /const body = neutraliseForms\(bodyHtml\)/)
+  assert.match(src, /html\.replace\('<div id="root"><\/div>', \(\) =>/, "function replacement: $ patterns in content cannot corrupt output")
+})
+
+test("metadata carries no pending business name and no unverified product specifications (C1, C16)", () => {
+  const all = routes.allRoutes()
+  assert.equal(routes.brandSuffix(), "", "no brand suffix while the display name is pending")
+  for (const r of all) {
+    const meta = `${routes.fullTitle(r)} ${r.description} ${r.article?.headline ?? ""}`
+    assert.doesNotMatch(meta, /Jolu Group|Jolu Machineries|World's top|superior|outstanding|European standards|\b\d+\s?hp\b|milestone|proudly/i, r.path)
+  }
+  for (const r of all.filter((r) => r.kind === "product")) {
+    assert.equal(r.description, routes.productSeoDescription(r.product))
+    assert.ok(r.description.startsWith(r.product.name))
+  }
+  const nf = head.buildHead(routes.NOT_FOUND_ROUTE, { indexable: false })
+  assert.ok(!nf.metas.some((m) => m.id === "og:url"), "404 has no og:url")
+})
+
+test("ScrollToTop does not jump on first mount; index.html reveals animated content without JavaScript", () => {
+  const stt = fs.readFileSync(path.join(ROOT, "src/components/ScrollToTop.tsx"), "utf8")
+  assert.match(stt, /if \(first\.current\) \{\s*first\.current = false;\s*if \(!hash\) return;/)
+  const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8")
+  assert.match(html, /<noscript><style>\.opacity-0\{opacity:1!important/)
 })
 
 test("sitemap builder output is well-formed", () => {

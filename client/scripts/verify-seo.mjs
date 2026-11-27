@@ -20,6 +20,8 @@ const fail = (m) => errors.push(m)
 const FORBIDDEN = ["facebook.com/search", "leading distributors", "premier dealer", "trusted partner", "trusted dealer",
   "global leader in agricultural technology", "Genuine OEM", "Genuine Spare Parts", "authentic Zoomlion", "In Stock",
   "Low Stock", "Faith Yegon", "Geoffrey Bosire", "John Ouma"]
+// Unverified specifications/superlatives (registry C16) must not appear in <title>, meta tags or JSON-LD.
+const META_FORBIDDEN = [/\b\d+\s?hp\b/i, /World's top/i, /\bsuperior\b/i, /European standards/i, /\boutstanding\b/i, /\d+\s?(kg\/s|L)\b/, /Jolu Group|Jolu Machineries/]
 const FORBIDDEN_LD_KEYS = ["offers", "price", "priceCurrency", "availability", "aggregateRating", "review", "brand"]
 const ALLOWED_TYPES = new Set(["Organization", "WebSite", "BreadcrumbList", "ListItem", "Product", "ItemList", "Article", "FAQPage", "Question", "Answer", "ImageObject"])
 // Routes owned by another lane that do not yet render an <h1> (reported, not failed).
@@ -79,6 +81,10 @@ for (const f of pages) {
   const imgsNoAlt = (body.match(/<img(?![^>]*\balt=)[^>]*>/g) || []).length
   if (imgsNoAlt) fail(`${route}: ${imgsNoAlt} <img> without alt`)
   for (const s of FORBIDDEN) if (html.includes(s)) fail(`${route}: unsupported claim "${s}" present`)
+  const headPart = html.slice(0, html.indexOf("</head>"))
+  const metaText = [...headPart.matchAll(/<title>([^<]*)<\/title>|<meta [^>]*content="([^"]*)"|<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => m[1] || m[2] || m[3] || "").join(" \n ")
+  for (const re of META_FORBIDDEN) if (re.test(metaText)) fail(`${route}: metadata/JSON-LD contains unverified wording ${re}`)
+  for (const f of html.match(/<form\b[^>]*>/g) || []) if (!/onsubmit="return false"/.test(f) || !/method="post"/.test(f)) fail(`${route}: prerendered <form> can submit natively: ${f.slice(0, 80)}`)
   for (const m of head.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)) {
     let j; try { j = JSON.parse(m[1]) } catch (e) { fail(`${route}: JSON-LD does not parse: ${e.message}`); continue }
     const walkLd = (o) => {
