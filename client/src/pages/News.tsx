@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { emails, mailHref, visible } from "@/config/business";
+import { emails, mailHref, newsTestimonials, visible } from "@/config/business";
 import RegistryLink from "@/components/RegistryLink";
 
 const News: React.FC = () => {
@@ -184,7 +184,9 @@ useEffect(() => {
               </div>
 
 
-{/* Customer Testimonials */}
+{/* Customer Testimonials: named customers, shown only while the claim is visible (C12; hidden in production until consent is confirmed). */}
+{visible(newsTestimonials) && (
+<>
 <h2 className="text-xl font-semibold mt-6 text-[hsl(var(--primary))]">Customer Testimonials</h2>
 <p className="mb-4">
   Some of our valued clients shared their experiences during the launch event.
@@ -242,6 +244,8 @@ useEffect(() => {
     </div>
   ))}
 </div>
+</>
+)}
 
 
               
@@ -262,11 +266,14 @@ useEffect(() => {
               <p className="mb-4">
                 The event hosted key customers, executives, bank partners, and insurance representatives. Highlights included:
               </p>
+              {/* Attributed partner/client quotes are endorsements: same rule as testimonials (C12). */}
+              {visible(newsTestimonials) && (
               <ul className="mb-4 space-y-2 list-inside">
                 <li>“Partnerships like this drive local development and resilience.” — <em>Equity Bank Representative</em></li>
                 <li>“We are committed to protecting livelihoods and investments.” — <em>Britam Insurance Representative</em></li>
                 <li>“The launch of Jolu Group Security demonstrates vision and responsibility.” — <em>Key Client Testimonial</em></li>
               </ul>
+              )}
 
               {/* Company focus */}
               <h2 className="text-xl font-semibold mt-4 text-[hsl(var(--primary))]">Company focus and direction</h2>

@@ -53,8 +53,11 @@ test("every claim has an id, owner item C1-C19, a valid status and a recorded so
   for (let i = 1; i <= 19; i++) assert.ok(items.has(`C${i}`), `C${i} missing from registry`)
 })
 
-test("nothing is marked verified until the owner confirms it (this branch ships no owner confirmations)", () => {
-  assert.deepEqual(reg.ALL_CLAIMS.filter((c) => c.status === "verified").map((c) => c.id), [])
+test("only owner-directed claims are verified: the public-facing brand (M2-INTEG-02 §7); legal name stays pending", () => {
+  assert.deepEqual(reg.ALL_CLAIMS.filter((c) => c.status === "verified").map((c) => c.id), ["identity.displayName"])
+  assert.equal(reg.identity.displayName.value, "JOLU MACHINERIES")
+  assert.match(reg.identity.displayName.source, /Owner directive M2-INTEG-02/)
+  assert.equal(reg.identity.legalName.status, "pending")
 })
 
 test("visible(): verified and pending shown, unsupported never; forStructuredData(): verified only", () => {
@@ -66,7 +69,7 @@ test("visible(): verified and pending shown, unsupported never; forStructuredDat
   assert.equal(reg.forStructuredData(mk("pending")), undefined)
   assert.equal(reg.forStructuredData(mk("unsupported")), undefined)
   // With today's registry no identity, contact or location value is eligible for structured data.
-  for (const c of reg.ALL_CLAIMS) assert.equal(reg.forStructuredData(c), undefined, c.id)
+  for (const c of reg.ALL_CLAIMS.filter((c) => c.status !== "verified")) assert.equal(reg.forStructuredData(c), undefined, c.id)
 })
 
 test("strict mode (VITE_CLAIMS_STRICT=true) hides pending claims from visible content too", async () => {
@@ -195,4 +198,33 @@ test("default (non-strict) links are byte-identical to the previously published 
     "mailto:info@jolumachineries.com,jolumachineries@gmail.com?subject=%20Inquiry%20-%20Jolu%20Machineries")
   assert.equal(reg.mailHref([undefined, undefined]), undefined)
   assert.equal(reg.waHref(undefined, "x"), undefined)
+})
+
+test("M2-CLAIMS-02: production builds hide every pending claim (prerender and client bundle share VITE_DEPLOY_ENV)", async () => {
+  const prod = { "import.meta.env.VITE_DEPLOY_ENV": '"production"' }
+  const regProd = await bundle("src/config/business.ts", "claims-registry-prod", prod)
+  assert.equal(regProd.DEPLOY_ENV, "production")
+  assert.equal(regProd.STRICT, true, "strict is forced in production, with no opt-out")
+  for (const c of regProd.ALL_CLAIMS.filter((c) => c.status === "pending")) assert.equal(regProd.visible(c), undefined, c.id)
+  assert.equal(regProd.visible(regProd.identity.displayName), "JOLU MACHINERIES", "verified brand still shown")
+  const regPreview = await bundle("src/config/business.ts", "claims-registry-preview", { "import.meta.env.VITE_DEPLOY_ENV": '"preview"' })
+  assert.equal(regPreview.STRICT, false, "previews show pending values for owner review")
+  for (const [entry, name] of [["src/components/Footer.tsx", "prod-footer"], ["src/components/Header.tsx", "prod-header"], ["src/components/Hero.tsx", "prod-hero"], ["src/components/AboutSection.tsx", "prod-about"], ["src/pages/KTNInterview.tsx", "prod-ktn"], ["src/pages/News.tsx", "prod-news"]]) {
+    const { default: Comp } = await bundle(entry, name, prod)
+    const html = render(Comp)
+    for (const s of ["0705 038 679", "0743 682 700", "0721 700 393", "info@jolumachineries.com", "Tractors Sold", "Happy Customers", "24/7 Support", "within 24 hours", "feature on KTN", "Richard Nyango", "Faith Cherotich", "Equity Bank Representative", "Key Client Testimonial"]) assert.ok(!html.includes(s), `${entry}: pending "${s}" visible in production`)
+    assert.doesNotMatch(html, /href="(undefined|null|)[?"]/, `${entry}: broken link in production`)
+  }
+  const src = fs.readFileSync(path.join(ROOT, "vite.config.ts"), "utf8") + fs.readFileSync(path.join(ROOT, "scripts/prerender.mjs"), "utf8")
+  assert.match(src, /process\.env\.VITE_DEPLOY_ENV = process\.env\.VERCEL_ENV/)
+  assert.match(src, /env\.VITE_DEPLOY_ENV = deployEnv/)
+})
+
+test("KTN wording is registry-governed and neutral: no 'exclusive', shown only while the claim is visible", async () => {
+  const src = fs.readFileSync(path.join(ROOT, "src/pages/KTNInterview.tsx"), "utf8")
+  assert.doesNotMatch(src, /exclusive/i)
+  assert.match(src, /visible\(media\.ktnFeature\)/)
+  assert.doesNotMatch(reg.media.ktnFeature.value, /exclusive/i)
+  const { default: Ktn } = await bundle("src/pages/KTNInterview.tsx", "preview-ktn", { "import.meta.env.VITE_DEPLOY_ENV": '"preview"' })
+  assert.ok(render(Ktn).includes("Watch our feature on KTN"))
 })

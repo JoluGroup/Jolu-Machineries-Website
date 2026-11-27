@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import YouTubeEmbed from "@/components/YouTubeEmbed";
+import { media, visible } from "@/config/business";
 
 const KTNInterview = () => {
   return (
@@ -34,6 +35,7 @@ const KTNInterview = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12 flex justify-center">
         <div className="w-full max-w-3xl text-center">
+          {visible(media.ktnFeature) && (
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -41,10 +43,9 @@ const KTNInterview = () => {
             transition={{ duration: 0.8 }}
             className="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-10 leading-relaxed"
           >
-            Watch our exclusive feature on <span className="font-semibold">KTN</span>, 
-            where we shared insights about modern agricultural solutions and how{" "}
-            <span className="font-semibold">Jolu Machineries</span> is empowering farmers across Kenya.
+            {visible(media.ktnFeature)}
           </motion.p>
+          )}
 
           {/* Responsive embedded video */}
           <motion.div

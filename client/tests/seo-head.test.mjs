@@ -94,10 +94,13 @@ test("structured data: Product carries only name/description/image/url (no offer
   }
 })
 
-test("structured data gates: no Organization/WebSite while identity is unverified; FAQPage only from visible questions", () => {
-  assert.deepEqual(sd.siteEntities(), [])
+test("structured data gates: Organization/WebSite only from the verified display name, never the pending legal name; FAQPage only from visible questions", () => {
+  // M2-INTEG-02: the owner directed the public-facing brand JOLU MACHINERIES (C1 displayName verified); legalName pending.
+  const [org, site] = sd.siteEntities()
+  assert.deepEqual([org["@type"], org.name, org.url, org.legalName], ["Organization", "JOLU MACHINERIES", `${ORIGIN}/`, undefined])
+  assert.deepEqual([site["@type"], site.name], ["WebSite", "JOLU MACHINERIES"])
   const types = (p) => sd.structuredDataFor(routes.routeForPath(p), routes.allRoutes().filter((r) => r.kind === "product")).map((j) => j["@type"])
-  assert.deepEqual(types("/"), [])
+  assert.deepEqual(types("/"), ["Organization", "WebSite"])
   assert.deepEqual(types("/products"), ["BreadcrumbList", "ItemList"])
   assert.deepEqual(types("/news"), ["BreadcrumbList", "Article"])
   for (const r of routes.allRoutes()) assert.equal(sd.faqPage(r), null, `${r.path} has no visible Q&A`)
@@ -146,10 +149,10 @@ test("prerendered forms cannot submit natively before the app mounts (no persona
 
 test("metadata carries no pending business name and no unverified product specifications (C1, C16)", () => {
   const all = routes.allRoutes()
-  assert.equal(routes.brandSuffix(), "", "no brand suffix while the display name is pending")
+  assert.equal(routes.brandSuffix(), " | JOLU MACHINERIES", "brand suffix comes only from the verified display name")
   for (const r of all) {
     const meta = `${routes.fullTitle(r)} ${r.description} ${r.article?.headline ?? ""}`
-    assert.doesNotMatch(meta, /Jolu Group|Jolu Machineries|World's top|superior|outstanding|European standards|\b\d+\s?hp\b|milestone|proudly/i, r.path)
+    assert.doesNotMatch(meta.replace(/ \| JOLU MACHINERIES$/, ""), /Jolu Group|Jolu Machineries|World's top|superior|outstanding|European standards|\b\d+\s?hp\b|milestone|proudly/i, r.path)
   }
   for (const r of all.filter((r) => r.kind === "product")) {
     assert.equal(r.description, routes.productSeoDescription(r.product))
@@ -163,7 +166,8 @@ test("ScrollToTop does not jump on first mount; index.html reveals animated cont
   const stt = fs.readFileSync(path.join(ROOT, "src/components/ScrollToTop.tsx"), "utf8")
   assert.match(stt, /if \(first\.current\) \{\s*first\.current = false;\s*if \(!hash\) return;/)
   const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8")
-  assert.match(html, /<noscript><style>\.opacity-0\{opacity:1!important/)
+  assert.match(html, /<noscript><style>\[data-reveal\]\.opacity-0\{opacity:1!important/)
+  assert.doesNotMatch(html, /<noscript><style>\.opacity-0\{/, "no-JS rule must not reveal hover overlays")
 })
 
 test("sitemap builder output is well-formed", () => {

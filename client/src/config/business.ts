@@ -2,9 +2,10 @@
 //
 // Status rules (enforced by tests/claims-registry.test.mjs):
 //   verified    - confirmed by the owner. May appear in visible content, metadata and structured data.
-//   pending     - an existing, already-published value awaiting owner confirmation. Visible content keeps showing it
-//                 (removing every phone number would break the contact journey) UNLESS the build sets
-//                 VITE_CLAIMS_STRICT=true. It NEVER appears in metadata or structured data (`forStructuredData`).
+//   pending     - an existing value awaiting owner confirmation. Shown in preview/development builds so the content
+//                 can be reviewed, but NEVER in a production build (M2-CLAIMS-02: strict mode is forced when
+//                 VITE_DEPLOY_ENV=production, derived from Vercel's VERCEL_ENV) and never in metadata or structured data.
+//                 VITE_CLAIMS_STRICT=true forces the same behaviour anywhere (e.g. to preview production output).
 //   unsupported - not substantiated (or demonstrably wrong). Never rendered anywhere; components use neutral fallbacks.
 //
 // Nothing here was invented: every value is copied from the site as it stood at b4dc32d. Conflicting values are kept
@@ -31,8 +32,16 @@ export interface Stat { readonly target: number; readonly label: string; readonl
 
 const claim = <T,>(c: Claim<T>): Claim<T> => Object.freeze(c)
 
+/** Deployment environment baked in at build time ("production" | "preview" | "" for local/CI). */
+export const DEPLOY_ENV: string = (() => {
+  try { return String(import.meta.env.VITE_DEPLOY_ENV ?? "") } catch { return "" }
+})()
+
+/** Pending claims are hidden in production builds, always; and anywhere VITE_CLAIMS_STRICT=true. */
 export const STRICT: boolean = (() => {
-  try { return String(import.meta.env.VITE_CLAIMS_STRICT) === "true" } catch { return false }
+  let forced = false
+  try { forced = String(import.meta.env.VITE_CLAIMS_STRICT) === "true" } catch { forced = false }
+  return forced || DEPLOY_ENV === "production"
 })()
 
 /** Value for visible customer-facing content: verified always; pending unless strict; unsupported never. */
@@ -50,7 +59,9 @@ export function forStructuredData<T>(c: Claim<T>): T | undefined {
 // ---------------------------------------------------------------- identity (C1)
 export const identity = {
   legalName: claim({ id: "identity.legalName", ownerItem: "C1", status: "pending", value: "Jolu Agricultural & Construction Machineries", source: "client/index.html meta author", note: "Four name variants in use; owner to confirm legal and display names." }),
-  displayName: claim({ id: "identity.displayName", ownerItem: "C1", status: "pending", value: "Jolu Machineries", source: "index.html og:site_name; AboutSection; Footer copyright" }),
+  // Public-facing brand directed by the owner in M2-INTEG-02 §7 ("The proposed public-facing brand is JOLU MACHINERIES").
+  // Used for <title> suffix, og:site_name and Organization/WebSite JSON-LD. The registered legal name stays pending.
+  displayName: claim({ id: "identity.displayName", ownerItem: "C1", status: "verified", value: "JOLU MACHINERIES", source: "Owner directive M2-INTEG-02 §7", note: "Owner to confirm this as final; legalName remains pending." }),
   groupName: claim({ id: "identity.groupName", ownerItem: "C1", status: "pending", value: "Jolu Group", source: "NakuruLaunch.tsx, Mud4Fun.tsx" }),
 } as const
 
@@ -107,7 +118,7 @@ export const testimonials = claim<readonly Testimonial[]>({
 })
 
 /** Named customer testimonials on the News page (with video links). Shown as today; owner to confirm consent. */
-export const newsTestimonials = claim<readonly string[]>({ id: "testimonials.news", ownerItem: "C12", status: "pending", value: ["Richard Nyango", "Faith Cherotich"], source: "News.tsx:120-133, 220-262 (video testimonials), News.tsx:301 (key client quote)", note: "Not gated in code; confirm recorded consent or request removal." })
+export const newsTestimonials = claim<readonly string[]>({ id: "testimonials.news", ownerItem: "C12", status: "pending", value: ["Richard Nyango", "Faith Cherotich"], source: "News.tsx customer testimonial videos (Richard Nyango, Faith Cherotich) and attributed partner/client quotes (Equity Bank, Britam, key client)", note: "Gated with visible(): shown in previews, hidden in production until recorded consent is confirmed." })
 
 /** Product star ratings and review counts on the homepage catalogue: removed (no source). */
 export const productRatings = claim({ id: "products.ratings", ownerItem: "C12", status: "unsupported", value: "", source: "ProductsSection.tsx (hard-coded ratings and review counts on 19 products, removed)" })
@@ -136,7 +147,8 @@ export const warranty = claim({ id: "warranty", ownerItem: "C17", status: "unsup
 export const prices = claim({ id: "prices", ownerItem: "C18", status: "unsupported", value: "", source: "none published (SparePartsSection has an unused price field)", note: "Keep unpublished; never emit Offer/price in structured data." })
 
 export const media = {
-  ktnExclusive: claim({ id: "media.ktnExclusive", ownerItem: "C19", status: "pending", value: "exclusive feature", source: "KTNInterview:43" }),
+  // Owner directive: neutral feature wording ("exclusive" dropped), shown only once the feature itself is verified.
+  ktnFeature: claim({ id: "media.ktnFeature", ownerItem: "C19", status: "pending", value: "Watch our feature on KTN, where we shared insights about modern agricultural solutions for farmers in Kenya.", source: "KTNInterview:43 (previously 'exclusive feature')" }),
 } as const
 
 /** Every claim, for tests and the owner-verification report. */

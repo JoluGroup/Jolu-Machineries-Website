@@ -46,12 +46,14 @@ export function neutraliseForms(html) {
   return html.replace(/<form(?![^>]*\sonsubmit=)/g, '<form method="post" action="#" onsubmit="return false"')
 }
 
-export async function loadRenderer() {
+export async function loadRenderer(deployEnv = process.env.VERCEL_ENV ?? "") {
   const cache = path.join(ROOT, "node_modules/.cache/prerender")
   fs.mkdirSync(cache, { recursive: true })
   const outfile = path.join(cache, "entry-server.mjs")
   const env = { BASE_URL: "/", DEV: false, PROD: true, MODE: "production", SSR: true }
   for (const [k, v] of Object.entries(process.env)) if (k.startsWith("VITE_")) env[k] = v
+  // M2-CLAIMS-02: the prerendered HTML must apply the same claim policy as the client bundle for this deployment.
+  env.VITE_DEPLOY_ENV = deployEnv
   await build({
     entryPoints: [path.join(ROOT, "src/entry-server.tsx")], outfile, bundle: true, format: "esm", platform: "node", jsx: "automatic",
     external: ["react", "react-dom", "react-dom/server", "react-router-dom", "react/jsx-runtime"],
@@ -96,7 +98,7 @@ export async function prerender({ outDir, templatePath, envOverride } = {}) {
     template = fs.readFileSync(cachedTemplate, "utf8")
   }
   const indexable = resolveIndexable(process.env, envOverride)
-  const m = await loadRenderer()
+  const m = await loadRenderer(envOverride ?? process.env.VERCEL_ENV ?? "")
   const routes = m.allRoutes()
   const written = []
 
