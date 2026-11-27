@@ -19,7 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { emails, mailHref, visible } from "@/config/business";
+import { emails, locations, mailHref, visible } from "@/config/business";
 import RegistryLink from "@/components/RegistryLink";
 
 // Verified on the official JOLU Group channel (@jolugroupltd, Live tab):
@@ -175,10 +175,13 @@ const NakuruLaunch: React.FC = () => {
                   alt="Jolu Group Nakuru showroom"
                   className="w-full rounded-xl object-cover shadow-lg"
                 />
-                <figcaption className="text-sm text-muted-foreground mt-2">
-                  Nakuru Regional Offices and Showroom — opposite Nakuru
-                  Athletics Club, along West Road.
-                </figcaption>
+                {/* The office address is the pending C7 claim location.nakuru; production (strict) omits the caption. */}
+                {visible(locations.nakuru) && (
+                  <figcaption className="text-sm text-muted-foreground mt-2">
+                    Nakuru Regional Offices and Showroom — opposite Nakuru
+                    Athletics Club, along West Road.
+                  </figcaption>
+                )}
               </figure>
 
               {/* Speeches */}

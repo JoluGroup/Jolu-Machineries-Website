@@ -56,7 +56,7 @@ else {
 // ---------------------------------------------------------------- 2. production variant
 // Distinctive strings of pending registry claims (C2-C7, C9-C12, C19). C16 product specifications and the C1 group
 // name in event text are owner decisions recorded in the M2-INTEG-02 report and are deliberately not listed here.
-const PENDING_IN_PRODUCTION = ["0705 038 679", "705 038 679", "0743 682 700", "743 682 700", "0721 700 393", "info@jolumachineries.com", "wa.me/254", "Head Office – Thome", "Thome, Nairobi, Kenya", "KFA Building", "Quickfill", "KENGAS", "Evans Hospital", "Mon–Fri", "Tractors Sold", "Happy Customers", "24/7 Support", "within 24 hours", "feature on KTN", "KTN feature", "Richard Nyango", "Faith Cherotich", "Key Client Testimonial"]
+const PENDING_IN_PRODUCTION = ["0705 038 679", "705 038 679", "0743 682 700", "743 682 700", "0721 700 393", "info@jolumachineries.com", "wa.me/254", "Head Office – Thome", "Thome, Nairobi, Kenya", "KFA Building", "Quickfill", "KENGAS", "Evans Hospital", "Mon–Fri", "Tractors Sold", "Happy Customers", "24/7 Support", "within 24 hours", "feature on KTN", "KTN feature", "Richard Nyango", "Faith Cherotich", "Key Client Testimonial", "tel:+254705038679", "tel:+254743682700", "jolumachineries@gmail.com", "info@jolugroup.com", "Years Experience", "Sun: Closed", "Equity Bank Representative", "Britam Insurance Representative", "Showroom — opposite"]
 const out = fs.mkdtempSync(path.join(os.tmpdir(), "seo-prod-"))
 const { routes } = await prerender({ outDir: out, envOverride: "production" })
 const pages = htmlFiles(out).filter((f) => !f.endsWith("404.html"))
