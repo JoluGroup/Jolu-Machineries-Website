@@ -13,7 +13,7 @@ How a decision is applied: the registry status changes from `pending` to `verifi
 
 | Item | Exact current value(s) | Where shown | Decision |
 |---|---|---|---|
-| Registered legal entity name | "Jolu Agricultural & Construction Machineries" (index.html author meta). Four name variants exist across the site. | Withheld everywhere | |
+| Registered legal entity name | Registry value "Jolu Agricultural & Construction Machineries" (originally from the index.html author meta, since removed). Variants in page text: "Jolu Machineries" (most pages), "JOLU MACHINERIES" (brand), "Jolu Agricultural Machineries" (Careers role description; Gallery caption "Jolu Agricultural Machineries Showroom"), "Jolu Group of Companies" (News, Careers) | Legal name withheld everywhere | Supply the registered name |
 | Public-facing brand | "JOLU MACHINERIES" (status: verified per M2-INTEG-02 §7, final confirmation requested) | Page titles, og:site_name, Organization/WebSite JSON-LD | |
 | Group name in event and corporate text | "Jolu Group", "Jolu Group of Companies" | News, Nakuru launch, Mud4Fun, Gallery captions (CEO, Directors, Managing Director, Head of Business), Careers | Confirm as historically accurate / correct |
 
@@ -35,7 +35,7 @@ How a decision is applied: the registry status changes from `pending` to `verifi
 | Nairobi | "Head Office", "Thome, Nairobi, Kenya"; FloatingContact labels it "Main Office" | Label conflict | |
 | Nakuru | "Regional Office & Showroom", "Along West Road, Opposite Nakuru Athletics, Next to Evans Hospital, Nakuru, Kenya"; map plus code P357+5JP | | |
 | Nakuru (second) | "Jolu Office (Machineries & Security)", "KFA Building, Nakuru" | Shared with Jolu Security; not in footer | Keep / remove |
-| Migori / Rongo | Footer: "Near KENGAS Rongo, Migori, Kenya"; FloatingContact and map: "Quickfill Rongo Station, Migori, Kenya" | **Address conflict** | Choose |
+| Migori / Rongo | Footer: "Near KENGAS Rongo, Migori, Kenya"; FloatingContact: "Quickfill Rongo Station, Migori, Kenya"; ContactSection heading: "Jolu Office - Quickfill Service Station – Rongo, Migori"; map label "Quickfill Rongo Station, Migori" | **Address conflict** | Choose |
 | Opening hours | "Mon–Fri: 9:00–18:00", "Sat: 9:00-13:00", "Sun: Closed" | **Conflicts with the "24/7 Support" card** | Confirm hours; 24/7 yes/no |
 
 ## 4. Social profiles (C8)
