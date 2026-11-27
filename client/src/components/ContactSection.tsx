@@ -255,18 +255,23 @@ const ContactSection = () => {
                     </form>
 
                     {/* Maps Section */}
+                    {/* M2-INTEG-02: each location card is a C7 claim; production (strict) hides pending ones. */}
+                    {[locations.nairobi, locations.nakuru, locations.nakuruKfa, locations.migoriFloating].some(visible) && (
                     <div className="mt-10 space-y-6">
                       <h3 className="text-xl font-semibold">Find Us</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Nairobi — location name only, intentionally map-free */}
+                        {visible(locations.nairobi) && (
                         <div className="border border-slate-200 rounded-xl bg-card p-5 shadow-sm transition-shadow duration-300 hover:shadow-lg">
                           <div className="flex items-start gap-2">
                             <MapPin className="h-5 w-5 shrink-0 text-primary mt-0.5" />
                             <h4 className="font-medium">Jolu Head Office – Thome, Nairobi</h4>
                           </div>
                         </div>
+                        )}
 
                         {/* Nakuru Map */}
+                        {visible(locations.nakuru) && (
                         <div className="border border-slate-200 rounded-xl bg-card p-5 shadow-sm transition-shadow duration-300 hover:shadow-lg">
                           <div className="flex items-start gap-2 mb-3">
                             <MapPin className="h-5 w-5 shrink-0 text-primary mt-0.5" />
@@ -279,8 +284,10 @@ const ContactSection = () => {
                             embedSrc="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1328.126918773704!2d36.06425771376447!3d-0.29232555730089016!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x18298dc3daec4f73%3A0x9502bd597c8842f0!2sP357%2B5JP%2C%20Nakuru!5e0!3m2!1sen!2ske!4v1774359316918!5m2!1sen!2ske"
                           />
                         </div>
+                        )}
 
                         {/* Nakuru KFA Map */}
+                        {visible(locations.nakuruKfa) && (
                         <div className="border border-slate-200 rounded-xl bg-card p-5 shadow-sm transition-shadow duration-300 hover:shadow-lg">
                           <div className="flex items-start gap-2 mb-3">
                             <MapPin className="h-5 w-5 shrink-0 text-primary mt-0.5" />
@@ -293,8 +300,10 @@ const ContactSection = () => {
                             embedSrc="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15958.37956243454!2d36.05669568715821!3d-0.28648409808689044!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182aa60a63f693e9%3A0xaba0a02d31f7b4d5!2sKFA%20Building%2C%20Nakuru!5e0!3m2!1sen!2ske!4v1723810622341!5m2!1sen!2ske"
                           />
                         </div>
+                        )}
 
                         {/* Rongo Map */}
+                        {visible(locations.migoriFloating) && (
                         <div className="border border-slate-200 rounded-xl bg-card p-5 shadow-sm transition-shadow duration-300 hover:shadow-lg">
                           <div className="flex items-start gap-2 mb-3">
                             <MapPin className="h-5 w-5 shrink-0 text-primary mt-0.5" />
@@ -307,8 +316,10 @@ const ContactSection = () => {
                             embedSrc="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.472100426641!2d34.606213499999996!3d-0.7548144999999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x182b496e03a56399%3A0xc2ad096c1f16c391!2sQUICKFILL%20RONGO%20STATION!5e0!3m2!1sen!2ske!4v1774360053586!5m2!1sen!2ske"
                           />
                         </div>
+                        )}
                       </div>
                     </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>

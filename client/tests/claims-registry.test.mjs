@@ -209,13 +209,14 @@ test("M2-CLAIMS-02: production builds hide every pending claim (prerender and cl
   assert.equal(regProd.visible(regProd.identity.displayName), "JOLU MACHINERIES", "verified brand still shown")
   const regPreview = await bundle("src/config/business.ts", "claims-registry-preview", { "import.meta.env.VITE_DEPLOY_ENV": '"preview"' })
   assert.equal(regPreview.STRICT, false, "previews show pending values for owner review")
-  for (const [entry, name] of [["src/components/Footer.tsx", "prod-footer"], ["src/components/Header.tsx", "prod-header"], ["src/components/Hero.tsx", "prod-hero"], ["src/components/AboutSection.tsx", "prod-about"], ["src/pages/KTNInterview.tsx", "prod-ktn"], ["src/pages/News.tsx", "prod-news"]]) {
+  for (const [entry, name] of [["src/components/Footer.tsx", "prod-footer"], ["src/components/Header.tsx", "prod-header"], ["src/components/Hero.tsx", "prod-hero"], ["src/components/AboutSection.tsx", "prod-about"], ["src/pages/KTNInterview.tsx", "prod-ktn"], ["src/pages/News.tsx", "prod-news"], ["src/components/ContactSection.tsx", "prod-contact"]]) {
     const { default: Comp } = await bundle(entry, name, prod)
     const html = render(Comp)
-    for (const s of ["0705 038 679", "0743 682 700", "0721 700 393", "info@jolumachineries.com", "Tractors Sold", "Happy Customers", "24/7 Support", "within 24 hours", "feature on KTN", "Richard Nyango", "Faith Cherotich", "Equity Bank Representative", "Key Client Testimonial"]) assert.ok(!html.includes(s), `${entry}: pending "${s}" visible in production`)
+    for (const s of ["0705 038 679", "0743 682 700", "0721 700 393", "info@jolumachineries.com", "Tractors Sold", "Happy Customers", "24/7 Support", "within 24 hours", "feature on KTN", "Richard Nyango", "Faith Cherotich", "Equity Bank Representative", "Key Client Testimonial", "Thome", "KFA Building", "Quickfill", "Find Us"]) assert.ok(!html.includes(s), `${entry}: pending "${s}" visible in production`)
     assert.doesNotMatch(html, /href="(undefined|null|)[?"]/, `${entry}: broken link in production`)
   }
   const src = fs.readFileSync(path.join(ROOT, "vite.config.ts"), "utf8") + fs.readFileSync(path.join(ROOT, "scripts/prerender.mjs"), "utf8")
+  assert.match(src, /if \(process\.env\.VERCEL_ENV === "production"\) process\.env\.VITE_DEPLOY_ENV = "production"/, "Vercel production always builds strict")
   assert.match(src, /process\.env\.VITE_DEPLOY_ENV = process\.env\.VERCEL_ENV/)
   assert.match(src, /env\.VITE_DEPLOY_ENV = deployEnv/)
 })

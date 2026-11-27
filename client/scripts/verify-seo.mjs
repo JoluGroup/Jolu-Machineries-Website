@@ -54,6 +54,9 @@ else {
 }
 
 // ---------------------------------------------------------------- 2. production variant
+// Distinctive strings of pending registry claims (C2-C7, C9-C12, C19). C16 product specifications and the C1 group
+// name in event text are owner decisions recorded in the M2-INTEG-02 report and are deliberately not listed here.
+const PENDING_IN_PRODUCTION = ["0705 038 679", "705 038 679", "0743 682 700", "743 682 700", "0721 700 393", "info@jolumachineries.com", "wa.me/254", "Thome", "KFA Building", "Quickfill", "KENGAS", "Evans Hospital", "Mon–Fri", "Tractors Sold", "Happy Customers", "24/7 Support", "within 24 hours", "feature on KTN", "KTN feature", "Richard Nyango", "Faith Cherotich", "Key Client Testimonial"]
 const out = fs.mkdtempSync(path.join(os.tmpdir(), "seo-prod-"))
 const { routes } = await prerender({ outDir: out, envOverride: "production" })
 const pages = htmlFiles(out).filter((f) => !f.endsWith("404.html"))
@@ -77,6 +80,8 @@ for (const f of pages) {
   for (const tag of ["og:title", "og:description", "og:image", "og:type"]) if (!new RegExp(`property="${tag}" content="[^"]+"`).test(head)) fail(`${route}: missing ${tag}`)
   if (!/name="twitter:card" content="summary_large_image"/.test(head)) fail(`${route}: missing twitter:card`)
   if (/content="[^"]*@\/assets/.test(head)) fail(`${route}: build-time image key leaked into metadata`)
+  // M2-INTEG-02: pending contact, location, statistic, testimonial and KTN claims must not reach production HTML.
+  for (const s of PENDING_IN_PRODUCTION) if (html.includes(s)) fail(`${route}: pending claim text "${s}" in production HTML`)
   const noindexExpected = route === "/quote" || route === "/schedule"
   if (noindexExpected && robots !== "noindex, follow") fail(`${route}: expected noindex, follow (got ${robots})`)
   if (!noindexExpected && robots) fail(`${route}: production page must be indexable (robots=${robots})`)

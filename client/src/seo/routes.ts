@@ -104,7 +104,7 @@ export const STATIC_ROUTES: readonly RouteMeta[] = [
   {
     path: "/ktn-interview", kind: "article",
     title: "KTN Interview",
-    description: "Watch our KTN feature on modern agricultural solutions for farmers in Kenya.",
+    description: "Video of the KTN interview on agricultural machinery in Kenya.",
     indexable: true, breadcrumbs: [HOME, { name: "KTN Interview", path: "/ktn-interview" }],
     article: { headline: "KTN Interview" },
   },

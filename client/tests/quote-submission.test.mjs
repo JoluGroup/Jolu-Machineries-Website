@@ -183,6 +183,10 @@ test("build guard: Vercel production fails without a valid VITE_API_BASE; previe
   }
   assert.deepEqual(checkApiBaseForBuild("https://api.ci.invalid", undefined), { ok: true, fatal: false }, "CI value passes")
   assert.deepEqual(checkApiBaseForBuild("https://api.example.com", "production"), { ok: true, fatal: false })
+  for (const loop of ["http://localhost:5000", "http://127.0.0.1:5000", "http://[::1]:5000", "http://api.localhost"]) {
+    if (api.resolveApiBase(loop)) assert.equal(checkApiBaseForBuild(loop, "production").fatal, true, `loopback ${loop} refused for production`)
+  }
+  assert.equal(checkApiBaseForBuild("http://localhost:5000", "preview").fatal, false, "loopback is fine outside production")
   const vite = read("vite.config.ts")
   assert.match(vite, /checkApiBaseForBuild\(env\.VITE_API_BASE, process\.env\.VERCEL_ENV\)/, "vite config uses the guard")
   assert.match(vite, /if \(check\.fatal\) throw new Error/)

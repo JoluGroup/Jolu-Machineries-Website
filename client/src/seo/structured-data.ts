@@ -2,7 +2,7 @@
 //  - Only facts visible on the page or verified in the claims registry (forStructuredData) are emitted.
 //  - Product: name, description, image, url ONLY. Never brand, offers, price, availability, rating, review or specs
 //    (prices are unpublished, stock is unverified and specifications await manufacturer confirmation - C16-C18).
-//  - Organization / WebSite are emitted only once the owner verifies the identity (C1); today they are omitted.
+//  - Organization / WebSite are emitted only while the display name (C1) is verified; legalName only once it is verified too.
 //  - FAQPage only from questions that are visibly rendered on the page (none today).
 //  - Valid schema.org markup does not guarantee any rich result.
 import manifest from "@/generated/image-manifest.json"

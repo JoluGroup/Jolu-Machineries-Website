@@ -5,7 +5,10 @@ import { checkApiBaseForBuild } from "./src/lib/api-base-guard";
 
 // M2-CLAIMS-02: expose the deployment environment to the client bundle so production builds hide pending claims.
 // (Vite exposes VITE_* variables from process.env; Vercel provides VERCEL_ENV during builds.)
-if (process.env.VITE_DEPLOY_ENV === undefined) process.env.VITE_DEPLOY_ENV = process.env.VERCEL_ENV ?? "";
+// A Vercel production build is always "production", whatever VITE_DEPLOY_ENV says, so the bundle and the prerender
+// (scripts/prerender.mjs, which keys off VERCEL_ENV) always agree on strict claims mode.
+if (process.env.VERCEL_ENV === "production") process.env.VITE_DEPLOY_ENV = "production";
+else if (process.env.VITE_DEPLOY_ENV === undefined) process.env.VITE_DEPLOY_ENV = process.env.VERCEL_ENV ?? "";
 
 // M2-QUOTE-01: fail Vercel production builds without a valid VITE_API_BASE; warn elsewhere.
 function assertApiBase(mode: string) {
