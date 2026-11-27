@@ -47,26 +47,9 @@ const speakerVideoUrl = (name: string): string | null => {
 };
 
 const NakuruLaunch: React.FC = () => {
-  const metaTitle = "Jolu Group Nakuru Regional Offices & Showroom Grand Launch";
-  const metaDescription =
-    "Jolu Group officially launches its Nakuru Regional Offices and Showroom in Nakuru, marking a major milestone in regional expansion.";
+  // Page title/description come from src/seo/routes.ts (M2-SEO-01).
 
   const [showScroll, setShowScroll] = useState(false);
-
-  useEffect(() => {
-    document.title = metaTitle;
-    let meta = document.querySelector(
-      'meta[name="description"]'
-    ) as HTMLMetaElement | null;
-
-    if (!meta) {
-      meta = document.createElement("meta");
-      meta.name = "description";
-      document.head.appendChild(meta);
-    }
-
-    meta.content = metaDescription;
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => setShowScroll(window.scrollY > 300);

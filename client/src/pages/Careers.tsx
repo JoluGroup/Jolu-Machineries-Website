@@ -18,24 +18,9 @@ import { emails, mailHref, visible } from "@/config/business";
 import RegistryLink from "@/components/RegistryLink";
 
 const Careers: React.FC = () => {
-  const metaTitle = "Careers at Jolu Group of Companies — Join Our Team";
-  const metaDescription =
-    "Discover exciting career opportunities at Jolu Group of Companies. Join a passionate, innovative, and purpose-driven team building Africa’s future in security, machinery, and sustainable enterprise.";
+  // Page title/description come from src/seo/routes.ts (M2-SEO-01).
 
   const [showScroll, setShowScroll] = useState(false);
-
-  useEffect(() => {
-    document.title = metaTitle;
-    let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
-
-    if (!meta) {
-      meta = document.createElement("meta");
-      meta.name = "description";
-      document.head.appendChild(meta);
-    }
-
-    meta.content = metaDescription;
-  }, [metaTitle, metaDescription]);
 
   useEffect(() => {
     const handleScroll = () => setShowScroll(window.scrollY > 300);

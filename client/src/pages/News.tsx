@@ -18,45 +18,11 @@ import { emails, mailHref, visible } from "@/config/business";
 import RegistryLink from "@/components/RegistryLink";
 
 const News: React.FC = () => {
-  // SEO metadata
-  const metaTitle = "Jolu Group of Companies Launch — Aug. 23, 2025";
-  const metaDescription =
-    "The Jolu Group of Companies officially launched on Aug. 23, 2025 at Lowland Estate, Thome, Nairobi — unveiling Jolu Machineries, Jolu Group Security, and partnerships with Equity Bank, Kingdom Bank, and Britam Insurance.";
+  // Page title/description/Open Graph come from src/seo/routes.ts (M2-SEO-01).
 
     const [showScroll, setShowScroll] = useState(false);
 
 
-// SEO metadata effect
-useEffect(() => {
-  document.title = metaTitle;
-  let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
-  if (!meta) {
-    meta = document.createElement("meta");
-    meta.name = "description";
-    document.head.appendChild(meta);
-  }
-  meta.content = metaDescription;
-
-  const ogTitle = document.querySelector('meta[property="og:title"]') as HTMLMetaElement | null;
-  if (!ogTitle) {
-    const t = document.createElement("meta");
-    t.setAttribute("property", "og:title");
-    t.content = metaTitle;
-    document.head.appendChild(t);
-  } else {
-    ogTitle.content = metaTitle;
-  }
-
-  const ogDesc = document.querySelector('meta[property="og:description"]') as HTMLMetaElement | null;
-  if (!ogDesc) {
-    const d = document.createElement("meta");
-    d.setAttribute("property", "og:description");
-    d.content = metaDescription;
-    document.head.appendChild(d);
-  } else {
-    ogDesc.content = metaDescription;
-  }
-}, [metaTitle, metaDescription]);
 
 // Scroll detection effect
 useEffect(() => {

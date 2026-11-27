@@ -21,22 +21,9 @@ import RegistryLink from "@/components/RegistryLink";
 const MotionResponsiveImage = motion.create(ResponsiveImage);
 
 const Mud4Fun: React.FC = () => {
-  const metaTitle = "Mud4Fun 4x4 Challenge Highlights — Dec 2025";
-  const metaDescription =
-    "Jolu Group proudly partnered in the Mud4Fun 4x4 Challenge in Naivasha, providing security and equipment support.";
+  // Page title/description come from src/seo/routes.ts (M2-SEO-01).
 
   const [showScroll, setShowScroll] = useState(false);
-
-  useEffect(() => {
-    document.title = metaTitle;
-    let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
-    if (!meta) {
-      meta = document.createElement("meta");
-      meta.name = "description";
-      document.head.appendChild(meta);
-    }
-    meta.content = metaDescription;
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => setShowScroll(window.scrollY > 300);
