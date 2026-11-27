@@ -63,7 +63,9 @@ test("head: self-referencing www canonical, route-specific OG/Twitter, no robots
   assert.match(meta["og:image"], /^https:\/\/www\.jolumachineries\.com\//)
   assert.ok(!meta["og:image"].includes("@/assets"))
   assert.equal(meta.robots, undefined)
-  assert.equal(meta["og:site_name"], undefined, "site name is pending (C1) and must not reach metadata")
+  // C1 displayName is owner-directed (M2-INTEG-02 §7) and verified, so og:site_name carries it; the legal name never does.
+  assert.equal(meta["og:site_name"], "JOLU MACHINERIES")
+  assert.ok(!Object.values(meta).some((v) => /Jolu Agricultural & Construction Machineries/.test(v)), "pending legal name never in metadata")
   assert.equal(head.buildHead(routes.routeForPath("/"), { indexable: true }).canonical, `${ORIGIN}/`)
   assert.equal(head.buildHead(routes.routeForPath("/products/"), { indexable: true }).canonical, `${ORIGIN}/products`)
 })
@@ -152,7 +154,7 @@ test("metadata carries no pending business name and no unverified product specif
   assert.equal(routes.brandSuffix(), " | JOLU MACHINERIES", "brand suffix comes only from the verified display name")
   for (const r of all) {
     const meta = `${routes.fullTitle(r)} ${r.description} ${r.article?.headline ?? ""}`
-    assert.doesNotMatch(meta.replace(/ \| JOLU MACHINERIES$/, ""), /Jolu Group|Jolu Machineries|World's top|superior|outstanding|European standards|\b\d+\s?hp\b|milestone|proudly/i, r.path)
+    assert.doesNotMatch(meta.replaceAll(" | JOLU MACHINERIES", ""), /Jolu Group|Jolu Machineries|World's top|superior|outstanding|European standards|\b\d+\s?hp\b|milestone|proudly/i, r.path)
   }
   for (const r of all.filter((r) => r.kind === "product")) {
     assert.equal(r.description, routes.productSeoDescription(r.product))
