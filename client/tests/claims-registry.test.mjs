@@ -39,12 +39,12 @@ const FORBIDDEN = [
 ]
 const forbiddenIn = (text) => FORBIDDEN.filter((f) => text.toLowerCase().includes(f.toLowerCase()))
 
-test("every claim has an id, owner item C1-C19, a valid status and a recorded source", () => {
+test("every claim has an id, owner item C1-C20, a valid status and a recorded source", () => {
   assert.ok(reg.ALL_CLAIMS.length >= 25)
   const ids = new Set()
   for (const c of reg.ALL_CLAIMS) {
     assert.ok(c.id && !ids.has(c.id), `duplicate or missing id ${c.id}`); ids.add(c.id)
-    assert.match(c.ownerItem, /^C(1[0-9]|[1-9])(\/C(1[0-9]|[1-9]))?$/, c.id)
+    assert.match(c.ownerItem, /^C(20|1[0-9]|[1-9])(\/C(20|1[0-9]|[1-9]))?$/, c.id)
     assert.ok(["verified", "pending", "unsupported"].includes(c.status), c.id)
     assert.ok(c.source && c.source.length > 3, `${c.id} has no source`)
   }
@@ -228,4 +228,12 @@ test("KTN wording is registry-governed and neutral: no 'exclusive', shown only w
   assert.doesNotMatch(reg.media.ktnFeature.value, /exclusive/i)
   const { default: Ktn } = await bundle("src/pages/KTNInterview.tsx", "preview-ktn", { "import.meta.env.VITE_DEPLOY_ENV": '"preview"' })
   assert.ok(render(Ktn).includes("Watch our feature on KTN"))
+})
+
+test("M2-CLAIMS-FINAL-01: newsletter promises offers only while the offers claim is verified", async () => {
+  assert.equal(reg.marketing.newsletterOffers.status, "unsupported")
+  const { default: Footer } = await bundle("src/components/Footer.tsx", "footer-offers-preview", { "import.meta.env.VITE_DEPLOY_ENV": '"preview"' })
+  const html = render(Footer)
+  assert.ok(!/exclusive offers/i.test(html), "no offers promised while unsupported, even in previews")
+  assert.ok(html.includes("agricultural machinery updates") && html.includes("farming tips"), "newsletter copy still describes the newsletter")
 })
