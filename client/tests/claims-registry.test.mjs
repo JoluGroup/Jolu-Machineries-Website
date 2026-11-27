@@ -212,7 +212,7 @@ test("M2-CLAIMS-02: production builds hide every pending claim (prerender and cl
   for (const [entry, name] of [["src/components/Footer.tsx", "prod-footer"], ["src/components/Header.tsx", "prod-header"], ["src/components/Hero.tsx", "prod-hero"], ["src/components/AboutSection.tsx", "prod-about"], ["src/pages/KTNInterview.tsx", "prod-ktn"], ["src/pages/News.tsx", "prod-news"], ["src/components/ContactSection.tsx", "prod-contact"]]) {
     const { default: Comp } = await bundle(entry, name, prod)
     const html = render(Comp)
-    for (const s of ["0705 038 679", "0743 682 700", "0721 700 393", "info@jolumachineries.com", "Tractors Sold", "Happy Customers", "24/7 Support", "within 24 hours", "feature on KTN", "Richard Nyango", "Faith Cherotich", "Equity Bank Representative", "Key Client Testimonial", "Thome", "KFA Building", "Quickfill", "Find Us"]) assert.ok(!html.includes(s), `${entry}: pending "${s}" visible in production`)
+    for (const s of ["0705 038 679", "0743 682 700", "0721 700 393", "info@jolumachineries.com", "Tractors Sold", "Happy Customers", "24/7 Support", "within 24 hours", "feature on KTN", "Richard Nyango", "Faith Cherotich", "Equity Bank Representative", "Key Client Testimonial", "Head Office – Thome", "Thome, Nairobi, Kenya", "KFA Building", "Quickfill", "Find Us"]) assert.ok(!html.includes(s), `${entry}: pending "${s}" visible in production`)
     assert.doesNotMatch(html, /href="(undefined|null|)[?"]/, `${entry}: broken link in production`)
   }
   const src = fs.readFileSync(path.join(ROOT, "vite.config.ts"), "utf8") + fs.readFileSync(path.join(ROOT, "scripts/prerender.mjs"), "utf8")
