@@ -19,6 +19,8 @@ import {
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { emails, locations, mailHref, visible } from "@/config/business";
+import RegistryLink from "@/components/RegistryLink";
 
 // Verified on the official JOLU Group channel (@jolugroupltd, Live tab):
 // "JOLU GROUP NAKURU REGIONAL OFFICE & SHOW ROOM---OFFICIAL LAUNCH",
@@ -45,26 +47,9 @@ const speakerVideoUrl = (name: string): string | null => {
 };
 
 const NakuruLaunch: React.FC = () => {
-  const metaTitle = "Jolu Group Nakuru Regional Offices & Showroom Grand Launch";
-  const metaDescription =
-    "Jolu Group officially launches its Nakuru Regional Offices and Showroom in Nakuru, marking a major milestone in regional expansion.";
+  // Page title/description come from src/seo/routes.ts (M2-SEO-01).
 
   const [showScroll, setShowScroll] = useState(false);
-
-  useEffect(() => {
-    document.title = metaTitle;
-    let meta = document.querySelector(
-      'meta[name="description"]'
-    ) as HTMLMetaElement | null;
-
-    if (!meta) {
-      meta = document.createElement("meta");
-      meta.name = "description";
-      document.head.appendChild(meta);
-    }
-
-    meta.content = metaDescription;
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => setShowScroll(window.scrollY > 300);
@@ -190,10 +175,13 @@ const NakuruLaunch: React.FC = () => {
                   alt="Jolu Group Nakuru showroom"
                   className="w-full rounded-xl object-cover shadow-lg"
                 />
-                <figcaption className="text-sm text-muted-foreground mt-2">
-                  Nakuru Regional Offices and Showroom — opposite Nakuru
-                  Athletics Club, along West Road.
-                </figcaption>
+                {/* The office address is the pending C7 claim location.nakuru; production (strict) omits the caption. */}
+                {visible(locations.nakuru) && (
+                  <figcaption className="text-sm text-muted-foreground mt-2">
+                    Nakuru Regional Offices and Showroom — opposite Nakuru
+                    Athletics Club, along West Road.
+                  </figcaption>
+                )}
               </figure>
 
               {/* Speeches */}
@@ -435,14 +423,14 @@ const NakuruLaunch: React.FC = () => {
                 <Button className="btn-quote">Request a Quote</Button>
               </Link>
 
-              <a href="mailto:info@jolumachineries.com">
+              <RegistryLink href={mailHref(visible(emails.general))}>
                 <Button
                   variant="outline"
                   className="border-primary-foreground text-primary-foreground bg-primary-foreground text-primary"
                 >
                   Email Us
                 </Button>
-              </a>
+              </RegistryLink>
             </div>
           </div>
         </section>

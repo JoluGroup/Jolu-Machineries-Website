@@ -1,0 +1,139 @@
+// M2-PRODUCT-VERIFY-01: production shows only manufacturer-verified specifications (node:test). Run: npm test
+import assert from "node:assert/strict"
+import fs from "node:fs"
+import path from "node:path"
+import test from "node:test"
+import { fileURLToPath, pathToFileURL } from "node:url"
+import { build } from "esbuild"
+import React from "react"
+import { renderToStaticMarkup } from "react-dom/server"
+import { MemoryRouter, Route, Routes } from "react-router-dom"
+
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
+async function bundle(entry, name, env) {
+  const cache = path.join(ROOT, "node_modules/.cache"); fs.mkdirSync(cache, { recursive: true })
+  const outfile = path.join(cache, `${name}.mjs`)
+  await build({
+    entryPoints: [path.join(ROOT, entry)], outfile, bundle: true, format: "esm", platform: "node", jsx: "automatic",
+    external: ["react", "react-dom", "react-dom/server", "react-router-dom", "react/jsx-runtime"],
+    alias: { "@": path.join(ROOT, "src") }, mainFields: ["module", "main"], conditions: ["module", "import"],
+    loader: { ".png": "dataurl", ".jpg": "dataurl", ".jpeg": "dataurl", ".webp": "dataurl", ".svg": "dataurl", ".json": "json" },
+    define: { "import.meta.env.BASE_URL": '"/"', "import.meta.env.DEV": "false", "import.meta.env.VITE_API_BASE": '""', "import.meta.env.VITE_DEPLOY_ENV": JSON.stringify(env) }, logLevel: "silent",
+  })
+  return import(pathToFileURL(outfile).href + "?t=" + Date.now())
+}
+const prod = await bundle("src/data/spec-verification.ts", "specs-prod", "production")
+const { products } = await bundle("src/data/products.ts", "specs-products", "production")
+const evidence = [...JSON.parse(fs.readFileSync(path.join(ROOT, "../docs/m2-products/tractors.json"))), ...JSON.parse(fs.readFileSync(path.join(ROOT, "../docs/m2-products/harvesters-implements.json")))]
+
+test("every product and every published spec has a verification status backed by the evidence files", () => {
+  assert.equal(Object.keys(prod.SPEC_STATUS).length, 18)
+  for (const p of products) {
+    const st = prod.SPEC_STATUS[p.slug]; assert.ok(st, p.slug)
+    for (const k of p.keySpecs ?? []) assert.ok(st.keySpecs[k.label], `${p.slug} key ${k.label}`)
+    for (const r of p.specTable?.rows ?? []) assert.ok(st.table[r[0]], `${p.slug} row ${r[0]}`)
+  }
+  for (const r of evidence.filter((r) => r.status === "VERIFIED")) assert.match(r.source_url ?? "", /^https:\/\//, `${r.slug} ${r.spec_label} verified without a source`)
+})
+
+test("strict mode withholds every non-publishable value; previews keep everything for owner review", () => {
+  for (const p of products) {
+    const s = prod.shownSpecs(p, true); const st = prod.SPEC_STATUS[p.slug]
+    for (const k of s.keySpecs) assert.ok(prod.isPublishable(st.keySpecs[k.label]), `${p.slug} ${k.label}`)
+    for (const r of s.specTable?.rows ?? []) assert.ok(prod.isPublishable(st.table[r[0]]), `${p.slug} ${r[0]}`)
+    const all = prod.shownSpecs(p, false)
+    assert.equal(all.keySpecs.length, p.keySpecs?.length ?? 0)
+  }
+  // Known manufacturer conflicts never reach production.
+  const te = products.find((p) => p.slug === "zoomlion-te100-combine-harvester")
+  assert.ok(!JSON.stringify(prod.shownSpecs(te, true)).includes("7230"), "TE100 weight conflicts with Zoomlion (7300 kg)")
+  const rn = products.find((p) => p.slug === "zoomlion-rn904")
+  assert.equal(prod.shownSpecs(rn, true).keySpecs.length, 0, "RN904/1104 has no manufacturer source yet")
+  assert.equal(prod.shownSpecs(rn, true).withheld, true)
+  const pg = products.find((p) => p.slug === "zoomlion-pg2004")
+  // M2-RC-FINAL-04: values resting only on the dealer-hosted PG brochure stay withheld until the owner accepts the source.
+  const pgShown = prod.shownSpecs(pg, true)
+  assert.equal(pgShown.withheld, true)
+  assert.deepEqual(pgShown.keySpecs.map((k) => k.label), ["Horse Power"], "only the official-page horsepower is shown")
+  assert.ok(!JSON.stringify(pgShown).includes("7272"), "brochure-only weight withheld")
+})
+
+test("production product page and homepage cards render no withheld value", async () => {
+  const { default: ProductDetail } = await bundle("src/pages/ProductDetail.tsx", "specs-detail-prod", "production")
+  const html = renderToStaticMarkup(React.createElement(MemoryRouter, { initialEntries: ["/products/zoomlion-te100-combine-harvester"] },
+    React.createElement(Routes, null, React.createElement(Route, { path: "/products/:slug", element: React.createElement(ProductDetail) }))))
+  assert.ok(html.includes("Zoomlion TE100"), "page rendered")
+  for (const v of ["7230", "3.2 m", "52 L/s", "540/70R24"]) assert.ok(!html.includes(v), `TE100 conflicting value ${v} shown in production`)
+  assert.ok(html.includes("being confirmed with the manufacturer"))
+  const cards = prod.gateCardSpecs([{ slug: "zoomlion-rc904-1104", horsepower: "90–110 HP", features: ["16F+8R Gearbox", "Full Hydraulic Steering"] }, { slug: "zoomlion-pg2004", horsepower: "200 HP", features: [] }], products, true)
+  assert.equal(cards[0].horsepower, undefined, "unverified RC904 power hidden on the card")
+  assert.deepEqual(cards[0].features, ["Full Hydraulic Steering"], "numeric feature hidden, qualitative kept")
+})
+
+test("strict mode also gates product copy: descriptions, advantages and the catalogue list", async () => {
+  const { default: ProductDetail } = await bundle("src/pages/ProductDetail.tsx", "specs-detail-prod2", "production")
+  const page = (slug) => renderToStaticMarkup(React.createElement(MemoryRouter, { initialEntries: [`/products/${slug}`] },
+    React.createElement(Routes, null, React.createElement(Route, { path: "/products/:slug", element: React.createElement(ProductDetail) }))))
+  const rs = page("zoomlion-rs1304-1604")
+  for (const v of ["28200", "100L/min", "37%", "920", "partially synchronized"]) assert.ok(!rs.toLowerCase().includes(v.toLowerCase()), `RS1304 copy leaks ${v}`)
+  const zc = page("zc123s-combine-harvester")
+  assert.ok(!zc.includes("220L") && !/Xinchai/i.test(zc), "ZC123S conflicting fuel tank / unsupported engine claim")
+  for (const [slug, v] of [["zl105-combine-harvester", "660"], ["3-disk-plough", "70–90"], ["zoomlion-pl2304", "European standards"]]) assert.ok(!page(slug).includes(v), `${slug} copy leaks ${v}`)
+  const { default: ProductList } = await bundle("src/pages/ProductList.tsx", "specs-list-prod", "production")
+  const list = renderToStaticMarkup(React.createElement(MemoryRouter, null, React.createElement(ProductList)))
+  for (const v of ["300hp", "70–90", "World's top", "World&#x27;s top"]) assert.ok(!list.includes(v), `catalogue list leaks ${v}`)
+  const { default: PreviewDetail } = await bundle("src/pages/ProductDetail.tsx", "specs-detail-preview", "preview")
+  const pv = renderToStaticMarkup(React.createElement(MemoryRouter, { initialEntries: ["/products/zoomlion-rs1304-1604"] },
+    React.createElement(Routes, null, React.createElement(Route, { path: "/products/:slug", element: React.createElement(PreviewDetail) }))))
+  assert.ok(pv.includes("28200"), "previews keep the published copy for owner review")
+})
+
+test("publishable statuses rest on official Zoomlion sources; sources awaiting owner acceptance are withheld", () => {
+  const OFFICIAL = /^https:\/\/(en-product\.zoomlion\.com|en\.zoomlion-ag\.com|www\.zoomlion\.com)\//
+  for (const r of evidence.filter((r) => r.status === "VERIFIED" || r.status === "CONFIGURATION-DEPENDENT")) {
+    if (r.source_acceptance === "pending-owner") {
+      const st = prod.SPEC_STATUS[r.slug]
+      const s = st.keySpecs[r.spec_label] ?? st.table[r.spec_label]
+      assert.equal(s, "SOURCE PENDING ACCEPTANCE", `${r.slug} ${r.spec_label} must be withheld until the source is accepted`)
+      continue
+    }
+    assert.ok(OFFICIAL.test(r.source_url ?? ""), `${r.slug} ${r.spec_label}: ${r.source_url}`)
+  }
+  for (const [slug, st] of Object.entries(prod.SPEC_STATUS)) for (const v of [...Object.values(st.keySpecs), ...Object.values(st.table)]) {
+    if (v === "SOURCE PENDING ACCEPTANCE") assert.equal(prod.isPublishable(v), false, slug)
+  }
+  assert.equal(prod.SPEC_STATUS["zoomlion-dv3504-wheeled-tractor"].keySpecs["Horse Power"], "SOURCE UNAVAILABLE")
+  assert.equal(prod.SPEC_STATUS["zoomlion-pg2004"].keySpecs["Weight"], "SOURCE PENDING ACCEPTANCE")
+})
+
+test("M2-RC-FINAL-04: PG2004 brochure-only values never render in production (page and homepage card)", async () => {
+  const { default: ProductDetail } = await bundle("src/pages/ProductDetail.tsx", "specs-detail-pg-prod", "production")
+  const html = renderToStaticMarkup(React.createElement(MemoryRouter, { initialEntries: ["/products/zoomlion-pg2004"] },
+    React.createElement(Routes, null, React.createElement(Route, { path: "/products/:slug", element: React.createElement(ProductDetail) }))))
+  assert.ok(html.includes("Zoomlion PG2004"), "page rendered")
+  for (const v of ["7272", "147.5", "48F+24R", "5482", "2858", "420/85R30", "90 kN", "25%"]) assert.ok(!html.includes(v), `PG2004 brochure-only value ${v} in production`)
+  const src = fs.readFileSync(path.join(ROOT, "src/components/ProductsSection.tsx"), "utf8")
+  const block = src.slice(src.indexOf('slug: "zoomlion-pg2004"'), src.indexOf("badge:", src.indexOf('slug: "zoomlion-pg2004"')))
+  const features = [...block.matchAll(/"([^"]+)"/g)].map((m) => m[1]).filter((f) => f !== "zoomlion-pg2004" && !/^(tractors|PG2004|ZOOMLION)/.test(f))
+  const hp = block.match(/horsepower:\s*"([^"]+)"/)?.[1]
+  const [card] = prod.gateCardSpecs([{ slug: "zoomlion-pg2004", horsepower: hp, features }], products, true)
+  assert.ok(!card.features.some((f) => /48F\+24R/.test(f)), "card drops the brochure-only gear ratio")
+})
+
+test("M2-CLOSEOUT-05: PG2004 descriptive claims resting only on the unapproved brochure are withheld in production", async () => {
+  const render = async (env) => {
+    const { default: ProductDetail } = await bundle("src/pages/ProductDetail.tsx", `specs-pg-desc-${env}`, env)
+    return renderToStaticMarkup(React.createElement(MemoryRouter, { initialEntries: ["/products/zoomlion-pg2004"] },
+      React.createElement(Routes, null, React.createElement(Route, { path: "/products/:slug", element: React.createElement(ProductDetail) }))))
+  }
+  const html = await render("production")
+  for (const v of ["Power-Beyond", "GPS", "unmanned", "Automatic PTO", "load sensing", "self-diagnosis", "without clutch pedal", "top global", "Brand-new"]) assert.ok(!html.includes(v), `PG2004 unsupported claim "${v}" in production`)
+  for (const v of ["High-pressure common rail turbocharged engine", "Its modern gearbox and electro-hydraulic integration"]) assert.ok(html.includes(v), `independently supported "${v}" kept`)
+  const pv = await render("preview")
+  assert.ok(pv.includes("Optional GPS navigation and unmanned driving"), "previews keep the published copy for owner review")
+  const [card] = prod.gateCardSpecs([{ slug: "zoomlion-pg2004", horsepower: "200 HP", features: ["48F+24R Power Shift Gears", "High-pressure Turbocharged Engine", "Smart Electro-Hydraulic Control", "Automatic PTO & GPS Option"] }], products, true)
+  assert.deepEqual(card.features, ["High-pressure Turbocharged Engine", "Smart Electro-Hydraulic Control"])
+  assert.equal(card.horsepower, "200 HP")
+  const [rs] = prod.gateCardSpecs([{ slug: "zoomlion-rs1304-1604", features: ["Optional GPS-ready cab"] }], products, true)
+  assert.deepEqual(rs.features, ["Optional GPS-ready cab"], "the PG2004 rule is product-scoped")
+})

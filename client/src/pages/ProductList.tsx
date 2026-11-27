@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import ResponsiveImage from "@/components/ResponsiveImage";
 import { products, type Product } from "@/data/products";
 import { groupProducts, productPath } from "@/data/catalogue";
+import { gateCopy } from "@/data/spec-verification";
 import { Link } from "react-router-dom";
 
 const ProductList = () => {
@@ -30,7 +31,7 @@ const ProductList = () => {
       </div>
       <div className="flex flex-1 flex-col p-4">
         <h3 className="text-xl font-semibold leading-snug">{product.name}</h3>
-        <p className="mt-2 mb-4 text-sm text-gray-600 line-clamp-3">{product.description}</p>
+        <p className="mt-2 mb-4 text-sm text-gray-600 line-clamp-3">{gateCopy(product.description, product)}</p>
         <Link
           to={productPath(product.slug)}
           className="mt-auto inline-flex items-center gap-1 font-medium text-red-600 hover:text-red-700 hover:underline"
@@ -46,6 +47,8 @@ const ProductList = () => {
     <>
       <Header />
       <main>
+        {/* One h1 per route (M2-SEO-01); visually hidden so the established design is unchanged. */}
+        <h1 className="sr-only">Zoomlion Tractors, Harvesters &amp; Farm Implements</h1>
         <section className="p-8 space-y-12">
           {groups.map((group) => (
             <div key={group.category}>

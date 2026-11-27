@@ -1,16 +1,24 @@
 import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin, ArrowUp } from "lucide-react";
+import { emails, locations, manufacturer, phones, social, visible, waHref } from "@/config/business";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { FaTiktok, FaWhatsapp } from "react-icons/fa";
 import { useLocation, Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { api } from "@/lib/api";
+import RegistryLink from "@/components/RegistryLink";
+import { CookieSettingsButton } from "@/privacy/ConsentBanner";
+
+const footerLocations = [locations.nairobi, locations.nakuru, locations.migoriFooter].map((c) => visible(c)).filter((l): l is NonNullable<typeof l> => Boolean(l));
 
 const Footer = () => {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
 
   const [email, setEmail] = useState("");
+  const subscribing = useRef(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -32,35 +40,37 @@ const Footer = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) return setMessage("⚠️ Please enter a valid email.");
 
+    if (subscribing.current) return;
+    subscribing.current = true;
+    setLoading(true);
+    setMessage("");
+    let outcome: Awaited<ReturnType<typeof api.subscribe>>;
     try {
-      setLoading(true);
-      setMessage("");
-
-      const API_BASE = import.meta.env.VITE_API_BASE;
-
-      const res = await fetch(`${API_BASE}/api/subscribe`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await res.json().catch(() => {
-        throw new Error("Invalid JSON response from server");
-      });
-
-      if (!res.ok || !data.ok) throw new Error(data?.message || "Subscription failed");
-
-      if (data.status === "already_subscribed") {
-        setMessage("ℹ️ You’re already subscribed with this email.");
-      } else {
-        setMessage("✅ Thank you for subscribing!");
-      }
-      setEmail("");
-    } catch (err) {
-      console.error(err);
-      setMessage("⚠️ Could not subscribe right now. Please try again later.");
+      outcome = await api.subscribe({ email });
     } finally {
+      subscribing.current = false;
       setLoading(false);
+    }
+    switch (outcome.kind) {
+      case "received":
+        setMessage("✅ Thank you for subscribing!");
+        setEmail("");
+        break;
+      case "duplicate":
+        setMessage("ℹ️ You’re already subscribed with this email.");
+        setEmail("");
+        break;
+      case "invalid":
+        setMessage("⚠️ Please enter a valid email.");
+        break;
+      case "rate_limited":
+        setMessage("⚠️ Too many attempts. Please wait a minute and try again.");
+        break;
+      case "network":
+        setMessage("⚠️ We couldn't reach our server. Please check your connection and try again.");
+        break;
+      default:
+        setMessage("⚠️ Could not subscribe right now. Please try again later.");
     }
   };
 
@@ -107,49 +117,42 @@ const Footer = () => {
                 />
               </Link>
               <p className="text-white/80 leading-relaxed mb-4">
-                Kenya's trusted partner for premium Zoomlion agricultural machinery.
-                Empowering farmers with world-class equipment and exceptional service for over 5 years.
+                {manufacturer.neutralDescription}
               </p>
             </div>
 
             <div className="space-y-3">
-              <div className="flex items-center space-x-3">
-                <Phone size={18} className="text-primary-glow shrink-0" />
-                <span className="text-white/80">0705 038 679</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Mail size={18} className="text-primary-glow shrink-0" />
-                <span className="text-white/80">info@jolumachineries.com</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Phone size={18} className="text-primary-glow shrink-0" />
-                <span className="text-white/80">After-Sales Department: 0721 700 393</span>
-              </div>
+              {visible(phones.primaryLocalDisplay) && (
+                <div className="flex items-center space-x-3">
+                  <Phone size={18} className="text-primary-glow shrink-0" />
+                  <span className="text-white/80">{visible(phones.primaryLocalDisplay)}</span>
+                </div>
+              )}
+              {visible(emails.general) && (
+                <div className="flex items-center space-x-3">
+                  <Mail size={18} className="text-primary-glow shrink-0" />
+                  <span className="text-white/80">{visible(emails.general)}</span>
+                </div>
+              )}
+              {visible(phones.afterSales) && (
+                <div className="flex items-center space-x-3">
+                  <Phone size={18} className="text-primary-glow shrink-0" />
+                  <span className="text-white/80">After-Sales Department: {visible(phones.afterSales)}</span>
+                </div>
+              )}
 
-              <div className="flex items-start space-x-3">
-                <MapPin size={18} className="text-primary-glow mt-0.5 shrink-0" />
-                <div className="leading-snug">
-                  <p className="font-semibold text-white">Nairobi</p>
-                  <p className="text-sm text-white/70">Head Office - Thome, Nairobi, Kenya</p>
+              {footerLocations.map((loc) => (
+                <div key={loc.name} className="flex items-start space-x-3">
+                  <MapPin size={18} className="text-primary-glow mt-0.5 shrink-0" />
+                  <div className="leading-snug">
+                    <p className="font-semibold text-white">{loc.name === "Nairobi" ? loc.name : `${loc.name} — ${loc.label}`}</p>
+                    <p className="text-sm text-white/70">{loc.name === "Nairobi" ? `${loc.label} - ${loc.address}` : loc.address}</p>
+                    {loc.name === "Nakuru" && visible(phones.secondaryLocalDisplay) && (
+                      <p className="text-sm text-white/70">{visible(phones.secondaryLocalDisplay)}</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <MapPin size={18} className="text-primary-glow mt-0.5 shrink-0" />
-                <div className="leading-snug">
-                  <p className="font-semibold text-white">Nakuru — Regional Office & Showroom</p>
-                  <p className="text-sm text-white/70">
-                    Along West Road, Opposite Nakuru Athletics, Next to Evans Hospital, Nakuru, Kenya
-                  </p>
-                  <p className="text-sm text-white/70">0743 682 700</p>
-                </div>
-              </div>
-              <div className="flex items-start space-x-3">
-                <MapPin size={18} className="text-primary-glow mt-0.5 shrink-0" />
-                <div className="leading-snug">
-                  <p className="font-semibold text-white">Migori — Branch Office</p>
-                  <p className="text-sm text-white/70">Near KENGAS Rongo, Migori, Kenya</p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
@@ -222,8 +225,8 @@ const Footer = () => {
           <div>
             <h4 className="text-xl font-semibold mb-6">Stay Updated</h4>
             <p className="text-white/80 mb-4">
-              Subscribe to our newsletter for the latest agricultural machinery updates,
-              farming tips, and exclusive offers.
+              Subscribe to our newsletter for the latest agricultural machinery updates
+              and farming tips.
             </p>
 
             <div className="space-y-3">
@@ -261,42 +264,44 @@ const Footer = () => {
               <div>
                 <p className="text-white/80 mb-3">Follow us on social media:</p>
                 <div className="flex space-x-3">
-                  <a
-                    href="https://www.facebook.com/search/top?q=jolu%20group"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Visit our Facebook page"
-                    className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-glow transition-colors duration-200"
-                  >
-                    <Facebook size={18} />
-                  </a>
-                  <a
-                    href="https://www.instagram.com/jolu_machineries/"
+                  {visible(social.facebook) && (
+                    <a
+                      href={visible(social.facebook)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Visit our Facebook page"
+                      className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-glow transition-colors duration-200"
+                    >
+                      <Facebook size={18} />
+                    </a>
+                  )}
+                  <RegistryLink
+                    href={visible(social.instagram)}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Visit our Instagram page"
                     className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-glow transition-colors duration-200"
                   >
                     <Instagram size={18} />
-                  </a>
-                  <a
-                    href="https://www.tiktok.com/@jolumachineries"
+                  </RegistryLink>
+                  <RegistryLink
+                    href={visible(social.tiktok)}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Visit our TikTok page"
                     className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-glow transition-colors duration-200"
                   >
                     <FaTiktok size={18} />
-                  </a>
-                  <a
-                    href="https://wa.me/254705038679"
+                  </RegistryLink>
+                  <RegistryLink
+                    href={waHref(visible(phones.primary))}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Chat with us on WhatsApp"
                     className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary-glow transition-colors duration-200"
                   >
                     <FaWhatsapp size={18} />
-                  </a>
+                  </RegistryLink>
                 </div>
               </div>
             </div>
@@ -309,6 +314,7 @@ const Footer = () => {
           <div className="text-white/60 text-sm">
             © {new Date().getFullYear()} Jolu Machineries. All rights reserved.
           </div>
+          <CookieSettingsButton className="md:ml-6 text-white/60 text-sm underline-offset-4 hover:text-white hover:underline" />
         </div>
       </div>
     </footer>

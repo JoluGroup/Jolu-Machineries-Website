@@ -4,6 +4,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import YouTubeEmbed from "@/components/YouTubeEmbed";
+import { media, visible } from "@/config/business";
 
 const KTNInterview = () => {
   return (
@@ -33,6 +35,7 @@ const KTNInterview = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12 flex justify-center">
         <div className="w-full max-w-3xl text-center">
+          {visible(media.ktnFeature) && (
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -40,10 +43,9 @@ const KTNInterview = () => {
             transition={{ duration: 0.8 }}
             className="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-10 leading-relaxed"
           >
-            Watch our exclusive feature on <span className="font-semibold">KTN</span>, 
-            where we shared insights about modern agricultural solutions and how{" "}
-            <span className="font-semibold">Jolu Machineries</span> is empowering farmers across Kenya.
+            {visible(media.ktnFeature)}
           </motion.p>
+          )}
 
           {/* Responsive embedded video */}
           <motion.div
@@ -53,15 +55,11 @@ const KTNInterview = () => {
             transition={{ duration: 0.8 }}
             className="relative w-full pb-[56.25%] mb-12 rounded-2xl overflow-hidden"
           >
-            <iframe
+            <YouTubeEmbed
               className="absolute top-0 left-0 w-full h-full"
-              src="https://www.youtube.com/embed/-jVldmfO1j8"
+              videoId="-jVldmfO1j8"
               title="Farm Mechanization || Farm Kenya"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            ></iframe>
+            />
           </motion.div>
 
           <motion.p
@@ -99,7 +97,7 @@ const KTNInterview = () => {
                 },
                 {
                   src: "/lovable-uploads/ktn/interview2.jpeg",
-                  alt: "Group photo after the KTN feature",
+                  alt: "Group photo after the KTN interview",
                 },
                 {
                   src: "/lovable-uploads/ktn/interview4.jpeg",

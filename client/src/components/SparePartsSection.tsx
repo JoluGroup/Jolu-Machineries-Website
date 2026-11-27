@@ -7,9 +7,7 @@ import {
   Zap,
   Disc3,
   PackageSearch,
-  CheckCircle2,
-  Clock,
-  XCircle,
+  HelpCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,8 +21,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import QuoteDrawer from "@/components/QuoteDrawer";
+import { spareParts } from "@/config/business";
 
-type Stock = "in-stock" | "low-stock" | "order";
 
 type SparePart = {
   id: number;
@@ -32,7 +30,6 @@ type SparePart = {
   partNumber: string;
   category: string;
   compatibleModels: string[];
-  stock: Stock;
   price?: string;
 };
 
@@ -52,7 +49,6 @@ const parts: SparePart[] = [
     partNumber: "ZL-EN-10425",
     category: "engine",
     compatibleModels: ["RC904/1104", "RN904/1104", "RS1304/1604"],
-    stock: "in-stock",
   },
   {
     id: 2,
@@ -60,7 +56,6 @@ const parts: SparePart[] = [
     partNumber: "ZL-EN-20871",
     category: "engine",
     compatibleModels: ["RS1304/1604", "RG1804/2004", "PL2304"],
-    stock: "low-stock",
   },
   {
     id: 3,
@@ -68,7 +63,6 @@ const parts: SparePart[] = [
     partNumber: "ZL-EN-33019",
     category: "engine",
     compatibleModels: ["RK504/704", "RD504"],
-    stock: "in-stock",
   },
   {
     id: 4,
@@ -76,7 +70,6 @@ const parts: SparePart[] = [
     partNumber: "ZL-TR-40562",
     category: "transmission",
     compatibleModels: ["RK504/704", "RC904/1104", "RN904/1104"],
-    stock: "in-stock",
   },
   {
     id: 5,
@@ -84,7 +77,6 @@ const parts: SparePart[] = [
     partNumber: "ZL-TR-41288",
     category: "transmission",
     compatibleModels: ["RK504/704", "RD504"],
-    stock: "order",
   },
   {
     id: 6,
@@ -92,7 +84,6 @@ const parts: SparePart[] = [
     partNumber: "ZL-TR-45774",
     category: "transmission",
     compatibleModels: ["RS1304/1604", "RG1804/2004"],
-    stock: "low-stock",
   },
   {
     id: 7,
@@ -100,7 +91,6 @@ const parts: SparePart[] = [
     partNumber: "ZL-HY-50913",
     category: "hydraulics",
     compatibleModels: ["RC904/1104", "RS1304/1604", "RG1804/2004"],
-    stock: "in-stock",
   },
   {
     id: 8,
@@ -108,7 +98,6 @@ const parts: SparePart[] = [
     partNumber: "ZL-HY-52640",
     category: "hydraulics",
     compatibleModels: ["RN904/1104", "PL2304", "PG2004"],
-    stock: "in-stock",
   },
   {
     id: 9,
@@ -116,7 +105,6 @@ const parts: SparePart[] = [
     partNumber: "ZL-HY-55127",
     category: "hydraulics",
     compatibleModels: ["RG1804/2004", "DV3504"],
-    stock: "order",
   },
   {
     id: 10,
@@ -124,7 +112,6 @@ const parts: SparePart[] = [
     partNumber: "ZL-EL-60338",
     category: "electrical",
     compatibleModels: ["RK504/704", "RC904/1104", "RN904/1104"],
-    stock: "in-stock",
   },
   {
     id: 11,
@@ -132,7 +119,6 @@ const parts: SparePart[] = [
     partNumber: "ZL-EL-61402",
     category: "electrical",
     compatibleModels: ["RS1304/1604", "PL2304", "PG2004"],
-    stock: "low-stock",
   },
   {
     id: 12,
@@ -140,7 +126,6 @@ const parts: SparePart[] = [
     partNumber: "ZL-EL-63915",
     category: "electrical",
     compatibleModels: ["DV3504", "PG2004"],
-    stock: "order",
   },
   {
     id: 13,
@@ -148,7 +133,6 @@ const parts: SparePart[] = [
     partNumber: "ZL-TU-70551",
     category: "tires",
     compatibleModels: ["RC904/1104", "RS1304/1604", "RG1804/2004"],
-    stock: "in-stock",
   },
   {
     id: 14,
@@ -156,7 +140,6 @@ const parts: SparePart[] = [
     partNumber: "ZL-TU-72284",
     category: "tires",
     compatibleModels: ["RK504/704", "RD504", "RC904/1104"],
-    stock: "in-stock",
   },
   {
     id: 15,
@@ -164,29 +147,13 @@ const parts: SparePart[] = [
     partNumber: "ZL-TU-74630",
     category: "tires",
     compatibleModels: ["PL2304", "DV3504"],
-    stock: "low-stock",
   },
 ];
 
-const stockMeta: Record<
-  Stock,
-  { label: string; icon: typeof CheckCircle2; className: string }
-> = {
-  "in-stock": {
-    label: "In Stock",
-    icon: CheckCircle2,
-    className: "bg-primary/10 text-primary border-primary/20",
-  },
-  "low-stock": {
-    label: "Low Stock",
-    icon: Clock,
-    className: "bg-accent/15 text-accent-foreground border-accent/30",
-  },
-  order: {
-    label: "Order on Request",
-    icon: XCircle,
-    className: "bg-muted text-muted-foreground border-border",
-  },
+const availabilityMeta = {
+  label: spareParts.availabilityFallback,
+  icon: HelpCircle,
+  className: "bg-muted text-muted-foreground border-border",
 };
 
 const SparePartsSection = () => {
@@ -221,13 +188,13 @@ const SparePartsSection = () => {
         {/* Heading */}
         <div className="text-center mb-12">
           <Badge className="mb-4 bg-primary/10 text-primary hover:bg-primary/20">
-            Genuine Spare Parts
+            Spare Parts
           </Badge>
           <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
             Spare Parts &amp; Components
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Genuine OEM parts for your ZOOMLION machinery. Search by part number or filter by
+            Spare parts for your ZOOMLION machinery. Search by part number or filter by
             your tractor model to find the exact fit.
           </p>
         </div>
@@ -305,7 +272,8 @@ const SparePartsSection = () => {
         {filteredParts.length > 0 ? (
           <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
             {filteredParts.map((part) => {
-              const stock = stockMeta[part.stock];
+              // No static stock levels exist (registry C14): availability is confirmed on enquiry.
+              const stock = availabilityMeta;
               const StockIcon = stock.icon;
               return (
                 <Card key={part.id} className="product-card group flex flex-col">

@@ -14,47 +14,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { emails, mailHref, newsTestimonials, visible } from "@/config/business";
+import RegistryLink from "@/components/RegistryLink";
 
 const News: React.FC = () => {
-  // SEO metadata
-  const metaTitle = "Jolu Group of Companies Launch — Aug. 23, 2025";
-  const metaDescription =
-    "The Jolu Group of Companies officially launched on Aug. 23, 2025 at Lowland Estate, Thome, Nairobi — unveiling Jolu Machineries, Jolu Group Security, and partnerships with Equity Bank, Kingdom Bank, and Britam Insurance.";
+  // Page title/description/Open Graph come from src/seo/routes.ts (M2-SEO-01).
 
     const [showScroll, setShowScroll] = useState(false);
 
 
-// SEO metadata effect
-useEffect(() => {
-  document.title = metaTitle;
-  let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
-  if (!meta) {
-    meta = document.createElement("meta");
-    meta.name = "description";
-    document.head.appendChild(meta);
-  }
-  meta.content = metaDescription;
-
-  const ogTitle = document.querySelector('meta[property="og:title"]') as HTMLMetaElement | null;
-  if (!ogTitle) {
-    const t = document.createElement("meta");
-    t.setAttribute("property", "og:title");
-    t.content = metaTitle;
-    document.head.appendChild(t);
-  } else {
-    ogTitle.content = metaTitle;
-  }
-
-  const ogDesc = document.querySelector('meta[property="og:description"]') as HTMLMetaElement | null;
-  if (!ogDesc) {
-    const d = document.createElement("meta");
-    d.setAttribute("property", "og:description");
-    d.content = metaDescription;
-    document.head.appendChild(d);
-  } else {
-    ogDesc.content = metaDescription;
-  }
-}, [metaTitle, metaDescription]);
 
 // Scroll detection effect
 useEffect(() => {
@@ -111,7 +79,7 @@ useEffect(() => {
       name: "Pastor Caroline",
       title: "Opening Prayer & Dedication Service",
       image: "/lovable-uploads/event/caroline.jpg",
-      video: "https://drive.google.com/file/d/FILE_ID_CAROLINE_VIDEO/view?usp=sharing",
+      // Video link withheld: the published URL contained an unfilled placeholder file id. Owner to supply the real link.
     },
   ];
 
@@ -216,7 +184,9 @@ useEffect(() => {
               </div>
 
 
-{/* Customer Testimonials */}
+{/* Customer Testimonials: named customers, shown only while the claim is visible (C12; hidden in production until consent is confirmed). */}
+{visible(newsTestimonials) && (
+<>
 <h2 className="text-xl font-semibold mt-6 text-[hsl(var(--primary))]">Customer Testimonials</h2>
 <p className="mb-4">
   Some of our valued clients shared their experiences during the launch event.
@@ -274,6 +244,8 @@ useEffect(() => {
     </div>
   ))}
 </div>
+</>
+)}
 
 
               
@@ -294,11 +266,14 @@ useEffect(() => {
               <p className="mb-4">
                 The event hosted key customers, executives, bank partners, and insurance representatives. Highlights included:
               </p>
+              {/* Attributed partner/client quotes are endorsements: same rule as testimonials (C12). */}
+              {visible(newsTestimonials) && (
               <ul className="mb-4 space-y-2 list-inside">
                 <li>“Partnerships like this drive local development and resilience.” — <em>Equity Bank Representative</em></li>
                 <li>“We are committed to protecting livelihoods and investments.” — <em>Britam Insurance Representative</em></li>
                 <li>“The launch of Jolu Group Security demonstrates vision and responsibility.” — <em>Key Client Testimonial</em></li>
               </ul>
+              )}
 
               {/* Company focus */}
               <h2 className="text-xl font-semibold mt-4 text-[hsl(var(--primary))]">Company focus and direction</h2>
@@ -317,9 +292,9 @@ useEffect(() => {
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 gap-3">
-                <a href="mailto:info@jolumachineries.com,jolumachineries@gmail.com?subject=%20Inquiry%20-%20Jolu%20Machineries" aria-label="Contact jolu machineries">
+                <RegistryLink href={mailHref([visible(emails.general), visible(emails.gmail)], " Inquiry - Jolu Machineries")} aria-label="Contact jolu machineries">
                   <Button size="sm">Email Us</Button>
-                </a>
+                </RegistryLink>
                 <Link to="/quote" aria-label="Request a demo or quote">
                   <Button variant="outline" size="sm">Request a Quote</Button>
                 </Link>

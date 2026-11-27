@@ -48,7 +48,7 @@ The backend server requires environment variables to run correctly.
     ```sh
     cp .env.example .env
     ```
-3.  Open the `.env` file and fill in the required values for your MongoDB and SMTP configurations.
+3.  Open the `.env` file and fill in the required values for MongoDB, Resend and the allowed origins (see `.env.example`).
 
 
 **Edit a file directly in GitHub**
@@ -79,22 +79,44 @@ This project is built with:
 
 This project is configured for deployment on Render.
 
-### Render Deployment
+### Render Deployment (API only)
 
-The `render.yaml` file in this repository is configured to deploy both the client and server. To deploy this project to Render:
+The website is hosted on Vercel. Render hosts **only** the Express API in `server/` (Node 20).
+The `render.yaml` Blueprint defines that single web service; it contains no secrets.
 
-1.  Create a new "Blueprint" service on Render.
-2.  Connect your GitHub repository.
-3.  Render will automatically detect the `render.yaml` file and configure the services.
-4.  You will need to set the following environment variables for the `jolu-machinery-server` service in the Render dashboard:
-    *   `MONGO_URI`
-    *   `MONGO_DB_NAME`
-    *   `SMTP_HOST`
-    *   `SMTP_PORT`
-    *   `SMTP_USER`
-    *   `SMTP_PASS`
-    *   `EMAIL_TO`
-    *   `EMAIL_FROM`
+1.  Settings: root directory `server`, build `npm ci`, start `npm start`, health check `/api/health` (readiness: `/api/ready`).
+2.  Set these environment variables in the Render dashboard (names only here):
+    *   `MONGO_URI`, `MONGO_DB_NAME` (MongoDB Atlas)
+    *   `RESEND_API_KEY`, `EMAIL_FROM` (an address on a Resend-verified domain), `EMAIL_TO`
+    *   `ALLOWED_ORIGINS` (comma-separated exact origins that may call the API; `*` matches one DNS label)
+    *   `NODE_ENV=production`
+3.  In production the server refuses to start and prints which variable names are missing.
+4.  Point the website at the API by setting `VITE_API_BASE` (absolute `https://` URL, no trailing slash) in the Vercel project, then redeploy.
+
+### Reliability behavior (what is and is not guaranteed)
+
+*   **Records first.** Every enquiry is stored before any email is attempted. If email fails the record is kept and the customer gets an honest error (502), never a success message.
+*   **Notification claim.** A record is claimed for sending with one atomic database update that also takes a 60-second lease, so concurrent requests, retries, restarts and multiple processes cannot send for the same record at the same time.
+*   **Provider idempotency.** Every send carries a stable Resend `Idempotency-Key` (`<collection>-<record id>`) with an identical payload. A retry after a timeout or network error therefore does not create a second email **while Resend honors the key (24 hours at the time of writing)**. This is **not** an exactly-once guarantee: "accepted by Resend" is also not "delivered to the inbox".
+*   **Statuses.** `sent` (Resend accepted), `failed` (Resend definitively refused: 4xx), `unknown` (timeout / network error / 5xx / 429: may have been accepted), `sending` (leased).
+*   **Recovery sweep.** Every 5 minutes (first run 30 s after boot) the API re-claims records that are `failed`, `unknown` or stranded in `sending` after a crash or redeploy. It is bounded: at most 5 per collection per run, exponential backoff (1 min doubling to 1 h), at most 6 attempts, and only records younger than 24 h. Anything beyond those limits stays stored and is logged as `notification.needs_manual_review` (a count, no customer data). Safe with several processes because of the lease. While the free Render instance is asleep nothing runs; recovery resumes when it wakes.
+*   **Quotation deduplication.** An identical enquiry (email, phone digits, name, county, area, product interest, message) repeated within 10 minutes of the moment its email was **accepted** returns the existing record (`200`, `duplicate: true`) instead of creating another; after that the same enquiry is a new quote. An unsent record is always reused by an identical retry, whatever its age. Different county, area or message is a different enquiry. This is enforced by a unique partial index (`quotes_active_fingerprint`), not by timing. **Quotes are refused with 503 while that index does not exist** (for example for the first seconds after boot, or if index creation keeps failing), so duplicate protection can never be silently missing. Contact and schedule submissions have no deduplication: a double submit creates two records.
+*   **Known limits.** (1) Customer retries are not capped by the sweep's attempt/age limits (they are bounded only by the rate limiter); a customer retry more than 24 h after the first attempt can send a second email if the first had actually been accepted, because Resend's key has expired. (2) Leases use each process's own clock; clock skew or a send still in flight when its 60 s lease expires could allow a second claim, which only the provider's idempotency key then prevents. (3) The provider call is not aborted on timeout. (4) Records that hit the attempt or age cap are only logged (`notification.needs_manual_review`), there is no alert yet. (5) If an earlier build (commit `3a58e14`) was ever started against a database, it created a unique index `fingerprint_1_windowKey_1` on `quotes`; drop it manually (`db.quotes.dropIndex("fingerprint_1_windowKey_1")`) before running this version, because it would reject a second identical enquiry after the window.
+*   **Readiness.** `/api/ready` checks valid configuration, a MongoDB `ping` (cached 10 s), the required quotes index, and that the email provider is *configured*. It does **not** call Resend: key validity, reachability and sender-domain verification are only discovered by an actual send.
+*   **Startup.** The API keeps retrying the database connection (capped backoff) instead of crash-looping, and an index failure never stops it: it is logged and reported by `/api/ready`.
+*   **Subscribers index.** The unique `email` index on `subscribers` is best effort. If legacy data contains exact duplicate emails it cannot be built; the API still works. To inspect the data read-only, run `MONGO_URI=... MONGO_DB_NAME=... node scripts/audit-subscribers.js` from `server/` (prints duplicate groups, changes nothing; the output contains addresses, keep it private). Resolve duplicates deliberately (keep the oldest record, remove or merge the others after review) and restart; the API retries index creation for about 10 minutes after boot.
+*   **Shutdown.** SIGTERM stops new connections, lets in-flight requests (including an email send) finish, closes the database client, then exits (10 s hard deadline).
+*   **Tests.** `cd server && npm test` (mocked database and mailer; no network, no real email).
+
+### Unsent notification report (read-only)
+
+Quotations, contacts and schedules are always stored before any email is attempted. To see which ones staff have not been emailed about (pending, sending, failed, unknown, or exhausted, meaning 6 attempts used or older than 24 h), run from `server/` with `MONGO_URI` and `MONGO_DB_NAME` set:
+
+    npm run unsent                    # human-readable, oldest first, 50 records per collection
+    npm run unsent -- --json          # machine-readable
+    npm run unsent -- --limit 200     # 1 to 1000
+
+It only reads (`countDocuments` and `find` with a projection). It never updates records, never sends email and never prints names, emails, phone numbers or messages: only record ids, dates, states, attempt counts and failure kinds. Use the id in Atlas to look up the customer. If the database cannot be read it prints a short error (no connection string) and exits 1; missing configuration exits 2. Exhausted records are not retried automatically: contact the customer from the stored record, then correct its status manually. Run it from a machine whose IP is on the Atlas access list.
 
 ## Can I connect a custom domain to my Lovable project?
 

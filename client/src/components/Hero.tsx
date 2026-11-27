@@ -15,6 +15,8 @@ import { useInView } from "@/hooks/use-in-view";
 import { cn } from "@/lib/utils";
 import ResponsiveImage from "@/components/ResponsiveImage";
 import { createSlideNavigator, wrapIndex } from "@/lib/slide-navigation";
+import { phones, stats, visible, waHref } from "@/config/business";
+import RegistryLink from "@/components/RegistryLink";
 
 const heroImage1 = "@/assets/hero/tractor1.jpg";
 const heroImage2 = "@/assets/hero/tractor2.png";
@@ -27,11 +29,9 @@ const Hero = () => {
 
   // Count-up metrics fire once when the stats block scrolls into view.
   const { ref: statsRef, inView: statsInView } = useInView<HTMLDivElement>({ once: true });
-  const heroStats = [
-    { target: 500, label: "Tractors Sold", icon: Tractor },
-    { target: 5, label: "Years Experience", icon: Award },
-    { target: 480, label: "Happy Customers", icon: Users },
-  ];
+  // Owner-supplied figures (registry C10, pending verification); hidden entirely if withheld.
+  const statIcons = [Tractor, Award, Users];
+  const heroStats = (visible(stats.homepage) ?? []).map((s, i) => ({ ...s, icon: statIcons[i % statIcons.length] }));
 
   const heroSlides = [
     {
@@ -43,10 +43,10 @@ const Hero = () => {
       image: heroImage1,
     },
     {
-      title: "Trusted Agricultural Partner",
+      title: "Agricultural Machinery & Support",
       subtitle: "Quality Equipment Since Day One",
       description:
-        "Your reliable source for high-quality agricultural machinery with expert support and genuine spare parts.",
+        "Your reliable source for high-quality agricultural machinery with expert support and spare parts.",
       cta: "Learn More",
       image: heroImage2,
     },
@@ -266,13 +266,13 @@ const Hero = () => {
                 variant="outline"
                 className="bg-transparent text-white border-white/40 hover:bg-white/10 hover:text-white text-lg px-6 sm:px-8 py-3 sm:py-4"
               >
-                <a
-                  href="https://wa.me/254705038679?text=Hello%20Jolu%20Machineries%2C%20I%20would%20like%20to%20inquire%20about%20your%20machinery%20fleet."
+                <RegistryLink
+                  href={waHref(visible(phones.primary), "Hello Jolu Machineries, I would like to inquire about your machinery fleet.")}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Quick WhatsApp Quote
-                </a>
+                </RegistryLink>
               </Button>
             </div>
           </Reveal>
@@ -280,6 +280,7 @@ const Hero = () => {
           {/* Stats Section — count-up on scroll into view */}
           <div
             ref={statsRef}
+            data-reveal=""
             className={cn(
               "grid grid-cols-1 md:grid-cols-3 gap-6 bg-black/40 backdrop-blur-md rounded-2xl p-6 border border-primary-glow/25 transition-all duration-300 ease-out",
               statsInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-[15px]"

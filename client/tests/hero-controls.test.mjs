@@ -8,10 +8,13 @@ import { fileURLToPath } from "node:url"
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 const hero = fs.readFileSync(path.join(ROOT, "src/components/Hero.tsx"), "utf8")
 
-test("homepage statistics are the owner-supplied figures (500 / 5 / 480), labels unchanged", () => {
-  const stats = [...hero.matchAll(/\{\s*target:\s*(\d+),\s*label:\s*"([^"]+)"/g)].map((m) => [m[2], Number(m[1])])
+test("homepage statistics are the owner-supplied figures (500 / 5 / 480), labels unchanged, sourced from the claims registry", () => {
+  // M2-CLAIMS-01 moved the figures into src/config/business.ts (claim C10, pending owner verification).
+  const registry = fs.readFileSync(path.join(ROOT, "src/config/business.ts"), "utf8")
+  const stats = [...registry.matchAll(/\{\s*target:\s*(\d+),\s*label:\s*"([^"]+)"/g)].map((m) => [m[2], Number(m[1])])
   assert.deepEqual(stats, [["Tractors Sold", 500], ["Years Experience", 5], ["Happy Customers", 480]])
-  assert.doesNotMatch(hero, /target:\s*(150|100)\b/, "old figures must not remain")
+  assert.match(hero, /visible\(stats\.homepage\)/, "Hero reads the figures through the registry")
+  assert.doesNotMatch(hero, /target:\s*\d+/, "no hard-coded figures remain in Hero")
 })
 
 test("carousel controls live in normal flow, not absolutely positioned over the content", () => {

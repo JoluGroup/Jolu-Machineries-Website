@@ -1,0 +1,20 @@
+{
+  "product": "Zoomlion PG2004 Wheeled Tractor",
+  "slug": "zoomlion-pg2004",
+  "decision": "M2-CLOSEOUT-05 §3: dealer-hosted PG Series brochure not approved; descriptive claims not supported by another accepted source are withheld from production.",
+  "accepted_source": { "url": "https://en-product.zoomlion.com/product/pro-detail-82.htm", "title": "Products-ZOOMLION (PG2004)", "checked": "2026-11-28" },
+  "claims": [
+    { "text": "Power-Beyond system (advantage, long description)", "official_page": "not stated", "production": "withheld" },
+    { "text": "Brand-new design with intelligent operation", "official_page": "'Intelligent hydraulic system', 'Intelligent 4WD control'; brand-new design not stated", "production": "withheld" },
+    { "text": "Built with top global components and sensors", "official_page": "names ZF chassis and Rexroth valves; 'top global' and sensors not stated", "production": "withheld" },
+    { "text": "High-pressure common rail turbocharged engine / High-pressure Turbocharged Engine", "official_page": "supported: high-pressure common rail, turbocharged intercooled engine", "production": "shown" },
+    { "text": "Power reversing without clutch pedal", "official_page": "power shuttle stated; no-clutch-pedal not stated", "production": "withheld" },
+    { "text": "Electro-hydraulic system with fault self-diagnosis", "official_page": "electro-hydraulic system stated; only a fault alarm interface, no self-diagnosis", "production": "withheld" },
+    { "text": "Smart Electro-Hydraulic Control / electro-hydraulic integration", "official_page": "supported: electro-hydraulic system, electronic hitch control", "production": "shown" },
+    { "text": "Automatic PTO control for turning and implements / Automatic PTO & GPS Option", "official_page": "not stated (PTO speeds only)", "production": "withheld" },
+    { "text": "Closed load sensing system for efficient operation", "official_page": "not stated", "production": "withheld" },
+    { "text": "Optional GPS navigation and unmanned driving", "official_page": "'Optional auto-guidance and ISOBUS'; GPS navigation and unmanned driving not stated", "production": "withheld" },
+    { "text": "Comfortable ... (description)", "official_page": "supported: smart cab for comfort", "production": "shown" },
+    { "text": "48F+24R gearbox; 25% torque reserve", "official_page": "48F+24R power shift listed; torque reserve 35%", "production": "withheld by existing numeric gating (brochure-only status preserved; 25% conflicts)" }
+  ]
+}
