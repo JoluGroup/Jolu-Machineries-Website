@@ -10,6 +10,13 @@ import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { buildSitemap, prerender } from "./prerender.mjs"
 
+// C1 identity, read from the claims registry source so this gate follows the owner's decision rather than a hard-coded verdict.
+const registrySrc = fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "../src/config/business.ts"), "utf8")
+const claimOf = (id) => { const m = registrySrc.match(new RegExp(`id: "${id.replace(".", "\\.")}"[^\\n]*?status: "(\\w+)", value: "([^"]*)"`)); return m ? { status: m[1], value: m[2] } : null }
+const displayNameClaim = claimOf("identity.displayName")
+const legalNameClaim = claimOf("identity.legalName")
+if (!displayNameClaim) throw new Error("verify-seo: could not read identity.displayName from the claims registry")
+
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 const DIST = path.join(ROOT, "dist")
 const ORIGIN = "https://www.jolumachineries.com"
@@ -95,7 +102,12 @@ for (const f of pages) {
       }
     }
     walkLd(j)
-    if (j["@type"] === "Organization" || j["@type"] === "WebSite") fail(`${route}: ${j["@type"]} emitted while identity (C1) is unverified`)
+    if (j["@type"] === "Organization" || j["@type"] === "WebSite") {
+      if (displayNameClaim.status !== "verified") fail(`${route}: ${j["@type"]} emitted while identity (C1) is unverified`)
+      else if (j.name !== displayNameClaim.value) fail(`${route}: ${j["@type"]} name ${JSON.stringify(j.name)} is not the verified display name`)
+      if ("legalName" in j && legalNameClaim?.status !== "verified") fail(`${route}: ${j["@type"]} carries legalName while it is unverified (C1)`)
+      if (route !== "/") fail(`${route}: ${j["@type"]} belongs on the home page only`)
+    }
   }
   if (route.startsWith("/products/") && !/"@type":"Product"/.test(head)) fail(`${route}: Product JSON-LD missing`)
   if (route !== "/" && !/"@type":"BreadcrumbList"/.test(head)) fail(`${route}: BreadcrumbList missing`)
