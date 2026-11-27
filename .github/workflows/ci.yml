@@ -135,7 +135,7 @@ jobs:
           t() { if [ "$2" = "success" ] && [ "$1" = "NOT_EXECUTED" ]; then echo "NOT EXECUTED (no test suite)"; else r "$2"; fi; }
           SERVER_TESTS='${{ needs.server.outputs.tests }}'; CLIENT_TESTS='${{ needs.client.outputs.tests }}'
           {
-            echo "## CI result for ${GITHUB_SHA}"
+            echo "## CI result for ${{ github.event.pull_request.head.sha || github.sha }}"
             echo "| job | result |"
             echo "|---|---|"
             echo "| server | $(t "$SERVER_TESTS" '${{ needs.server.result }}') |"

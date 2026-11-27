@@ -66,9 +66,9 @@ export default function ScheduleVisit() {
       <Header />
       <section className="min-h-screen bg-white dark:bg-zinc-900 py-16 px-4">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-5xl font-bold text-center text-primary mb-4">
+          <h1 className="text-5xl font-bold text-center text-primary mb-4">
             Schedule a Visit
-          </h2>
+          </h1>
           <p className="text-center text-gray-600 dark:text-gray-300 mb-10">
             Book a hands-on demo or site visit with our specialists.
           </p>

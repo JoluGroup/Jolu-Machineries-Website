@@ -280,6 +280,7 @@ const Hero = () => {
           {/* Stats Section — count-up on scroll into view */}
           <div
             ref={statsRef}
+            data-reveal=""
             className={cn(
               "grid grid-cols-1 md:grid-cols-3 gap-6 bg-black/40 backdrop-blur-md rounded-2xl p-6 border border-primary-glow/25 transition-all duration-300 ease-out",
               statsInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-[15px]"

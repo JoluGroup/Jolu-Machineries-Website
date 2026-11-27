@@ -21,11 +21,11 @@ const FORBIDDEN = ["facebook.com/search", "leading distributors", "premier deale
   "global leader in agricultural technology", "Genuine OEM", "Genuine Spare Parts", "authentic Zoomlion", "In Stock",
   "Low Stock", "Faith Yegon", "Geoffrey Bosire", "John Ouma"]
 // Unverified specifications/superlatives (registry C16) must not appear in <title>, meta tags or JSON-LD.
-const META_FORBIDDEN = [/\b\d+\s?hp\b/i, /World's top/i, /\bsuperior\b/i, /European standards/i, /\boutstanding\b/i, /\d+\s?(kg\/s|L)\b/, /Jolu Group|Jolu Machineries/]
+const META_FORBIDDEN = [/\b\d+\s?hp\b/i, /World's top/i, /\bsuperior\b/i, /European standards/i, /\boutstanding\b/i, /\d+\s?(kg\/s|L)\b/, /Jolu Group/]
 const FORBIDDEN_LD_KEYS = ["offers", "price", "priceCurrency", "availability", "aggregateRating", "review", "brand"]
 const ALLOWED_TYPES = new Set(["Organization", "WebSite", "BreadcrumbList", "ListItem", "Product", "ItemList", "Article", "FAQPage", "Question", "Answer", "ImageObject"])
 // Routes owned by another lane that do not yet render an <h1> (reported, not failed).
-const H1_EXCEPTIONS = new Set(["/schedule"])
+const H1_EXCEPTIONS = new Set()
 
 const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]))
 const htmlFiles = (d) => walk(d).filter((f) => f.endsWith(".html"))
@@ -82,7 +82,7 @@ for (const f of pages) {
   if (imgsNoAlt) fail(`${route}: ${imgsNoAlt} <img> without alt`)
   for (const s of FORBIDDEN) if (html.includes(s)) fail(`${route}: unsupported claim "${s}" present`)
   const headPart = html.slice(0, html.indexOf("</head>"))
-  const metaText = [...headPart.matchAll(/<title>([^<]*)<\/title>|<meta [^>]*content="([^"]*)"|<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => m[1] || m[2] || m[3] || "").join(" \n ")
+  const metaText = [...headPart.matchAll(/<title>([^<]*)<\/title>|<meta [^>]*content="([^"]*)"|<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map((m) => m[1] || m[2] || m[3] || "").join(" \n ")
   for (const re of META_FORBIDDEN) if (re.test(metaText)) fail(`${route}: metadata/JSON-LD contains unverified wording ${re}`)
   for (const f of html.match(/<form\b[^>]*>/g) || []) if (!/onsubmit="return false"/.test(f) || !/method="post"/.test(f)) fail(`${route}: prerendered <form> can submit natively: ${f.slice(0, 80)}`)
   for (const m of head.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)) {

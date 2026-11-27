@@ -9,7 +9,7 @@ export function ConsentBar({ onChoose, current, focusOnOpen = false }: { onChoos
   const first = useRef<HTMLButtonElement>(null)
   // When reopened from the footer "Cookie settings" control, move keyboard focus into the bar.
   useEffect(() => { if (focusOnOpen) first.current?.focus() }, [focusOnOpen])
-  const button = "h-10 min-w-[8.5rem] rounded-full border border-white/30 bg-white/10 px-5 text-sm font-semibold text-white hover:bg-white/20 focus-visible:ring-2 focus-visible:ring-primary-glow"
+  const button = "h-10 min-w-[8.5rem] rounded-full border border-white/30 bg-white/10 px-5 text-sm font-semibold text-white hover:bg-white/20 hover:text-white focus-visible:ring-2 focus-visible:ring-primary-glow"
   return (
     <div
       role="region"

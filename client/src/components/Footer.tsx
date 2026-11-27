@@ -44,9 +44,13 @@ const Footer = () => {
     subscribing.current = true;
     setLoading(true);
     setMessage("");
-    const outcome = await api.subscribe({ email });
-    subscribing.current = false;
-    setLoading(false);
+    let outcome: Awaited<ReturnType<typeof api.subscribe>>;
+    try {
+      outcome = await api.subscribe({ email });
+    } finally {
+      subscribing.current = false;
+      setLoading(false);
+    }
     switch (outcome.kind) {
       case "received":
         setMessage("✅ Thank you for subscribing!");

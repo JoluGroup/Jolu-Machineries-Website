@@ -12,7 +12,10 @@ const ScrollToTop = () => {
       if (!hash) return;
     }
     if (hash) {
-      const element = document.querySelector(hash);
+      // getElementById never throws on unusual fragments (e.g. "#1abc"), unlike querySelector.
+      let id = hash.slice(1);
+      try { id = decodeURIComponent(id); } catch { /* keep raw */ }
+      const element = document.getElementById(id);
       if (element) {
         // Delay ensures the element is in the DOM
         setTimeout(() => {

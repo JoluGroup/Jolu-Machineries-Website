@@ -83,8 +83,8 @@ export const STATIC_ROUTES: readonly RouteMeta[] = [
   },
   {
     path: "/careers", kind: "page",
-    title: "Careers — Current Openings",
-    description: "Current job openings, role requirements and how to apply by email for positions in our team.",
+    title: "Careers — Job Openings",
+    description: "Job openings, role requirements and how to apply by email for positions in our team.",
     indexable: true, breadcrumbs: [HOME, { name: "Careers", path: "/careers" }],
   },
   {
@@ -118,7 +118,7 @@ export const STATIC_ROUTES: readonly RouteMeta[] = [
   {
     path: "/showroom-launch", kind: "article",
     title: "Nakuru Regional Offices & Showroom Launch",
-    description: "Details of the launch event for the Nakuru regional offices and machinery showroom, with directions and contact options.",
+    description: "Speeches, presentations and photos from the launch of the Nakuru regional offices and showroom, with venue details.",
     indexable: true, breadcrumbs: [HOME, { name: "Nakuru Showroom Launch", path: "/showroom-launch" }],
     article: { headline: "Nakuru Regional Offices & Showroom Launch" },
   },
