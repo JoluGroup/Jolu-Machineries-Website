@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
 import QuoteDrawer from "@/components/QuoteDrawer";
+import { gateCardSpecs } from "@/data/spec-verification";
+import { products as catalogueProducts } from "@/data/products";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { FILTER_CATEGORY_EVENT } from "@/components/CategoryJump";
@@ -127,7 +129,7 @@ const ProductsSection = () => {
     { id: 'implements', name: 'Implements', count: 4 },
   ];
 
-  const products = [
+  const cardProducts = [
     {
       id: 1,
       slug: "zoomlion-rc904-1104",
@@ -461,6 +463,8 @@ const ProductsSection = () => {
 
     // Add more products here as needed
   ];
+  // M2-PRODUCT-VERIFY-01: production cards show only numbers backed by a manufacturer-verified specification.
+  const products = gateCardSpecs(cardProducts, catalogueProducts);
 
   const filteredProducts = products.filter(product => {
     const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;

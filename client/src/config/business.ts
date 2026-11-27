@@ -140,7 +140,7 @@ export const spareParts = {
 
 export const responseTime = claim({ id: "sla.response", ownerItem: "C15", status: "pending", value: "We'll get back to you within 24 hours.", source: "GetQuote:35, QuoteDrawer:89, ContactSection:50" })
 
-export const productSpecs = claim({ id: "products.specs", ownerItem: "C16", status: "pending", value: "keySpecs/specTable for 18 products in data/products.ts", source: "client/src/data/products.ts", note: "Shown as today; excluded from structured data until checked against manufacturer sheets." })
+export const productSpecs = claim({ id: "products.specs", ownerItem: "C16", status: "pending", value: "keySpecs/specTable for 18 products in data/products.ts", source: "client/src/data/products.ts", note: "Per-specification statuses in data/spec-verification.ts (M2-PRODUCT-VERIFY-01): production shows only manufacturer-verified or configuration-dependent values; never in structured data." })
 
 export const warranty = claim({ id: "warranty", ownerItem: "C17", status: "unsupported", value: "", source: "none found", note: "No warranty claims exist; none may be added without verified terms." })
 

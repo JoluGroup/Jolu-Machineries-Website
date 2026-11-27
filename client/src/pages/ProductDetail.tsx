@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import QuoteDrawer from "@/components/QuoteDrawer";
 import { phones, visible, waHref } from "@/config/business";
 import RegistryLink from "@/components/RegistryLink";
+import { shownSpecs } from "@/data/spec-verification";
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -15,8 +16,10 @@ const ProductDetail = () => {
   if (!product) {
     return <div className="text-center text-red-600 mt-20">Product not found</div>;
   }
+  const specs = shownSpecs(product);
 
-  const hpSpec = product.keySpecs?.find((s) => /power/i.test(s.label));
+
+  const hpSpec = specs.keySpecs.find((s) => /power/i.test(s.label));
   const quoteProduct = { name: product.name, hp: hpSpec?.value };
 
   return (
@@ -33,10 +36,10 @@ const ProductDetail = () => {
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-primary mb-4">{product.name}</h1>
               <p className="text-lg mb-6">{product.longDescription}</p>
-              {product.keySpecs && (
+              {specs.keySpecs.length > 0 && (
                 <ul className="space-y-2 text-muted-foreground">
-                  {product.keySpecs.map((spec, i) => (
-                    <li key={i}>⚙️ <strong>{spec.label}</strong>: {spec.value}</li>
+                  {specs.keySpecs.map((spec, i) => (
+                    <li key={i}>⚙️ <strong>{spec.label}</strong>: {spec.value}{spec.configDependent && <span className="text-xs"> (varies by configuration)</span>}</li>
                   ))}
                 </ul>
               )}
@@ -60,23 +63,23 @@ const ProductDetail = () => {
           )}
 
           {/* Specifications Table */}
-          {product.specTable && (
+          {specs.specTable && (
             <>
               <h3 className="text-xl font-semibold mt-10 mb-4 text-primary">Specifications Table</h3>
               <div className="overflow-auto">
                 <table className="min-w-full text-sm text-left border border-border">
                   <thead className="bg-primary text-primary-foreground">
                     <tr>
-                      {product.specTable.headers.map((header, i) => (
+                      {specs.specTable.headers.map((header, i) => (
                         <th key={i} className="p-3 border border-border">{header}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody className="bg-card text-foreground">
-                    {product.specTable.rows.map((row, i) => (
+                    {specs.specTable.rows.map((row, i) => (
                       <tr key={i} className="border-t border-border">
                         {row.map((cell, j) => (
-                          <td key={j} className="p-3 border border-border">{cell}</td>
+                          <td key={j} className="p-3 border border-border">{cell}{j === 0 && specs.specTable?.configDependent[i] && <span className="text-xs text-muted-foreground"> (varies by configuration)</span>}</td>
                         ))}
                       </tr>
                     ))}
@@ -84,6 +87,13 @@ const ProductDetail = () => {
                 </table>
               </div>
             </>
+          )}
+          {/* M2-PRODUCT-VERIFY-01: values not yet confirmed against the manufacturer are withheld, never estimated. */}
+          {specs.withheld && (
+            <p className="mt-6 text-sm text-muted-foreground">
+              Further specifications for this model are being confirmed with the manufacturer. Ask us for the specification
+              sheet for the configuration you are considering.
+            </p>
           )}
 
           {/* Call to Action */}
